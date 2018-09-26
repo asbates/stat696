@@ -1,0 +1,12 @@
+---
+title: "Stat 696 Old DAR Evaluation"
+author: "Andrew Bates"
+date: "9/26/2018"
+output: html_document
+---
+
+
+
+
+
+
