@@ -7,7 +7,7 @@ output: html_document
 
 ### Exam 1
 
-**Rank: **
+**Rank: 4**
 
 It was not clear to me what analysis was performed in this paper. It's not clear what their model is or even what the response is (maybe average of 4 test scores?). Apparently they used a linear regression model. They presented two tables but I don't understand why there are $\chi^2$ values. This may not be wrong but since it's not the usual regression output, and there is virtually no interpretation, it's confusing. The claim that a better test score in high school is a "free ticket to any colleges" seems to come out of nowhere. If they were analyzing college attendence rate this may have some grounding but this is not mentioned anywhere. Overall, this paper was confusing which makes it hard to read.
 
@@ -25,7 +25,9 @@ There are also a number of issues at a more detailed level. The variable names w
 
 **Rank: **
 
+The title has a grammatical error; it should say "relate*d*" and not "relate". I like how this paper has an executive summary to provide a short summary of the problem and results. However, they say they are predicting several different responses, but the paper doesn't explain these models beyond $R^2$. Also, they use $R^2$ as a model selection criteria. In the introduction, I'm not sure what the difference between their usage of "multi-linear" vs. "multivariate". In the additional summary section, they say there are 20 variables, then say 11. They say variable selection was used but don't explain what method was used. Also, they list significant variables but list different variables after model selection. Which ones were used? Writing out the model as an 'equation' doesn't really add anything that the table doesn't provide. The go back and forth between the 'preliminary' model and the 'variable selection' model. Why so many tests for normality (Table 7)? The conclusion is about 1.5 pages while the text for the rest of the paper is about 2 pages. I still don't know what the model is. If they are trying to model a percent, why not use logistic regression?
 
+The tables and figures need reformatting. There are too many digits in the tables, the figures are too small to really analyze, the variable names in the plots are abbreviations and have letters overlapping.
 
 
 ### Exam 11
