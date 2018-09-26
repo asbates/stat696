@@ -5,7 +5,32 @@ date: "9/26/2018"
 output: html_document
 ---
 
+### Exam 1
 
+**Rank: **
+
+It was not clear to me what analysis was performed in this paper. It's not clear what their model is or even what the response is (maybe average of 4 test scores?). Apparently they used a linear regression model. They presented two tables but I don't understand why there are $\chi^2$ values. This may not be wrong but since it's not the usual regression output, and there is virtually no interpretation, it's confusing. The claim that a better test score in high school is a "free ticket to any colleges" seems to come out of nowhere. If they were analyzing college attendence rate this may have some grounding but this is not mentioned anywhere. Overall, this paper was confusing which makes it hard to read.
+
+There are also a number of issues at a more detailed level. The variable names were all abbreviations that one would need a data dictionary to interpret. The tables were unformatted and look like code output. There were also too many digits in the tables to be readily interpretable. The plot is labeled "Avegrade" which is too brief. The number of bins might be a bit small for the sample size.
+
+
+### Exam 2
+
+**Rank: **
+
+
+
+
+### Exam 5
+
+**Rank: **
+
+
+
+
+### Exam 11
+
+**Rank: **
 
 
 
