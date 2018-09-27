@@ -40,6 +40,16 @@ The tables and figures need reformatting. There are too many digits in the table
 
 **Rank: **
 
+Summary: it seems like they're doing several analyses. Which one response are they using? Is this a prediction problem? First sentence of Introduction doesn't seem to imply this.
+
+Intro: "if a difference .. did exist": well did it or did it not? Why did they use "proportional hypothesis testing" for one set of percentages and "hypothesis testing for equal means" for another set? Do we need a table explaining the type of each variable? The number of observations for each when it's stated that there are no missing values? Should be in Appendix if anything.
+
+Statistical Analysis: Normality is not an assumption in a KS test. Did they test normality for **every** varible? Why? How can an average be 100 $\pm$ 20 units? "We have a problem modeling ...": this doesn't make sense. What is the meaning of $\ln (p/(1-p))$? What is $p$? How is logistic regression used if the response is $\in \mathbb{R}$?"This data point was altered ...": WHY!!!.  Don't use code abbreviations for variable names. Table a is code dump. Why $R^2$? Why are you presenting models that aren't your final model? Residual plots say "Log College". I don't remember them stating whether or not a log transform was applied.
+
+What do you mean by "high" and "low"? Is the same method as before (regression) is used, why did you say hypothesis testing in the introduction?
+
+
+
 
 
 
