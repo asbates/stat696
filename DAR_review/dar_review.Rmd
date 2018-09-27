@@ -17,7 +17,7 @@ There are also a number of issues at a more detailed level. The variable names w
 
 ### Exam 2
 
-**Rank: **
+**Rank: 1**
 
 The first word in paper is a grammatical error. The summary is good in that it provides background, methods, and results. However, they should have expanded a bit more. For example, they say teacher salary and enrollment influence drop-out rate but are these the only variables? Also, I'm not sure how controllable the covariates used are by a school/school board. The mean drop-out rate is 2. Apparently, this means 2%? They should have made this clear instead of leaving it up to the reader to infer.
 
@@ -27,26 +27,21 @@ In the first paragraph of the Statical Analysis section, I like how they justify
 
 ### Exam 5
 
-**Rank: **
+**Rank: 2**
 
 Right off the bat, the title contains a grammatical error which is not a good sign. I like how this paper has an executive summary to provide a short summary of the problem and results. However, they say they are predicting several different responses, but the paper doesn't explain these models beyond $R^2$. Also, it's not clear to me what the final model was. This is in part because they explain several models, one with a transformation, then state in the conclusion that a transformation was not used.
 
-The title has a grammatical error; it should say "relate*d*" and not "relate". I like how this paper has an executive summary to provide a short summary of the problem and results. However, they say they are predicting several different responses, but the paper doesn't explain these models beyond $R^2$. Also, they use $R^2$ as a model selection criteria. In the introduction, I'm not sure what the difference between their usage of "multi-linear" vs. "multivariate". In the additional summary section, they say there are 20 variables, then say 11. They say variable selection was used but don't explain what method was used. Also, they list significant variables but list different variables after model selection. Which ones were used? Writing out the model as an 'equation' doesn't really add anything that the table doesn't provide. The go back and forth between the 'preliminary' model and the 'variable selection' model. Why so many tests for normality (Table 7)? The conclusion is about 1.5 pages while the text for the rest of the paper is about 2 pages. I still don't know what the model is. If they are trying to model a percent, why not use logistic regression?
+They say variable selection was used but don't explain what method was used. Also, they list significant variables but list different variables after model selection. Which ones were used? The conclusion is about 1.5 pages while the text for the rest of the paper is about 2 pages. The conclusion is more like a summary of the analysis than a conclusion.
 
-The tables and figures need reformatting. There are too many digits in the tables, the figures are too small to really analyze, the variable names in the plots are abbreviations and have letters overlapping.
 
 
 ### Exam 11
 
-**Rank: **
+**Rank: 3**
 
-Summary: it seems like they're doing several analyses. Which one response are they using? Is this a prediction problem? First sentence of Introduction doesn't seem to imply this.
+The executive summary is a nice addition but they don't provide a full summary. Specifically, the last sentence states they analyzed several variables but they never state the results of this analysis. Also, this last sentence should be incorportated into the first, which explains what they did in this report. In the introduction, they state that proportional hypothesis testing" is used for one set of percentages and "hypothesis testing for equal means" for another set. I'm not sure why they used different tests. They also say that logistic regression is used but this conflicts with the analysis section which states the response is a real number.
 
-Intro: "if a difference .. did exist": well did it or did it not? Why did they use "proportional hypothesis testing" for one set of percentages and "hypothesis testing for equal means" for another set? Do we need a table explaining the type of each variable? The number of observations for each when it's stated that there are no missing values? Should be in Appendix if anything.
-
-Statistical Analysis: Normality is not an assumption in a KS test. Did they test normality for **every** varible? Why? How can an average be 100 $\pm$ 20 units? "We have a problem modeling ...": this doesn't make sense. What is the meaning of $\ln (p/(1-p))$? What is $p$? How is logistic regression used if the response is $\in \mathbb{R}$?"This data point was altered ...": WHY!!!.  Don't use code abbreviations for variable names. Table a is code dump. Why $R^2$? Why are you presenting models that aren't your final model? Residual plots say "Log College". I don't remember them stating whether or not a log transform was applied.
-
-What do you mean by "high" and "low"? Is the same method as before (regression) is used, why did you say hypothesis testing in the introduction?
+One part of the analysis I don't understand is why they performed KS tests on all variables. They should have explained the reason for this. In fourth paragraph of the analyis section, they state that one "data point was altered"! I don't agree with this decision at all. On page 5, they tested for a difference in proportion of students who went to 4 year vs. 2 year colleges. They say that this was done using the previous method. But the previous method was a regression and I don't know how this tests for a difference in proportions.
 
 
 
