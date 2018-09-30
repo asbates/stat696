@@ -6,6 +6,7 @@
 \usepackage{latexsym}
 \usepackage{color}
 \usepackage{listings} % allows for importing code scripts into the tex file
+\usepackage{amsmath}
 
 % Approximately 1 inch borders all around
 \setlength\topmargin{-.56in}
@@ -23,7 +24,23 @@
 \maketitle
 
 
+The \textit{insert reason here. e.g. skewness} of growth rate suggested a log transformation. However, growth rate contains some negative values as well as some zero values. For this reason, we used the following modified log transformation:
 
+% for some reason this is throwing an error
+% undefined control sequence, misplaced alignment tab character &
+% seems like maybe it's not recognizing cases environment
+% needed to add \usepackage{amsmath}
+% I guess I'm just too used to this already being there
+% or not needing to do it b/c R Markdown makes this available!
+\[
+\log(\text{growth rate}) = 
+  \begin{cases}
+    \log(growth rate + 0.15) &\text{if growth rate} > 0 \\
+    -\log(-growth rate + 0.15) &\text{if growth rate} < 0.
+  \end{cases}
+\]
+
+Note that since this is a one-to-one transformation ...
 
 
 \end{document}
