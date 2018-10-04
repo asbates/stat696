@@ -41,6 +41,17 @@ dim(ny) # 914 x 7
 summary(ny)
 corr_mat <- cor(ny)
 corrplot(corr_mat, type = "upper", diag = FALSE) # correlation matrix plot
+
+# highest correlations
+cor(ny$pop, ny$pop_dens) # 0.67
+cor(ny$income, ny$pop_dens) # 0.49
+cor(ny$income, ny$perc_intergov) # -0.30
+cor(ny$income, ny$pop) # 0.29
+
+# note: income and pop have lower correlation than income and pop_dens
+# so may want to include pop instead of pop_dens
+
+
 pairs(ny) # scatterplot matrix
 # see also argument log to pairs. and diag.panel 
 # also look at 580 code to see how to add density plot
