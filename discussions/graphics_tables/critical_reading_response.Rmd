@@ -1,0 +1,26 @@
+---
+title: "Critical Reading of Graphics and Tables Articles"
+author: "Andrew Bates"
+date: "10/4/2018"
+output: pdf_document
+---
+
+### Statement 1
+
+> R typically presents output in neatly organized columns and rows with numbers to 4-7 decimal places. It is thus a great idea to use the R output as tables in statistical reports.
+
+#### Response
+
+It's a terrible idea to use that many decimal places in a report table. All three articles state how too many digits makes it difficult for the reader to understand what's going on. One of Ehrenberg's main points is to round "to two effective digits" which he talks about at length. Wainer's *Significance* article agrees. He advocates rounding because "humans cannot comprehend more than two digits very easily." Even in *How to Display Data Badly* which is primarily about graphical displays, Wainer states that "a display can be made clearer by presenting less."
+
+### Statement 2
+
+> The graphic below is an excellent data visualization on Twitter topic traffic.
+
+This statement is just false.
+
+
+
+
+
+
