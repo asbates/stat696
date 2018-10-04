@@ -17,10 +17,7 @@ It's a terrible idea to use that many decimal places in a report table. All thre
 
 > The graphic below is an excellent data visualization on Twitter topic traffic.
 
-This statement is just false.
+#### Response 
 
-
-
-
-
+This statement is just plain false. The graphic is just taking up space as there is only one real number, 45%. It looks like some took Wainer's rules for how to display data badly but dropped the *badly*. For example, it follows *Rule 1 - Show as Few Data as Possible* and *Rule 5 - Graphs Data Out of Context* among others. Wainer's *Significance* article doesn't address graphics, but he would no doubt disagree with the statment. In article, he insists that "a table is for communication." In that vein, he would probably agree that the graphic does not really communicate anything to the reader. Similarly for the Ehrenberg article. He states that "we do not need to learn to read better, but writers need to be taught to write better." With this emphasis on communicating to the reader, one imagines he would disagree with the statement as well.
 
