@@ -70,7 +70,7 @@ ny <- ny %>%
 # as is, it's really only useful in this script
 hist_dens <- function(var){
   plot_var <- enquo(var)
-  ggplot(ny, aes(x = !!plot_var, y = ..density..)) +
+  ggplot(ny, aes(x = !! plot_var, y = ..density..)) +
     geom_histogram(bins = 50) +
     geom_density()
 }
@@ -111,6 +111,21 @@ hist_dens(log_grow_rate)
 
 
 # ---  scatterplots: response vs. predictors ----
+
+# function to create scatterplot of log expenditure vs. log covariate given
+# covariate name. also adds a scatter plot smooth
+scatter_smooth <- function(var){
+  x_var <- enquo(var)
+  ggplot(ny, aes(x = !! x_var, y = log_expenditure)) +
+    geom_point() +
+    geom_smooth(method = loess, formula = y ~ x) # see also method = lm
+}
+
+scatter_smooth(log_wealth)
+scatter_smooth(log_income)
+scatter_smooth(log_pop)
+scatter_smooth(log_perc_intergov)
+scatter_smooth(log_grow_rate)
 
 
 
