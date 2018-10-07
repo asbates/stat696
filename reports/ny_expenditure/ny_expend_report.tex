@@ -76,16 +76,16 @@
 \maketitle
 
 \begin{abstract}
-In this paper we estimate future expenditures for two municipalites in New York based on projected wealth per person, population, percent intergovernmental funding, and growth rate.
+In this paper we estimate future expenditures for two municipalites in New York based on various projected demographic and income-related factors. These estimates are obtained from a linear model chosen via a stepwise regression procedure with AIC as the model selection criteria. The variables in the model are wealth per person, population, percent intergovernmental funding, and growth rate. The estimated expenditures for Warwick are 1, 2 for the years 2005 and 2025. The estimated expenditures for Monroe are 1, 2 for the years 2005 and 2025.
 \end{abstract}
 
 
-\section{Introduction}
+\section{Introduction} \label{intro}
 
 
-\section{Analysis}
+\section{Analysis} \label{analysis}
 
-\subsection{Exploratory Data Analysis}
+\subsection{Exploratory Data Analysis} \label{eda}
 
 The \textit{insert reason here. e.g. skewness} of growth rate suggested a log transformation. However, growth rate contains some negative values as well as some zero values. For this reason, we used the following modified log transformation:
 
@@ -108,6 +108,8 @@ Note that since this is a one-to-one transformation ...
 In this dataset there were two measures of the size of a municipality: population and population density. Unsurprisingly, the correlation between these two measures was relatively high ($0.67$). In the interest of parsimony and to mitigate possible colinearity issues, we decided to consider only one of these variables to construct our model. Population density had a moderate correlation with mean income per person ($0.49$) whereas population had a relatively low correlation with income ($0.29$). To hedge against problems with colinearity, we decided to consider population for the model building process.
 
 
-\subsection{Model Building and Diagnostics}
+\subsection{Modeling and Diagnostics} \label{modeling}
+
+\section{Conclusion} \label{conclusion}
 
 \end{document}

@@ -26,7 +26,7 @@
 \maketitle
 
 \begin{abstract}
-In this paper we estimate future expenditures for two municipalites in New York based on projected wealth per person, population, percent intergovernmental funding, and growth rate.
+In this paper we estimate future expenditures for two municipalites in New York based on various projected demographic and income-related factors. These estimates are obtained from a linear model chosen via a stepwise regression procedure with AIC as the model selection criteria. The variables in the model are wealth per person, population, percent intergovernmental funding, and growth rate. The estimated expenditures for Warwick are 1, 2 for the years 2005 and 2025. The estimated expenditures for Monroe are 1, 2 for the years 2005 and 2025.
 \end{abstract}
 
 
