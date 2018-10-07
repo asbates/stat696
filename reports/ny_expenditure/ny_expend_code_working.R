@@ -5,6 +5,7 @@ library(corrplot)
 library(ggplot2)
 library(MASS)
 library(car)
+library(broom)
 
 ny <- read_csv("reports/ny_expenditure/ny_expend.csv")
 
@@ -222,9 +223,41 @@ final_fit <- lm(log_expenditure ~
                   log_grow_rate,
                 data = ny_high)
 
+# =======================================================
+# ----------------- model diagnostics -------------------
+# =======================================================
 
-# note: all p-values (except intercept) are significant at the 0.05 level
-# and
+# all p-values (except intercept) are significant at the 0.05 level
+# F test significant at 0.05 level
 summary(final_fit)
-vif(final_fit)
+
+# all VIF's are less than 1.2
+vif(final_fit)  # (car package)
+
+# constant variance test (car package)
+ncvTest(final_fit)
+
+# --------------- diagnostic plots ----------------
+
+# add fitted values, residuals, etc. to orignal data frame used to fit the model
+ny_high <- augment(final_fit) # (broom package)
+
+ny_high %>%
+  ggplot(aes(sample = .resid)) +
+  geom_qq() +
+  geom_qq_line()
+
+ny_high %>%
+  ggplot(aes(x = .resid)) +
+  geom_histogram(bins = 50)
+
+
+# attempt at using studentized residuals
+dist_pars = list(df = final_fit$df.residual)
+ny_high %>%
+  mutate(stud = rstudent(final_fit)) %>%
+  ggplot(aes(sample = stud)) +
+  stat_qq(distribution = qt, dparms = dist_pars["df"]) +
+  stat_qq_line(distribution = qt, dparms = dist_pars["df"])
+
 
