@@ -242,11 +242,18 @@ ncvTest(final_fit)
 # add fitted values, residuals, etc. to orignal data frame used to fit the model
 ny_high <- augment(final_fit) # (broom package)
 
+# residuals vs. fitted
+ggplot(ny_high, aes(x = .fitted, y = .resid)) +
+  geom_point() +
+  geom_hline(yintercept = 0)
+
+## qq plot
 ny_high %>%
   ggplot(aes(sample = .resid)) +
   geom_qq() +
   geom_qq_line()
 
+# histogram
 ny_high %>%
   ggplot(aes(x = .resid)) +
   geom_histogram(bins = 50)
