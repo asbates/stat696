@@ -32,6 +32,9 @@ In this paper we estimate future expenditures for two municipalites in New York 
 
 \section{Introduction} \label{intro}
 
+Two New York towns, Warwick and Monroe, would like to estimate future expenditures triggered by new housing construction proposals. They are primarily interested in determining whether they need to increase funds to compensate for increased expenditures related to the housing projects. To construct these estimates, Warwick and Monroe obtained data on expenditures along with various demographic and income-related variables from several New York municiplaties. The data used in this study consisted of 916 observations of seven variables. The response variable is expenditure per person revenue from state and federal grants, population density, mean income per person, and growth rate.
+
+
 
 \section{Analysis} \label{analysis}
 
