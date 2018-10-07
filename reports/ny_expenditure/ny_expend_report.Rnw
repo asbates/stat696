@@ -36,7 +36,9 @@ Two New York towns, Warwick and Monroe, would like to estimate future expenditur
 
 \section{Methods} \label{methods}
 
-The data used in this study consisted of 916 observations of seven variables. The response variable is expenditure per person revenue from state and federal grants, population density, mean income per person, and growth rate.
+The data used in this study consisted of 916 observations of seven variables. Each observation corresponds to a New York municipality for which each of the variables were collected. The response variable is expenditure per person. The covariates are as follows: wealth per person, population, revenue from state and federal grants, population density, mean income per person, and growth rate.
+
+For reasons of simplicity and interpretability, a linear regression model was chosen to estimate future expenditures. The variables in this data set (including the response) were heavily skewed, so log transformations were applied to each. (A log transformation was chosen over a more complex transformation to aid in interpretation). The correlation between log population and log population density was high ($0.67$) so to prevent this from leading to multicolinearity issues, only population was considered in the analysis. To ensure a linear relationship between the predictors and the response, the data was subsetted to include only those observations for which the population was larger than 4,000 (log population above $8.3$). Since the projected covariates for Warwick and Monroe fall within the range of the covariates in the subsetted data, this should not lead to any problems. In addition, this method was favored over a more complicated method like including a quadratic term on log population which would be harder to interpret. The regression model was constructed via stepwise regression using AIC as the selection criteria.
 
 
 
