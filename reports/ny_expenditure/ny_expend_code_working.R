@@ -114,19 +114,52 @@ hist_dens(log_grow_rate)
 
 # function to create scatterplot of log expenditure vs. log covariate given
 # covariate name. also adds a scatter plot smooth
-scatter_smooth <- function(var){
+scatter_smooth_log <- function(var){
   x_var <- enquo(var)
   ggplot(ny, aes(x = !! x_var, y = log_expenditure)) +
     geom_point() +
     geom_smooth(method = loess, formula = y ~ x) # see also method = lm
 }
 
-scatter_smooth(log_wealth)
-scatter_smooth(log_income)
-scatter_smooth(log_pop)
-scatter_smooth(log_perc_intergov)
-scatter_smooth(log_grow_rate)
+scatter_smooth_log(log_wealth)
+scatter_smooth_log(log_income)
+scatter_smooth_log(log_pop)
+scatter_smooth_log(log_perc_intergov)
+scatter_smooth_log(log_grow_rate)
 
+# all the above plots show an approximatley linear relationship 
+# except log expenditure vs. log population
+# in the following plot, it looks like if we might be able to
+# split log population into 2 groups and get an approximately linear relation
+
+scatter_smooth_log(log_pop) + 
+  geom_vline(xintercept = 8.3)
+
+# let's investigate further by splitting log population:
+# log population below and above 8.3
+ny_log_pop_low <- ny %>%
+  filter(log_pop <= 8.3)
+
+ny_log_pop_high <- ny %>%
+  filter(log_pop > 8.3)
+
+ggplot(ny_log_pop_low, aes(x = log_pop, y = log_expenditure)) +
+  geom_point() +
+  geom_smooth(method = loess, formula = y ~ x)
+
+ggplot(ny_log_pop_high, aes(x = log_pop, y = log_expenditure)) +
+  geom_point() +
+  geom_smooth(method = loess, formula = y ~ x)
+
+# based on the above plots, it appears that the relationship between
+# log expenditure and log population is approximately piecewise linear
+
+# NOTE: ask Prof. Levine:
+# do we even need to worry about having a fit for log_pop < 8.3?
+# the values of log pop for Warwick and Monroe all fall under
+# the log_pop > 8.3 subset
+# should we check all the other variables wealth, income, etc.
+# to make sure they fall within the range of values in the subset?
 
 
 pairs(ny) # scatterplot matrix
