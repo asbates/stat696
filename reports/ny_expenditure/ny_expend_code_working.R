@@ -3,6 +3,8 @@ library(readr)
 library(dplyr)
 library(corrplot)
 library(ggplot2)
+library(MASS)
+library(car)
 
 ny <- read_csv("reports/ny_expenditure/ny_expend.csv")
 
@@ -137,17 +139,17 @@ scatter_smooth_log(log_pop) +
 
 # let's investigate further by splitting log population:
 # log population below and above 8.3
-ny_log_pop_low <- ny %>%
+ny_low <- ny %>%
   filter(log_pop <= 8.3)
 
-ny_log_pop_high <- ny %>%
+ny_high <- ny %>%
   filter(log_pop > 8.3)
 
-ggplot(ny_log_pop_low, aes(x = log_pop, y = log_expenditure)) +
+ggplot(ny_low, aes(x = log_pop, y = log_expenditure)) +
   geom_point() +
   geom_smooth(method = loess, formula = y ~ x)
 
-ggplot(ny_log_pop_high, aes(x = log_pop, y = log_expenditure)) +
+ggplot(ny_high, aes(x = log_pop, y = log_expenditure)) +
   geom_point() +
   geom_smooth(method = loess, formula = y ~ x)
 
@@ -160,8 +162,6 @@ ggplot(ny_log_pop_high, aes(x = log_pop, y = log_expenditure)) +
 # the log_pop > 8.3 subset
 # should we check all the other variables wealth, income, etc.
 # to make sure they fall within the range of values in the subset?
-
-
 pairs(ny) # scatterplot matrix
 # see also argument log to pairs. and diag.panel 
 # also look at 580 code to see how to add density plot
@@ -171,7 +171,60 @@ pairs(ny, log = TRUE)
 
 
 
-
-
-
 # =======================================================
+# ----------------- model building ----------------------
+# =======================================================
+
+# we will use stepwise regression for model selection
+# with AIC as our criteria
+
+
+for_mod_fit_high <- ny_high %>%
+  dplyr::select(log_expenditure,
+                log_wealth,
+                log_income,
+                log_pop,
+                log_perc_intergov,
+                log_grow_rate) %>%
+  mutate(
+    log_wealth_2 = log_wealth^2,
+    log_income_2 = log_income^2,
+    log_pop_2 = log_pop^2,
+    log_perc_intergov_2 = log_perc_intergov^2,
+    log_grow_rate_2 = log_grow_rate^2
+  )
+
+# fit model without quadratic terms
+# best AIC is -611.3
+fit_high <- lm(log_expenditure ~ log_wealth +
+                      log_income +
+                      log_pop +
+                      log_perc_intergov +
+                      log_grow_rate,
+                    data = for_mod_fit_high)
+best_fit_high <- stepAIC(fit_high)
+best_fit_high
+
+# fit model with quadratic terms
+# best AIC is -622.91
+# this model is not used because:
+# there isn't much of an improvement in AIC compared to the simpler model above
+# this model includes quadratic terms without their respective linear terms
+#   we just can not justify such a model
+full_fit <- lm(log_expenditure ~., data = for_mod_fit_high)
+best_full_fit <- stepAIC(fit)
+best_full_fit
+
+final_fit <- lm(log_expenditure ~ 
+                  log_wealth +
+                  log_pop + 
+                  log_perc_intergov +
+                  log_grow_rate,
+                data = ny_high)
+
+
+# note: all p-values (except intercept) are significant at the 0.05 level
+# and
+summary(final_fit)
+vif(final_fit)
+
