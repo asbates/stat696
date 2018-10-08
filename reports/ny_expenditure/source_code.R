@@ -27,7 +27,7 @@ cor(ny$income, ny$perc_intergov) # -0.30
 cor(ny$income, ny$pop) # 0.29
 
 ny <- ny %>%
-  select(-pop_dens) # remove population density
+  dplyr::select(-pop_dens) # remove population density
 
 # ---  histograms and density plots ----
 
@@ -96,8 +96,8 @@ lpop_smooth <- lowess(ny$log_pop, ny$log_expenditure)
 
 ggplot(ny, aes(x = log_pop, y = log_expenditure)) +
   geom_point() +
-  geom_line(aes(x = lpop_smooth$x, y = lpop_smooth$y), color = "#F8766D") +
-  geom_segment(aes(x = 8.3, xend = 8.3, y = 4, yend = 5.24), color = "#619CFF")
+  geom_line(aes(x = lpop_smooth$x, y = lpop_smooth$y), color = "#00BFC4") +
+  geom_segment(aes(x = 8.3, xend = 8.3, y = 4, yend = 5.24), color = "#00BA38")
 
 ny_low <- ny %>%
   filter(log_pop <= 8.3)
@@ -114,7 +114,7 @@ lpop_high_smooth <- lowess(ny_high$log_pop, ny_high$log_expenditure)
 ggplot(ny_high, aes(x = log_pop, y = log_expenditure)) +
   geom_point() +
   geom_line(aes(x = lpop_high_smooth$x,
-                y = lpop_high_smooth$y), color = "#F8766D")
+                y = lpop_high_smooth$y), color = "#00BFC4")
 
 # based on the above plots, it appears that the relationship between
 # log expenditure and log population is approximately piecewise linear

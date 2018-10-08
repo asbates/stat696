@@ -1,0 +1,12 @@
+base
+knitr
+readr
+dplyr
+corrplot
+ggplot2
+MASS
+carData
+car
+broom
+here
+bindrcpp

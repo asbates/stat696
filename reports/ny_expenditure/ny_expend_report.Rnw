@@ -46,7 +46,7 @@ For reasons of simplicity and interpretability, a linear regression model was ch
 
 \section{Analysis} \label{analysis}
 
-<<r setup, echo = FALSE, message = FALSE>>=
+<<r setup, echo = FALSE, message = FALSE, warning = FALSE, cache = TRUE>>=
 library(readr)
 library(dplyr)
 library(corrplot)
@@ -54,12 +54,13 @@ library(ggplot2)
 library(MASS)
 library(car)
 library(broom)
+library(here)
 
-ny <- read_csv("reports/ny_expenditure/ny_expend.csv")
+ny <- read_csv(here("reports/ny_expenditure/ny_expend.csv"))
 
 ny <- filter(ny, !is.na(expenditure)) # remove 2 rows with missing values
 ny <- ny %>%
-  select(-pop_dens) # remove population density
+  dplyr::select(-pop_dens) # remove population density
 ny <- ny %>%
   mutate(
     log_expenditure = log(expenditure),
