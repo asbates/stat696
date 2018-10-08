@@ -138,8 +138,27 @@ scatter_smooth_log(log_grow_rate)
 scatter_smooth_log(log_pop) + 
   geom_vline(xintercept = 8.3)
 
+lpop_smooth <- lowess(ny$log_pop, ny$log_expenditure)
+
+ggplot(ny, aes(x = log_pop, y = log_expenditure)) +
+  geom_point() +
+  geom_line(aes(x = lpop_smooth$x, y = lpop_smooth$y), color = "#F8766D") +
+  geom_segment(aes(x = 8.3, xend = 8.3, y = 4, yend = 5.24), color = "#619CFF") 
+
 # let's investigate further by splitting log population:
 # log population below and above 8.3
+
+# NOTE: may want to use 8.4 as cutoff:
+#which.min(log_pop_smooth$y)
+#  [1] 670
+# > log_pop_smooth$x[670]
+#  [1] 8.407155
+# log_pop_smooth$x[648]
+# [1] 8.297793
+# log_pop_smooth$y[648]
+# [1] 5.244371
+
+
 ny_low <- ny %>%
   filter(log_pop <= 8.3)
 
