@@ -40,7 +40,7 @@ Two New York towns, Warwick and Monroe, would like to estimate future expenditur
 
 The data used in this study consisted of 916 observations of seven variables. Each observation corresponds to a New York municipality for which each of the variables were collected. The response variable is expenditure per person. The covariates are as follows: wealth per person, population, revenue from state and federal grants, population density, mean income per person, and growth rate.
 
-For reasons of simplicity and interpretability, a linear regression model was chosen to estimate future expenditures. The correlation between population and population density was high ($0.67$) so to prevent this from leading to multicolinearity issues, only population was considered in the analysis. The variables in this data set (including the response) were heavily skewed, so log transformations were applied to each. (A log transformation was chosen over a more complex transformation to aid in interpretation). To ensure a linear relationship between the predictors and the response, the data was subsetted to include only those observations for which the population was larger than 4,000 (log population above $8.3$). Since the projected covariates for Warwick and Monroe fall within the range of the covariates in the subsetted data, this should not lead to any problems. In addition, this method was favored over a more complicated method like including a quadratic term on log population which would be harder to interpret. The regression model was constructed via stepwise regression using AIC as the selection criteria.
+For reasons of simplicity and interpretability, a linear regression model was chosen to estimate future expenditures. The correlation between population and population density was high ($0.67$) so to prevent this from leading to multicolinearity issues, only population was considered in the analysis. The variables in this data set (including the response) were heavily skewed, so log transformations were applied to each. To ensure a linear relationship between the predictors and the response, the data was subsetted to include only those observations for which the population was larger than $4,000$. Since the projected covariates for Warwick and Monroe fall within the range of the covariates in the subsetted data, this should not lead to any problems. In addition, this method was favored over a more complicated method like including a quadratic term on log population which would be harder to interpret. The regression model was constructed via stepwise regression using AIC as the selection criteria.
 
 
 
@@ -89,7 +89,7 @@ Upon an initial examination of the data, it was evident that transformations wou
 \]
 Note that since this is a one-to-one transformation ...
 
-To ensure the linearity assumption of our model was satisfied, we examined the relationship between log expenditure and the log of each of the covariates. Except for log population, all other covariates had an approximately liner relationship with log expenditure. Figure \ref{fig_vs_log_pop} is a plot of log expenditure vs. log population.
+To ensure the linearity assumption of our model was satisfied, we examined the relationship between log expenditure and the log of each of the covariates. Except for log population, all other covariates had an approximately liner relationship with log expenditure. Figure \ref{fig_vs_log_pop} is a plot of log expenditure vs. log population with the addition of a smoothing line. We see what appears to be a quadratic relationship. However, notice that on either side of the vertical line, the relationship is approximately linear. So we were essentially faced with two choices. We could try to include the square of log population as an additional predictor or we could subset the data and have a roughly linear relationship between the response and log population.
 
 
 <<r fig_vs_log_pop, echo = FALSE, cache = TRUE, fig.width = 5, fig.height = 3, fig.pos = "h", fig.cap = "Plot of log expenditure vs. log population with LOWESS smooth line">>=
@@ -98,12 +98,15 @@ ggplot(ny, aes(x = log_pop, y = log_expenditure)) +
   geom_point() +
   geom_line(aes(x = lpop_smooth$x, y = lpop_smooth$y),
             color = "#00BFC4") +
-  geom_segment(aes(x = 8.3, xend = 8.3, y = 4, yend = 5.24),
-               color = "#00BA38") +
+  geom_vline(xintercept = 8.3, color = "#00BA38")
+  #geom_segment(aes(x = 8.3, xend = 8.3, y = 4, yend = 5.24),
+  #             color = "#00BA38") +
   xlab("Log Population") +
   ylab("Log Expenditure") +
   theme_classic()
 @
+
+We chose the latter method for two reasons. First, as mentioned previously, we favored a simpler model for the interpretability that comes with it. The log of population squared is not as easy to understand. Second, the projected covariates we would be predicting with fall within the rang of the covariates in the subsetted data. For these reasons, we subsetted the data to include only those observations that had a population greater than $4,000$ (log population above $8.3$). This subsetted data set included $266$ of the original observations which we felt was large enough to obtain accurate inferences from.
 
 
 
