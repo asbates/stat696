@@ -46,11 +46,39 @@ For reasons of simplicity and interpretability, a linear regression model was ch
 
 \section{Analysis} \label{analysis}
 
+<<r setup, echo = FALSE, message = FALSE>>=
+library(readr)
+library(dplyr)
+library(corrplot)
+library(ggplot2)
+library(MASS)
+library(car)
+library(broom)
+
+ny <- read_csv("reports/ny_expenditure/ny_expend.csv")
+
+ny <- filter(ny, !is.na(expenditure)) # remove 2 rows with missing values
+ny <- ny %>%
+  select(-pop_dens) # remove population density
+ny <- ny %>%
+  mutate(
+    log_expenditure = log(expenditure),
+    log_wealth = log(wealth),
+    log_income = log(income),
+    log_pop = log(pop),
+    log_perc_intergov = log(perc_intergov),
+    log_grow_rate = ifelse(grow_rate > 0,
+                           log(grow_rate + 0.15),
+                           -log(-grow_rate + 0.15))
+  )
+@
+
+
 \subsection{Exploratory Data Analysis} \label{eda}
 
 In this data set there were two measures of the size of a municipality: population and population density. Unsurprisingly, the correlation between these two measures was relatively high ($0.67$). In the interest of parsimony and to mitigate possible colinearity issues, we decided to consider only one of these variables to construct our model. Population density had a moderate correlation with mean income per person ($0.49$) whereas population had a comparably low correlation with income ($0.29$). To hedge against problems with colinearity, we decided to consider population for the model building process.
 
-Upon an initial examination of the data, it was evident that transformations would be necessary. Each of the covariates, and the response, were skewed (see Appendix \ref{appendix_plots}) and some were heavily skewed. As this might pose problems with linearity, we performed transformations on the variables. To remain in line with our goal of having a comprehensible model, we favored log transformations over a more complex procedure. To that end, we performed log transformations on all variables in the data set. However, a straightforward application of the logarithm was not possible for one covariate. Growth rate contains some negative values as well as some zero values. To remedy this, we used the following pseudo-log transformation:
+Upon an initial examination of the data, it was evident that transformations would be necessary. Each of the covariates, and the response, were skewed (see Appendix \ref{appendix_plots}) and some were heavily skewed. As this might pose problems with linearity, we performed transformations on the variables. To remain in line with our goal of having a comprehensible model, we favored log transformations over a more complex procedure. To that end, we performed log transformations on all variables in the data set.  However, a straightforward application of the logarithm was not possible for one covariate. Growth rate contains some negative values as well as some zero values. To remedy this, we used the following pseudo-log transformation:
 \[
 \text{p-}\log(\text{growth rate}) = % plog for pseudo-log
   \begin{cases}
@@ -60,6 +88,7 @@ Upon an initial examination of the data, it was evident that transformations wou
 \]
 Note that since this is a one-to-one transformation ...
 
+To ensure the linearity assumption of our model was satisfied, we examined the relationship between log expenditure and the log of each of the covariates. Except for log population, all other covariates had an approximately liner relationship with log expenditure. Figure () is a plot of log expenditure vs. log population.
 
 
 \subsection{Modeling and Diagnostics} \label{modeling}
