@@ -67,6 +67,8 @@
 
 % change name of Abstract
 \renewcommand{\abstractname}{Executive Summary}
+% allow multiple sections in appendix
+\usepackage[title]{appendix}
 
 \title{The Effect of New Housing Projects on Expenditures in Two New York Municipalities} 
 \author{Andrew Bates}
@@ -88,7 +90,7 @@ Two New York towns, Warwick and Monroe, would like to estimate future expenditur
 
 The data used in this study consisted of 916 observations of seven variables. Each observation corresponds to a New York municipality for which each of the variables were collected. The response variable is expenditure per person. The covariates are as follows: wealth per person, population, revenue from state and federal grants, population density, mean income per person, and growth rate.
 
-For reasons of simplicity and interpretability, a linear regression model was chosen to estimate future expenditures. The variables in this data set (including the response) were heavily skewed, so log transformations were applied to each. (A log transformation was chosen over a more complex transformation to aid in interpretation). The correlation between log population and log population density was high ($0.67$) so to prevent this from leading to multicolinearity issues, only population was considered in the analysis. To ensure a linear relationship between the predictors and the response, the data was subsetted to include only those observations for which the population was larger than 4,000 (log population above $8.3$). Since the projected covariates for Warwick and Monroe fall within the range of the covariates in the subsetted data, this should not lead to any problems. In addition, this method was favored over a more complicated method like including a quadratic term on log population which would be harder to interpret. The regression model was constructed via stepwise regression using AIC as the selection criteria.
+For reasons of simplicity and interpretability, a linear regression model was chosen to estimate future expenditures. The correlation between population and population density was high ($0.67$) so to prevent this from leading to multicolinearity issues, only population was considered in the analysis. The variables in this data set (including the response) were heavily skewed, so log transformations were applied to each. (A log transformation was chosen over a more complex transformation to aid in interpretation). To ensure a linear relationship between the predictors and the response, the data was subsetted to include only those observations for which the population was larger than 4,000 (log population above $8.3$). Since the projected covariates for Warwick and Monroe fall within the range of the covariates in the subsetted data, this should not lead to any problems. In addition, this method was favored over a more complicated method like including a quadratic term on log population which would be harder to interpret. The regression model was constructed via stepwise regression using AIC as the selection criteria.
 
 
 
@@ -96,29 +98,32 @@ For reasons of simplicity and interpretability, a linear regression model was ch
 
 \subsection{Exploratory Data Analysis} \label{eda}
 
-The \textit{insert reason here. e.g. skewness} of growth rate suggested a log transformation. However, growth rate contains some negative values as well as some zero values. For this reason, we used the following modified log transformation:
+In this data set there were two measures of the size of a municipality: population and population density. Unsurprisingly, the correlation between these two measures was relatively high ($0.67$). In the interest of parsimony and to mitigate possible colinearity issues, we decided to consider only one of these variables to construct our model. Population density had a moderate correlation with mean income per person ($0.49$) whereas population had a comparably low correlation with income ($0.29$). To hedge against problems with colinearity, we decided to consider population for the model building process.
 
-% for some reason this is throwing an error
-% undefined control sequence, misplaced alignment tab character &
-% seems like maybe it's not recognizing cases environment
-% needed to add \usepackage{amsmath}
-% I guess I'm just too used to this already being there
-% or not needing to do it b/c R Markdown makes this available!
+Upon an initial examination of the data, it was evident that transformations would be necessary. Each of the covariates, and the response, were skewed (see Appendix \ref{appendix_plots}) and some were heavily skewed. To remain in line with our goal of having a comprehensible model, we favored log transformations over a more complex procedure. However, a straightforward application of the logarithm was not possible for one covariate. Growth rate contains some negative values as well as some zero values. To remedy this, we used the following pseudo-log transformation:
 \[
-p\log(\text{growth rate}) = % plog for pseudo-log
+\text{p-}\log(\text{growth rate}) = % plog for pseudo-log
   \begin{cases}
-    \log(growth rate + 0.15) &\text{if growth rate} > 0 \\
-    -\log(-growth rate + 0.15) &\text{if growth rate} < 0.
+    \log(\text{growth rate} + 0.15) &\text{if growth rate} > 0 \\
+    -\log(-\text{growth rate} + 0.15) &\text{if growth rate} \le 0.
   \end{cases}
 \]
-
 Note that since this is a one-to-one transformation ...
 
-In this dataset there were two measures of the size of a municipality: population and population density. Unsurprisingly, the correlation between these two measures was relatively high ($0.67$). In the interest of parsimony and to mitigate possible colinearity issues, we decided to consider only one of these variables to construct our model. Population density had a moderate correlation with mean income per person ($0.49$) whereas population had a relatively low correlation with income ($0.29$). To hedge against problems with colinearity, we decided to consider population for the model building process.
 
 
 \subsection{Modeling and Diagnostics} \label{modeling}
 
 \section{Conclusion} \label{conclusion}
+
+
+
+\newpage
+\begin{appendices}
+
+\section{Supplementary Plots} \label{appendix_plots}
+
+\end{appendices}
+
 
 \end{document}

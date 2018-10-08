@@ -17,6 +17,8 @@
 
 % change name of Abstract
 \renewcommand{\abstractname}{Executive Summary}
+% allow multiple sections in appendix
+\usepackage[title]{appendix}
 
 \title{The Effect of New Housing Projects on Expenditures in Two New York Municipalities} 
 \author{Andrew Bates}
@@ -46,29 +48,32 @@ For reasons of simplicity and interpretability, a linear regression model was ch
 
 \subsection{Exploratory Data Analysis} \label{eda}
 
-The \textit{insert reason here. e.g. skewness} of growth rate suggested a log transformation. However, growth rate contains some negative values as well as some zero values. For this reason, we used the following modified log transformation:
+In this data set there were two measures of the size of a municipality: population and population density. Unsurprisingly, the correlation between these two measures was relatively high ($0.67$). In the interest of parsimony and to mitigate possible colinearity issues, we decided to consider only one of these variables to construct our model. Population density had a moderate correlation with mean income per person ($0.49$) whereas population had a comparably low correlation with income ($0.29$). To hedge against problems with colinearity, we decided to consider population for the model building process.
 
-% for some reason this is throwing an error
-% undefined control sequence, misplaced alignment tab character &
-% seems like maybe it's not recognizing cases environment
-% needed to add \usepackage{amsmath}
-% I guess I'm just too used to this already being there
-% or not needing to do it b/c R Markdown makes this available!
+Upon an initial examination of the data, it was evident that transformations would be necessary. Each of the covariates, and the response, were skewed (see Appendix \ref{appendix_plots}) and some were heavily skewed. To remain in line with our goal of having a comprehensible model, we favored log transformations over a more complex procedure. However, a straightforward application of the logarithm was not possible for one covariate. Growth rate contains some negative values as well as some zero values. To remedy this, we used the following pseudo-log transformation:
 \[
-p\log(\text{growth rate}) = % plog for pseudo-log
+\text{p-}\log(\text{growth rate}) = % plog for pseudo-log
   \begin{cases}
-    \log(growth rate + 0.15) &\text{if growth rate} > 0 \\
-    -\log(-growth rate + 0.15) &\text{if growth rate} < 0.
+    \log(\text{growth rate} + 0.15) &\text{if growth rate} > 0 \\
+    -\log(-\text{growth rate} + 0.15) &\text{if growth rate} \le 0.
   \end{cases}
 \]
-
 Note that since this is a one-to-one transformation ...
 
-In this dataset there were two measures of the size of a municipality: population and population density. Unsurprisingly, the correlation between these two measures was relatively high ($0.67$). In the interest of parsimony and to mitigate possible colinearity issues, we decided to consider only one of these variables to construct our model. Population density had a moderate correlation with mean income per person ($0.49$) whereas population had a relatively low correlation with income ($0.29$). To hedge against problems with colinearity, we decided to consider population for the model building process.
 
 
 \subsection{Modeling and Diagnostics} \label{modeling}
 
 \section{Conclusion} \label{conclusion}
+
+
+
+\newpage
+\begin{appendices}
+
+\section{Supplementary Plots} \label{appendix_plots}
+
+\end{appendices}
+
 
 \end{document}
