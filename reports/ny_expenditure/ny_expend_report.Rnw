@@ -89,26 +89,37 @@ Upon an initial examination of the data, it was evident that transformations wou
 \]
 Note that since this is a one-to-one transformation ...
 
-To ensure the linearity assumption of our model was satisfied, we examined the relationship between log expenditure and the log of each of the covariates. Except for log population, all other covariates had an approximately liner relationship with log expenditure. Figure \ref{fig_vs_log_pop} is a plot of log expenditure vs. log population with the addition of a smoothing line. We see what appears to be a quadratic relationship. However, notice that on either side of the vertical line, the relationship is approximately linear. So we were essentially faced with two choices. We could try to include the square of log population as an additional predictor or we could subset the data and have a roughly linear relationship between the response and log population.
+To ensure the linearity assumption of our model was satisfied, we examined the relationship between log expenditure and the log of each of the covariates. Except for log population, all other covariates had an approximately liner relationship with log expenditure. Figure \ref{fig:vs_log_pop} is a plot of log expenditure vs. log population with the addition of a smoothing line. We see what appears to be a quadratic relationship. However, notice that on either side of the vertical line, the relationship is approximately linear. So we were essentially faced with two choices. We could try to include the square of log population as an additional predictor or we could subset the data and have a roughly linear relationship between the response and log population.
 
 
-<<r fig_vs_log_pop, echo = FALSE, cache = TRUE, fig.width = 5, fig.height = 3, fig.pos = "h", fig.cap = "Plot of log expenditure vs. log population with LOWESS smooth line">>=
+<<r fig_vs_log_pop, echo = FALSE, cache = TRUE, fig.width = 5, fig.height = 3, fig.pos = "h", fig.cap = "\\label{fig:vs_log_pop} Plot of log expenditure vs. log population with LOWESS smooth line">>=
 lpop_smooth <- lowess(ny$log_pop, ny$log_expenditure)
 ggplot(ny, aes(x = log_pop, y = log_expenditure)) +
   geom_point() +
   geom_line(aes(x = lpop_smooth$x, y = lpop_smooth$y),
             color = "#00BFC4") +
-  geom_vline(xintercept = 8.3, color = "#00BA38")
-  #geom_segment(aes(x = 8.3, xend = 8.3, y = 4, yend = 5.24),
-  #             color = "#00BA38") +
+  geom_vline(xintercept = 8.3, color = "#00BA38") + 
   xlab("Log Population") +
   ylab("Log Expenditure") +
   theme_classic()
 @
 
-We chose the latter method for two reasons. First, as mentioned previously, we favored a simpler model for the interpretability that comes with it. The log of population squared is not as easy to understand. Second, the projected covariates we would be predicting with fall within the rang of the covariates in the subsetted data. For these reasons, we subsetted the data to include only those observations that had a population greater than $4,000$ (log population above $8.3$). This subsetted data set included $266$ of the original observations which we felt was large enough to obtain accurate inferences from.
+We chose the latter method for two reasons. First, as mentioned previously, we favored a simpler model for the interpretability that comes with it. The log of population squared is not as easy to understand. Second, the projected covariates we would be predicting with fall within the rang of the covariates in the subsetted data. For these reasons, we subsetted the data to include only those observations that had a population greater than $4,000$ (log population above $8.3$). This subsetted data set included $266$ of the original observations which we felt was large enough to obtain accurate inferences from. Figure \ref{fig:vs_log_pop_subset} is a plot of log expenditure vs. log population for this subsetted data set along with a smoothing line. We can see that the relationship between the two variables is roughly linear. We do see minor deviation from linearity for high values of log population but overall the trend is approximately linear. Additionally, it is much more linear than the relationship we see in Figure \ref{fig:vs_log_pop}.
 
+<<r fig_vs_log_pop_subset, echo = FALSE, cache = TRUE, fig.width = 5, fig.height = 3, fig.pos = "h", fig.cap = "\\label{fig:vs_log_pop_subset} Plot of log expenditure vs. log population with LOWESS smooth line from subsetted data">>=
+ny_high <- ny %>%
+  filter(log_pop > 8.3)
 
+lpop_high_smooth <- lowess(ny_high$log_pop, ny_high$log_expenditure)
+
+ggplot(ny_high, aes(x = log_pop, y = log_expenditure)) +
+  geom_point() +
+  geom_line(aes(x = lpop_high_smooth$x,
+                y = lpop_high_smooth$y), color = "#00BFC4") +
+  xlab("Log Population") +
+  ylab("Log Expenditure") +
+  theme_classic()
+@
 
 \subsection{Modeling and Diagnostics} \label{modeling}
 
