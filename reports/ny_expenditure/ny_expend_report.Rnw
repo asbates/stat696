@@ -89,7 +89,22 @@ Upon an initial examination of the data, it was evident that transformations wou
 \]
 Note that since this is a one-to-one transformation ...
 
-To ensure the linearity assumption of our model was satisfied, we examined the relationship between log expenditure and the log of each of the covariates. Except for log population, all other covariates had an approximately liner relationship with log expenditure. Figure () is a plot of log expenditure vs. log population.
+To ensure the linearity assumption of our model was satisfied, we examined the relationship between log expenditure and the log of each of the covariates. Except for log population, all other covariates had an approximately liner relationship with log expenditure. Figure \ref{fig_vs_log_pop} is a plot of log expenditure vs. log population.
+
+
+<<r fig_vs_log_pop, echo = FALSE, cache = TRUE, fig.width = 5, fig.height = 3, fig.pos = "h", fig.cap = "Plot of log expenditure vs. log population with LOWESS smooth line">>=
+lpop_smooth <- lowess(ny$log_pop, ny$log_expenditure)
+ggplot(ny, aes(x = log_pop, y = log_expenditure)) +
+  geom_point() +
+  geom_line(aes(x = lpop_smooth$x, y = lpop_smooth$y),
+            color = "#00BFC4") +
+  geom_segment(aes(x = 8.3, xend = 8.3, y = 4, yend = 5.24),
+               color = "#00BA38") +
+  xlab("Log Population") +
+  ylab("Log Expenditure") +
+  theme_classic()
+@
+
 
 
 \subsection{Modeling and Diagnostics} \label{modeling}
