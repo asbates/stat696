@@ -56,6 +56,7 @@ library(car)
 library(broom)
 library(here)
 library(xtable)
+library(gridExtra)
 
 ny <- read_csv(here("reports/ny_expenditure/ny_expend.csv"))
 
@@ -127,6 +128,40 @@ ggplot(ny_high, aes(x = log_pop, y = log_expenditure)) +
 After performing variable transformations and data subsetting, our regression model was ready to be constructed. We used both forward and backward stepwise regression to build the model. AIC was used as our model selection criterion. This was partly due to the ubiquity of AIC and partly because it penalizes larger models. This penalization aligns itself with our preference for simpler models. That being said, we did investigate the inclusion of squared log transformations for all the covariates ($\log^2(\text{income})$, etc.). However, there was not much of an improvement that could be gained by including these terms. The AIC for the model including these terms was $-622$ while the AIC for the model without them was $-611$, not much of a difference. Furthermore, the model with the quadratic variables included contained some quadratic terms without their corresponding linear components. We simply could not justify such a model. The final model used log expenditure as the response with the following covariates: log wealth, log population, log percent intergovernmental funding, and log growth rate.
 
 
+<<r diag_plots, echo = FALSE, cache = TRUE, fig.width = 6.6, fig.height = 3.5, fig.cap = "\\label{fig:diag} Diagnostic plots for regression model. The left plot shows studentized residuals vs. fitted values. The right plot shows a QQ plot of the studentized residuals vs. t-distribution quantiles.">>=
+final_fit <- lm(log_expenditure ~ 
+                  log_wealth +
+                  log_pop + 
+                  log_perc_intergov +
+                  log_grow_rate,
+                data = ny_high)
+# add fitted values, residuals, etc. to orignal data frame used to fit the model
+ny_high <- augment(final_fit) # (broom package)
+
+# add studentized residuals to data frame
+ny_high <- ny_high %>%
+  mutate(stud_res = rstudent(final_fit))
+
+# studentized residuals vs. fitted
+res_vs_fit <- ggplot(ny_high, aes(x = .fitted, y = stud_res)) +
+  geom_point() +
+  geom_hline(yintercept = 0, color = "#00BFC4") +
+  xlab("Fitted Values") +
+  ylab("Studentized Residuals") +
+  theme_classic()
+
+# qq plot studentized residuals vs. t distribution
+dist_pars = list(df = final_fit$df.residual)
+res_qq <- ny_high %>%
+  ggplot(aes(sample = stud_res)) +
+  stat_qq(distribution = qt, dparams = dist_pars[["df"]]) +
+  stat_qq_line(distribution = qt, dparams = dist_pars[["df"]], color = "#00BFC4") +
+  xlab("Theoretical t Quantiles") +
+  ylab("Studentized Residual Quantiles") +
+  theme_classic()
+
+grid.arrange(res_vs_fit, res_qq, ncol = 2) # put plots side-by-side
+@
 
 
 
@@ -138,12 +173,6 @@ a bit more about the model like mentioning p-values and VIF's. include table wit
 
 
 <<r regress_summary, echo = FALSE, cache = TRUE, results = "asis">>=
-final_fit <- lm(log_expenditure ~ 
-                  log_wealth +
-                  log_pop + 
-                  log_perc_intergov +
-                  log_grow_rate,
-                data = ny_high)
 ci_bounds = formatC(signif(confint(final_fit), digits = 6),
                    digits = 2, format = "f", flag = "#")
 regress_tbl <- tidy(final_fit) %>% # from broom

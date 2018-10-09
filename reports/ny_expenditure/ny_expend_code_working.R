@@ -277,6 +277,7 @@ ny_high %>%
   ggplot(aes(x = .resid)) +
   geom_histogram(bins = 50)
 
+
 # histogram of studentized residuals
 student_resid = data.frame(student_res = rstudent(final_fit))
 ggplot(student_resid, aes(x = student_res)) +
@@ -287,13 +288,31 @@ ggplot(student_resid, aes(x = student_res)) +
 ggplot(ny_high, aes(x = .std.resid)) +
   geom_histogram(bins = 50)
 
+# add studentized residuals to data frame
+ny_high <- ny_high %>%
+  mutate(stud_res = rstudent(final_fit))
 
 # attempt at using studentized residuals
+dist_pars = list(df = final_fit$df.residual)
+#
+# studentized residuals vs. fitted
+ggplot(ny_high, aes(x = .fitted, y = stud_res)) +
+  geom_point() +
+  geom_hline(yintercept = 0)
+
+# qq plot studentized residuals vs. fitted
 dist_pars = list(df = final_fit$df.residual)
 ny_high %>%
   mutate(stud = rstudent(final_fit)) %>%
   ggplot(aes(sample = stud)) +
-  stat_qq(distribution = qt, dparms = dist_pars["df"]) +
-  stat_qq_line(distribution = qt, dparms = dist_pars["df"])
+  stat_qq(distribution = qt, dparams = dist_pars[["df"]]) +
+  stat_qq_line(distribution = qt, dparams = dist_pars[["df"]])
 
+# row with smallest studentized residual
+ny_high %>%
+  filter(stud_res == min(stud_res))
+
+ny_high %>%
+  filter(stud_res == min(stud_res)) %>%
+  dplyr::select(stud_res)
 
