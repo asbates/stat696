@@ -28,7 +28,7 @@
 \maketitle
 
 \begin{abstract}
-In this paper we estimate future expenditures for two municipalites in New York based on various projected demographic and income-related factors. These estimates are obtained from a linear model chosen via a stepwise regression procedure with AIC as the model selection criterion. The variables in the model are wealth per person, population, percent intergovernmental funding, and growth rate. The estimated expenditures for Warwick are 1, 2 for the years 2005 and 2025. The estimated expenditures for Monroe are 1, 2 for the years 2005 and 2025.
+In this paper we estimate future expenditures for two municipalites in New York based on various projected demographic and income-related factors. These estimates are obtained from a linear regression model chosen via a stepwise model selection procedure. The variables in the model are wealth per person, population, percent intergovernmental funding, and growth rate. The estimated expenditures for Warwick are 1, 2 for the years 2005 and 2025. The estimated expenditures for Monroe are 1, 2 for the years 2005 and 2025.
 \end{abstract}
 
 
@@ -165,6 +165,7 @@ res_qq <- ny_high %>%
 grid.arrange(res_vs_fit, res_qq, ncol = 2) # put plots side-by-side
 @
 
+A summary of the regression model can be found in Table \ref{tab:regress}.
 
 
 From here: 
