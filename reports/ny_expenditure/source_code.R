@@ -201,24 +201,30 @@ ncvTest(final_fit)
 
 # --------------- diagnostic plots ----------------
 
-# add fitted values, etc. to orignal data frame used to fit the model
-ny_high <- augment(final_fit) # (broom package)
+# add studentized residuals to data frame
+ny_high <- ny_high %>%
+  mutate(stud_res = rstudent(final_fit))
 
-# residuals vs. fitted
-ggplot(ny_high, aes(x = .fitted, y = .resid)) +
+# studentized residuals vs. fitted
+ggplot(ny_high, aes(x = .fitted, y = stud_res)) +
   geom_point() +
   geom_hline(yintercept = 0)
 
-## qq plot
+# qq plot studentized residuals vs. t distribution
+dist_pars = list(df = final_fit$df.residual)
 ny_high %>%
-  ggplot(aes(sample = .resid)) +
-  geom_qq() +
-  geom_qq_line()
+  mutate(stud = rstudent(final_fit)) %>%
+  ggplot(aes(sample = stud)) +
+  stat_qq(distribution = qt, dparams = dist_pars[["df"]]) +
+  stat_qq_line(distribution = qt, dparams = dist_pars[["df"]])
 
-# histogram
+# row with smallest studentized residual
 ny_high %>%
-  ggplot(aes(x = .resid)) +
-  geom_histogram(bins = 50)
+  filter(stud_res == min(stud_res))
+
+ny_high %>%
+  filter(stud_res == min(stud_res)) %>%
+  dplyr::select(stud_res)
 
 
 # ----- regression summary table -------

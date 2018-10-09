@@ -105,7 +105,7 @@ ggplot(ny, aes(x = log_pop, y = log_expenditure)) +
   theme_classic()
 @
 
-We chose the latter method. As mentioned previously, we favored a simpler model for the interpretability that comes with it. The log of population squared is not as easy to understand. Also, the projected covariates we would be predicting with fall within the rang of the covariates in the subsetted data. For these reasons, we subsetted the data to include only those observations that had a population greater than $4,000$ (log population above $8.3$). This subsetted data set included $266$ of the original observations which we felt was large enough to obtain accurate inferences from. Figure \ref{fig:vs_log_pop_subset} is a plot of log expenditure vs. log population for this subsetted data set along with a smoothing line. We can see that the relationship between the two variables is roughly linear. We do see minor deviation from linearity for high values of log population but overall the trend is approximately linear. Additionally, it is much more linear than the relationship we see in Figure \ref{fig:vs_log_pop}.
+We chose the latter method. As mentioned previously, we favored a simpler model for the interpretability that comes with it. The log of population squared is not as easy to understand. Also, the projected covariates we would be predicting with fall within the rang of the covariates in the subsetted data. For these reasons, we subsetted the data to include only those observations that had a population greater than $4,000$ (log population above $8.3$). This subsetted data set included $266$ of the original observations which we felt was large enough to obtain reliable inferences from. Figure \ref{fig:vs_log_pop_subset} is a plot of log expenditure vs. log population for this subsetted data set along with a smoothing line. We can see that the relationship between the two variables is roughly linear. We do see minor deviation from linearity for high values of log population but overall the trend is approximately linear. Additionally, it is much more linear than the relationship we see in Figure \ref{fig:vs_log_pop}.
 
 <<r fig_vs_log_pop_subset, echo = FALSE, cache = TRUE, fig.width = 5, fig.height = 3, fig.pos = "h", fig.cap = "\\label{fig:vs_log_pop_subset} Plot of log expenditure vs. log population with LOWESS smooth line from subsetted data">>=
 ny_high <- ny %>%
@@ -124,11 +124,15 @@ ggplot(ny_high, aes(x = log_pop, y = log_expenditure)) +
 
 \subsection{Modeling and Diagnostics} \label{modeling}
 
-After performing variable transformations and data subsetting, our regression model was ready to be constructed. We used both forward and backward stepwise regression to build the model. AIC was used as our model selection criterion. This was partly due to the ubiquity of AIC and partly because it penalizes larger models. This penalization aligns itself with our preference for simpler models. That being said, we did investigate the inclusion of squared log transformations for all the covariates ($\log^2(\text{income})$, etc.). However, there was not much of an improvement that could be gained by including these terms. The AIC for the model including these terms was $-622$ while the AIC for the model without them was $-611$, not much of a difference. Furthermore, the model with the quadratic variables included contained some quadratic terms without their corresponding linear components. We simply could not justify such a model.
+After performing variable transformations and data subsetting, our regression model was ready to be constructed. We used both forward and backward stepwise regression to build the model. AIC was used as our model selection criterion. This was partly due to the ubiquity of AIC and partly because it penalizes larger models. This penalization aligns itself with our preference for simpler models. That being said, we did investigate the inclusion of squared log transformations for all the covariates ($\log^2(\text{income})$, etc.). However, there was not much of an improvement that could be gained by including these terms. The AIC for the model including these terms was $-622$ while the AIC for the model without them was $-611$, not much of a difference. Furthermore, the model with the quadratic variables included contained some quadratic terms without their corresponding linear components. We simply could not justify such a model. The final model used log expenditure as the response with the following covariates: log wealth, log population, log percent intergovernmental funding, and log growth rate.
 
-The final model used log expenditure as the response with the following covariates: log wealth, log population, log percent intergovernmental funding, and log growth rate.
+
+
+
 
 From here: 
+
+include diagnostic plots. residual vs. fitted. either qq plot or histogram of residuals (note the outlier or 2 on the left of this plot). may want to consider other residuals like studentized. may also want to consider having this come before the tables. not sure the best order here.
 
 a bit more about the model like mentioning p-values and VIF's. include table with regression summary. analyze the table. i.e. log grow rate has a very small coefficient (-0.02). explain why this may or may not be useful (think effect size). reference to Table \ref{tbl:regress}. pick a coefficient and interpret it. i.e. for unit increase in ....
 
@@ -167,7 +171,6 @@ xtable(regress_tbl, label = "tbl:regress", align = "|l|rrrr|",
 
 
 
-include diagnostic plots. residual vs. fitted. either qq plot or histogram of residuals (note the outlier or 2 on the left of this plot). may want to consider other residuals like studentized. may also want to consider having this come before the tables. not sure the best order here.
 
 make predictions. give table with projected wealth, income, etc. then give table of predictions with PI's. be sure to try to find anything interesting to talk about. this might go in a 'Results' section
 
