@@ -142,7 +142,32 @@ The final model used log expenditure as the response with the following covariat
 
 From here: 
 
-a bit more about the model like mentioning p-values and VIF's. include table with regression summary. analyze the table. i.e. log grow rate has a very small coefficient (-0.02). explain why this may or may not be useful (think effect size). 
+a bit more about the model like mentioning p-values and VIF's. include table with regression summary. analyze the table. i.e. log grow rate has a very small coefficient (-0.02). explain why this may or may not be useful (think effect size). reference to Table \ref{tbl:regress}
+
+
+% latex table generated in R 3.5.1 by xtable 1.8-3 package
+% Tue Oct  9 09:22:22 2018
+\begin{table}[ht]
+\centering
+\begin{tabular}{|l|rrrr|}
+  \hline
+ & Estimate & SE & p-value & 95\% CI \\ 
+  \hline
+Intercept & 0.13 & 0.44 & 0.769 & ( -0.73 , 0.99 ) \\ 
+  Log Wealth & 0.49 & 0.04 & 0.000 & ( 0.42 , 0.56 ) \\ 
+  Log Population & 0.08 & 0.02 & 0.001 & ( 0.03 , 0.12 ) \\ 
+  Log \% Intergov Funding & -0.28 & 0.04 & 0.000 & ( -0.36 , -0.20 ) \\ 
+  Log Growth Rate & -0.02 & 0.01 & 0.031 & ( -0.05 , -0.00 ) \\ 
+   \hline
+\end{tabular}
+\caption{Summary table for regressing log expenditure on 
+         log wealth, log population, log percent government funding,
+         and log growth rate} 
+\label{tbl:regress}
+\end{table}
+
+
+
 
 include diagnostic plots. residual vs. fitted. either qq plot or histogram of residuals (note the outlier or 2 on the left of this plot). may want to consider other residuals like studentized. may also want to consider having this come before the tables. not sure the best order here.
 
