@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2018.9.5)  8 OCT 2018 17:13
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2018.9.5)  8 OCT 2018 19:48
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -441,7 +441,7 @@ File: figure/r_fig_vs_log_pop_subset-1.pdf Graphic file (type pdf)
 Package pdftex.def Info: figure/r_fig_vs_log_pop_subset-1.pdf  used on input li
 ne 131.
 (pdftex.def)             Requested size: 361.34912pt x 216.80946pt.
- [3 <./figure/r_fig_vs_log_pop_subset-1.pdf>] [4]
+ [3 <./figure/r_fig_vs_log_pop_subset-1.pdf>] [4] [5]
 (./ny_expend_report.aux) ) 
 Here is how much of TeX's memory you used:
  4275 strings out of 492642
@@ -462,10 +462,10 @@ s/cm/cmr17.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/
 cm/cmr7.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/
 cmr9.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cms
 y10.pfb>
-Output written on ny_expend_report.pdf (4 pages, 201612 bytes).
+Output written on ny_expend_report.pdf (5 pages, 203540 bytes).
 PDF statistics:
- 69 PDF objects out of 1000 (max. 8388607)
- 48 compressed objects within 1 object stream
+ 72 PDF objects out of 1000 (max. 8388607)
+ 50 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  11 words of extra memory for PDF output out of 10000 (max. 10000000)
 

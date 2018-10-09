@@ -127,6 +127,14 @@ After performing variable transformations and data subsetting, our regression mo
 
 The final model used log expenditure as the response with the following covariates: log wealth, log population, log percent intergovernmental funding, and log growth rate.
 
+From here: 
+
+a bit more about the model like mentioning p-values and VIF's. include table with regression summary. analyze the table. i.e. log grow rate has a very small coefficient (-0.02). explain why this may or may not be useful (think effect size). 
+
+include diagnostic plots. residual vs. fitted. either qq plot or histogram of residuals (note the outlier or 2 on the left of this plot). may want to consider other residuals like studentized. may also want to consider having this come before the tables. not sure the best order here.
+
+make predictions. give table with projected wealth, income, etc. then give table of predictions with PI's. be sure to try to find anything interesting to talk about. this might go in a 'Results' section
+
 \section{Conclusion} \label{conclusion}
 
 
