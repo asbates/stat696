@@ -1,13 +1,15 @@
 
-library(readr)
-library(dplyr)
-library(corrplot)
-library(ggplot2)
-library(MASS)
+library(readr) # read in data
+library(dplyr) # data manipulation
+library(corrplot) # correlation plotting
+library(ggplot2) # plotting
+library(MASS) # stepwise regression
 library(car)
-library(broom)
+library(broom) # tidy model output
+library(here) # file path helper
+library(xtable) # table formatting
 
-ny <- read_csv("reports/ny_expenditure/ny_expend.csv")
+ny <- read_csv(here("reports/ny_expenditure/ny_expend.csv"))
 
 # =======================================================
 # ----------------- EDA ------------------------
