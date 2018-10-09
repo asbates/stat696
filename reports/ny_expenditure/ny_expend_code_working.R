@@ -277,6 +277,16 @@ ny_high %>%
   ggplot(aes(x = .resid)) +
   geom_histogram(bins = 50)
 
+# histogram of studentized residuals
+student_resid = data.frame(student_res = rstudent(final_fit))
+ggplot(student_resid, aes(x = student_res)) +
+  geom_histogram(bins = 50)
+
+
+# histogram of standardized residuals
+ggplot(ny_high, aes(x = .std.resid)) +
+  geom_histogram(bins = 50)
+
 
 # attempt at using studentized residuals
 dist_pars = list(df = final_fit$df.residual)
