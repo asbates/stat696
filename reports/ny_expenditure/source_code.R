@@ -104,7 +104,7 @@ ny_low <- ny %>%
 
 ny_high <- ny %>%
   filter(log_pop > 8.3)
-dim(ny_high)
+dim(ny_high) # 266  12
 
 ggplot(ny_low, aes(x = log_pop, y = log_expenditure)) +
   geom_point() +
