@@ -130,7 +130,7 @@ The final model used log expenditure as the response with the following covariat
 
 From here: 
 
-a bit more about the model like mentioning p-values and VIF's. include table with regression summary. analyze the table. i.e. log grow rate has a very small coefficient (-0.02). explain why this may or may not be useful (think effect size). reference to Table \ref{tbl:regress}
+a bit more about the model like mentioning p-values and VIF's. include table with regression summary. analyze the table. i.e. log grow rate has a very small coefficient (-0.02). explain why this may or may not be useful (think effect size). reference to Table \ref{tbl:regress}. pick a coefficient and interpret it. i.e. for unit increase in ....
 
 
 <<r regress_summary, echo = FALSE, cache = TRUE, results = "asis">>=
