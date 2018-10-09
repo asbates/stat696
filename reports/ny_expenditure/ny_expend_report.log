@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2018.9.5)  9 OCT 2018 14:39
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2018.9.5)  9 OCT 2018 15:13
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -441,14 +441,14 @@ File: figure/r_fig_vs_log_pop_subset-1.pdf Graphic file (type pdf)
 Package pdftex.def Info: figure/r_fig_vs_log_pop_subset-1.pdf  used on input li
 ne 131.
 (pdftex.def)             Requested size: 361.34912pt x 216.80946pt.
-Package color Info: Redefining color shadecolor on input line 143.
-<figure/r_diag_plots-1.pdf, id=25, 476.78125pt x 252.945pt>
+ [3 <./figure/r_fig_vs_log_pop_subset-1.pdf>]
+Package color Info: Redefining color shadecolor on input line 145.
+<figure/r_diag_plots-1.pdf, id=34, 476.78125pt x 252.945pt>
 File: figure/r_diag_plots-1.pdf Graphic file (type pdf)
 <use figure/r_diag_plots-1.pdf>
-Package pdftex.def Info: figure/r_diag_plots-1.pdf  used on input line 144.
+Package pdftex.def Info: figure/r_diag_plots-1.pdf  used on input line 146.
 (pdftex.def)             Requested size: 469.03268pt x 248.84932pt.
- [3 <./figure/r_fig_vs_log_pop_subset-1.pdf>] [4 <./figure/r_diag_plots-1.pdf>]
- [5] (./ny_expend_report.aux) ) 
+ [4 <./figure/r_diag_plots-1.pdf>] [5] [6] (./ny_expend_report.aux) ) 
 Here is how much of TeX's memory you used:
  4284 strings out of 492642
  59817 string characters out of 6129385
@@ -456,22 +456,22 @@ Here is how much of TeX's memory you used:
  8102 multiletter control sequences out of 15000+600000
  9958 words of font info for 40 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 41i,9n,32p,1150b,249s stack positions out of 5000i,500n,10000p,200000b,80000s
-</usr/local/texlive/2018/texmf-dist/fonts/type1/
-public/amsfonts/cm/cmbx12.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/p
-ublic/amsfonts/cm/cmbx9.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/pub
-lic/amsfonts/cm/cmex10.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/publ
-ic/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/publi
-c/amsfonts/cm/cmr10.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/
-amsfonts/cm/cmr12.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/am
-sfonts/cm/cmr17.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsf
-onts/cm/cmr7.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfont
-s/cm/cmr9.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/c
-m/cmsy10.pfb>
-Output written on ny_expend_report.pdf (5 pages, 240292 bytes).
+ 41i,9n,32p,1576b,249s stack positions out of 5000i,500n,10000p,200000b,80000s
+</usr/loca
+l/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/local
+/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx9.pfb></usr/local/t
+exlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/local/te
+xlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/tex
+live/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texli
+ve/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/local/texlive
+/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/local/texlive/2
+018/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/local/texlive/2018
+/texmf-dist/fonts/type1/public/amsfonts/cm/cmr9.pfb></usr/local/texlive/2018/te
+xmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb>
+Output written on ny_expend_report.pdf (6 pages, 242154 bytes).
 PDF statistics:
- 78 PDF objects out of 1000 (max. 8388607)
- 54 compressed objects within 1 object stream
+ 81 PDF objects out of 1000 (max. 8388607)
+ 56 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  16 words of extra memory for PDF output out of 10000 (max. 10000000)
 

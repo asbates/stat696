@@ -177,29 +177,11 @@ final_fit <- lm(log_expenditure ~
 # ----------------- model diagnostics -------------------
 # =======================================================
 
-# all p-values (except intercept) are significant at the 0.05 level
-# F test significant at 0.05 level
-summary(final_fit)
-
-# all VIF's are less than 1.2
-vif(final_fit)  # (car package)
-
-# constant variance test (car package)
-#==================================================================
-#==================================================================
-#==================================================================
-#==================================================================
-# may not include this. if excluded, remove libary(car) above
-#==================================================================
-#==================================================================
-ncvTest(final_fit)
-#==================================================================
-#==================================================================
-#==================================================================
-#==================================================================
-#==================================================================
 
 # --------------- diagnostic plots ----------------
+
+# add fitted values, residuals, etc. to orignal data frame used to fit the model
+ny_high <- augment(final_fit) # (broom package)
 
 # add studentized residuals to data frame
 ny_high <- ny_high %>%
@@ -226,8 +208,15 @@ ny_high %>%
   filter(stud_res == min(stud_res)) %>%
   dplyr::select(stud_res)
 
+# ----- regression summaries -------
 
-# ----- regression summary table -------
+# all p-values (except intercept) are significant at the 0.05 level
+# F test significant at 0.05 level
+summary(final_fit)
+
+# all VIF's are less than 1.2
+vif(final_fit)  # (car package)
+
 
 # the following code is mostly just formatting
 ci_bounds = formatC(signif(confint(final_fit), digits = 6),
@@ -250,6 +239,9 @@ regress_tbl <- tidy(final_fit) %>% # from broom
 
 rownames(regress_tbl) = c("Intercept", "Log Wealth", "Log Population",
                          "Log % Intergov Funding", "Log Growth Rate")
+
+regress_tbl
+# convert to latex table
 xtable(regress_tbl, label = "tbl:regress", align = "|l|rrrr|",
          caption = "Summary table for regressing log expenditure on 
          log wealth, log population, log % government funding,
