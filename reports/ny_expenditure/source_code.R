@@ -221,4 +221,28 @@ ny_high %>%
   geom_histogram(bins = 50)
 
 
+# ----- regression summary table -------
 
+# the following code is mostly just formatting
+ci_bounds = formatC(signif(confint(final_fit), digits = 6),
+                   digits = 2, format = "f", flag = "#")
+
+tidy(final_fit) %>% # from broom
+  dplyr::select(-statistic) %>%
+  bind_cols(`95% CI` = paste("(", ci_bounds[,1], ",", ci_bounds[,2], ")")) %>%
+  mutate(
+    Term = c("Intercept", "Log Wealth", "Log Population",
+             "Log % Intergov Funding", "Log Growth Rate"),
+    Estimate = formatC(signif(estimate, digits = 6),
+                       digits = 2, format = "f", flag = "#"),
+    SE = formatC(signif(std.error, digits = 6),
+                 digits = 2, format = "f", flag = "#"),
+    `p-value` = formatC(signif(p.value, digits = 6),
+                        digits = 2, format = "f", flag = "#")
+    
+  ) %>%
+  dplyr::select(Term, Estimate, SE, `p-value`, `95% CI`) %>%
+  xtable(., label = "tbl:regress", align = "|l|rrrr|",
+         caption = "Summary table for regressing log expenditure on 
+         log wealth, log population, log % government funding,
+         and log growth rate")
