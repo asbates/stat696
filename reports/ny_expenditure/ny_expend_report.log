@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2018.9.5)  10 OCT 2018 15:00
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2018.9.5)  10 OCT 2018 16:17
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -426,39 +426,39 @@ File: ulasy.fd 1998/08/17 v2.2e LaTeX symbol font definitions
 ) [1
 
 {/usr/local/texlive/2018/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
-Package color Info: Redefining color shadecolor on input line 120.
+Package color Info: Redefining color shadecolor on input line 119.
 <figure/r_fig_vs_log_pop-1.pdf, id=13, 361.35pt x 216.81pt>
 File: figure/r_fig_vs_log_pop-1.pdf Graphic file (type pdf)
 <use figure/r_fig_vs_log_pop-1.pdf>
-Package pdftex.def Info: figure/r_fig_vs_log_pop-1.pdf  used on input line 121.
+Package pdftex.def Info: figure/r_fig_vs_log_pop-1.pdf  used on input line 120.
 
 (pdftex.def)             Requested size: 361.34912pt x 216.80946pt.
  [2 <./figure/r_fig_vs_log_pop-1.pdf>]
-Package color Info: Redefining color shadecolor on input line 130.
+Package color Info: Redefining color shadecolor on input line 129.
 <figure/r_fig_vs_log_pop_subset-1.pdf, id=24, 361.35pt x 216.81pt>
 File: figure/r_fig_vs_log_pop_subset-1.pdf Graphic file (type pdf)
 <use figure/r_fig_vs_log_pop_subset-1.pdf>
 Package pdftex.def Info: figure/r_fig_vs_log_pop_subset-1.pdf  used on input li
-ne 131.
+ne 130.
 (pdftex.def)             Requested size: 361.34912pt x 216.80946pt.
- [3 <./figure/r_fig_vs_log_pop_subset-1.pdf>]
-Package color Info: Redefining color shadecolor on input line 145.
-<figure/r_diag_plots-1.pdf, id=34, 476.78125pt x 252.945pt>
+Package color Info: Redefining color shadecolor on input line 144.
+<figure/r_diag_plots-1.pdf, id=25, 476.78125pt x 252.945pt>
 File: figure/r_diag_plots-1.pdf Graphic file (type pdf)
 <use figure/r_diag_plots-1.pdf>
-Package pdftex.def Info: figure/r_diag_plots-1.pdf  used on input line 146.
+Package pdftex.def Info: figure/r_diag_plots-1.pdf  used on input line 145.
 (pdftex.def)             Requested size: 469.03268pt x 248.84932pt.
-LaTeX Font Info:    Try loading font information for TS1+cmr on input line 152.
+ [3 <./figure/r_fig_vs_log_pop_subset-1.pdf>]
+LaTeX Font Info:    Try loading font information for TS1+cmr on input line 151.
 
 
 (/usr/local/texlive/2018/texmf-dist/tex/latex/base/ts1cmr.fd
 File: ts1cmr.fd 2014/09/29 v2.5h Standard LaTeX font definitions
 ) [4 <./figure/r_diag_plots-1.pdf>] [5] [6] (./ny_expend_report.aux) ) 
 Here is how much of TeX's memory you used:
- 4307 strings out of 492642
- 60712 string characters out of 6129385
- 126754 words of memory out of 5000000
- 8121 multiletter control sequences out of 15000+600000
+ 4306 strings out of 492642
+ 60703 string characters out of 6129385
+ 125746 words of memory out of 5000000
+ 8120 multiletter control sequences out of 15000+600000
  10293 words of font info for 41 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  41i,9n,32p,1627b,249s stack positions out of 5000i,500n,10000p,200000b,80000s
@@ -475,7 +475,7 @@ ve/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/local/texlive
 /texmf-dist/fonts/type1/public/amsfonts/cm/cmr9.pfb></usr/local/texlive/2018/te
 xmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2018/tex
 mf-dist/fonts/type1/public/cm-super/sfrm1000.pfb>
-Output written on ny_expend_report.pdf (6 pages, 244705 bytes).
+Output written on ny_expend_report.pdf (6 pages, 244805 bytes).
 PDF statistics:
  86 PDF objects out of 1000 (max. 8388607)
  60 compressed objects within 1 object stream

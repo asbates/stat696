@@ -273,6 +273,7 @@ pred <- exp(predict(final_fit,
                     newdata = log_projected,
                     interval = "prediction") + sd_fit^2/2)
 pred <- formatC(signif(pred, digits = 6), format = "d", flag = "#")
+
 # format for latex output via xtable
 pred_tbl <- projected %>%
   mutate(
