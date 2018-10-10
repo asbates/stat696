@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2018.9.5)  10 OCT 2018 16:25
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2018.9.5)  10 OCT 2018 16:51
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -453,33 +453,48 @@ File: figure/r_diag_plots-1.pdf Graphic file (type pdf)
 <use figure/r_diag_plots-1.pdf>
 Package pdftex.def Info: figure/r_diag_plots-1.pdf  used on input line 145.
 (pdftex.def)             Requested size: 469.03268pt x 248.84932pt.
- [4 <./figure/r_diag_plots-1.pdf>] [5] [6] (./ny_expend_report.aux) ) 
+ [4 <./figure/r_diag_plots-1.pdf>] [5]
+Package color Info: Redefining color shadecolor on input line 220.
+<figure/r_append_hist-1.pdf, id=48, 505.89pt x 505.89pt>
+File: figure/r_append_hist-1.pdf Graphic file (type pdf)
+<use figure/r_append_hist-1.pdf>
+Package pdftex.def Info: figure/r_append_hist-1.pdf  used on input line 221.
+(pdftex.def)             Requested size: 469.03268pt x 469.04477pt.
+Package color Info: Redefining color shadecolor on input line 230.
+<figure/r_append_log_hist-1.pdf, id=49, 505.89pt x 505.89pt>
+File: figure/r_append_log_hist-1.pdf Graphic file (type pdf)
+<use figure/r_append_log_hist-1.pdf>
+Package pdftex.def Info: figure/r_append_log_hist-1.pdf  used on input line 231
+.
+(pdftex.def)             Requested size: 469.03268pt x 469.04477pt.
+ [6] [7 <./figure/r_append_hist-1.pdf>] [8 <./figure/r_append_log_hist-1.pdf>] 
+(./ny_expend_report.aux) ) 
 Here is how much of TeX's memory you used:
- 4316 strings out of 492642
- 60798 string characters out of 6129385
- 125746 words of memory out of 5000000
- 8125 multiletter control sequences out of 15000+600000
+ 4328 strings out of 492642
+ 61192 string characters out of 6129385
+ 126762 words of memory out of 5000000
+ 8135 multiletter control sequences out of 15000+600000
  11574 words of font info for 46 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 41i,9n,32p,1576b,249s stack positions out of 5000i,500n,10000p,200000b,80000s
-{/usr/loca
-l/texlive/2018/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc}</usr/local
-/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/local/
-texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx9.pfb></usr/local/te
-xlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/local/tex
-live/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texl
-ive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texliv
-e/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/local/texlive/
-2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/local/texlive/20
-18/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/local/texlive/2018/
-texmf-dist/fonts/type1/public/amsfonts/cm/cmr9.pfb></usr/local/texlive/2018/tex
-mf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2018/texm
-f-dist/fonts/type1/public/cm-super/sfrm0900.pfb></usr/local/texlive/2018/texmf-
-dist/fonts/type1/public/cm-super/sfrm1000.pfb>
-Output written on ny_expend_report.pdf (6 pages, 247504 bytes).
+ 41i,9n,32p,1576b,286s stack positions out of 5000i,500n,10000p,200000b,80000s
+{/usr/local/texlive/2018/texmf-dist/fonts/enc/dvips/c
+m-super/cm-super-ts1.enc}</usr/local/texlive/2018/texmf-dist/fonts/type1/public
+/amsfonts/cm/cmbx12.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/
+amsfonts/cm/cmbx9.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/am
+sfonts/cm/cmex10.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/ams
+fonts/cm/cmmi10.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsf
+onts/cm/cmr10.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfon
+ts/cm/cmr12.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts
+/cm/cmr17.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/c
+m/cmr7.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/c
+mr9.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy
+10.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/cm-super/sfrm0900
+.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/cm-super/sfrm1000.p
+fb>
+Output written on ny_expend_report.pdf (8 pages, 313050 bytes).
 PDF statistics:
- 90 PDF objects out of 1000 (max. 8388607)
- 63 compressed objects within 1 object stream
+ 110 PDF objects out of 1000 (max. 8388607)
+ 77 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
- 16 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 26 words of extra memory for PDF output out of 10000 (max. 10000000)
 
