@@ -250,12 +250,11 @@ xtable(regress_tbl, label = "tbl:regress", align = "|l|rrrr|")
 
 # projected values for Warwick and Monroe for 2005 & 2025
 projected <- data.frame(
-  pop = c(20442, 31033, 10496, 13913),
-  wealth = c(85000, 89000, 58000, 60000),
+  pop = c(20442L, 31033L, 10496L, 13913L),
+  wealth = c(85000L, 89000L, 58000L, 60000L),
   perc_intergov = c(24.7, 26.0, 8.8, 10.1),
   grow_rate = c(35.0, 40.0, 35.0, 35.0)
 )
-projected
 
 log_projected <- projected %>%
   mutate(
@@ -273,9 +272,15 @@ sd_fit <- sd(final_fit$resid)
 pred <- exp(predict(final_fit,
                     newdata = log_projected,
                     interval = "prediction") + sd_fit^2/2)
-pred <- formatC(signif(pred, digits = 6), digits = 2, format = "f", flag = "#")
+pred <- formatC(signif(pred, digits = 6), format = "d", flag = "#")
 # format for latex output via xtable
 pred_tbl <- projected %>%
+  mutate(
+    perc_intergov = formatC(signif(perc_intergov, digits = 2),
+                            digits = 1, format = "f", flag = "#"),
+    grow_rate = formatC(signif(grow_rate, digits = 2),
+                        digits = 1, format = "f", flag = "#")
+  ) %>%
   rename(
     Population = pop,
     Wealth = wealth,
@@ -284,9 +289,10 @@ pred_tbl <- projected %>%
   ) %>%
   bind_cols(Estimate = pred[,1]) %>%
   bind_cols(`95 % PI` = paste("(", pred[,2], ",", pred[,3], ")"))
+rownames(pred_tbl) <- c("Warwick-2005", "Warwick-2025 ",
+                        "Monroe-2005", "Monroe-2025")
 
-rownames(pred_tbl) <- c("Warwick 2005", "Warwick 2025 ",
-                        "Monroe 2005", "Monroe 2025")
-
-xtable(pred_tbl, align = "|l|rrrrrr|")
+xtable(pred_tbl, align = "|l|rrrrrr|", label = "tbl:pred",
+       caption = "Projections for Warwick and Monroe along with predicted
+       expenditures and prediction intervals.")
 
