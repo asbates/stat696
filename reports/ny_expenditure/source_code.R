@@ -242,8 +242,5 @@ rownames(regress_tbl) = c("Intercept", "Log Wealth", "Log Population",
 
 regress_tbl
 # convert to latex table
-xtable(regress_tbl, label = "tbl:regress", align = "|l|rrrr|",
-         caption = "Summary table for regressing log expenditure on 
-         log wealth, log population, log % government funding,
-         and log growth rate")
+xtable(regress_tbl, label = "tbl:regress", align = "|l|rrrr|")
 

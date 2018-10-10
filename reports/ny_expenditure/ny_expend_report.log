@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2018.9.5)  9 OCT 2018 15:13
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2018.9.5)  9 OCT 2018 18:09
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -448,16 +448,22 @@ File: figure/r_diag_plots-1.pdf Graphic file (type pdf)
 <use figure/r_diag_plots-1.pdf>
 Package pdftex.def Info: figure/r_diag_plots-1.pdf  used on input line 146.
 (pdftex.def)             Requested size: 469.03268pt x 248.84932pt.
- [4 <./figure/r_diag_plots-1.pdf>] [5] [6] (./ny_expend_report.aux) ) 
+LaTeX Font Info:    Try loading font information for TS1+cmr on input line 152.
+
+
+(/usr/local/texlive/2018/texmf-dist/tex/latex/base/ts1cmr.fd
+File: ts1cmr.fd 2014/09/29 v2.5h Standard LaTeX font definitions
+) [4 <./figure/r_diag_plots-1.pdf>] [5] [6] (./ny_expend_report.aux) ) 
 Here is how much of TeX's memory you used:
- 4284 strings out of 492642
- 59817 string characters out of 6129385
- 127754 words of memory out of 5000000
- 8102 multiletter control sequences out of 15000+600000
- 9958 words of font info for 40 fonts, out of 8000000 for 9000
+ 4307 strings out of 492642
+ 60719 string characters out of 6129385
+ 128754 words of memory out of 5000000
+ 8121 multiletter control sequences out of 15000+600000
+ 10293 words of font info for 41 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 41i,9n,32p,1576b,249s stack positions out of 5000i,500n,10000p,200000b,80000s
-</usr/loca
+ 41i,9n,32p,1627b,249s stack positions out of 5000i,500n,10000p,200000b,80000s
+{/usr/loc
+al/texlive/2018/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc}</usr/loca
 l/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/local
 /texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx9.pfb></usr/local/t
 exlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/local/te
@@ -467,11 +473,12 @@ ve/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/local/texlive
 /2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/local/texlive/2
 018/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/local/texlive/2018
 /texmf-dist/fonts/type1/public/amsfonts/cm/cmr9.pfb></usr/local/texlive/2018/te
-xmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb>
-Output written on ny_expend_report.pdf (6 pages, 242154 bytes).
+xmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2018/tex
+mf-dist/fonts/type1/public/cm-super/sfrm1000.pfb>
+Output written on ny_expend_report.pdf (6 pages, 244521 bytes).
 PDF statistics:
- 81 PDF objects out of 1000 (max. 8388607)
- 56 compressed objects within 1 object stream
+ 86 PDF objects out of 1000 (max. 8388607)
+ 60 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  16 words of extra memory for PDF output out of 10000 (max. 10000000)
 
