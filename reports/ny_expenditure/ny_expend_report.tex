@@ -160,7 +160,7 @@ A summary of the regression model can be found in Table \ref{tbl:regress}. Note 
 
 
 % latex table generated in R 3.5.1 by xtable 1.8-3 package
-% Tue Oct  9 17:04:01 2018
+% Tue Oct  9 19:12:31 2018
 \begin{table}[ht]
 \centering
 \begin{tabular}{|l|rrrr|}
@@ -174,9 +174,7 @@ Intercept & 0.13 & 0.44 & 0.769 & ( -0.731 , 0.987 ) \\
   Log Growth Rate & -0.02 & 0.01 & 0.031 & ( -0.046 , -0.002 ) \\ 
    \hline
 \end{tabular}
-\caption{Summary table for regressing log expenditure on 
-         log wealth, log population, log percent intergovernmental funding,
-         and log growth rate} 
+\caption{Summary table for regressing log expenditure on log wealth, log population, log percent intergovernmental funding, and log growth rate.} 
 \label{tbl:regress}
 \end{table}
 
@@ -184,24 +182,28 @@ Intercept & 0.13 & 0.44 & 0.769 & ( -0.731 , 0.987 ) \\
 
 From here: 
 
-make predictions. give table with projected wealth, income, etc. then give table of predictions with PI's. be sure to try to find anything interesting to talk about. this might go in a 'Results' section
+make predictions. give table with projected wealth, income, etc. then give table of predictions with PI's. be sure to try to find anything interesting to talk about. this might go in a 'Results' section. reference to prediciton table Table \ref{tbl:pred}
 
-\begin{table}
+% latex table generated in R 3.5.1 by xtable 1.8-3 package
+% Tue Oct  9 19:12:31 2018
+\begin{table}[ht]
 \centering
-\begin{tabular}{|l|rrrrr|}
-\hline
-Town & Year & Population & Wealth & \% Intergov Funding  & Growth Rate \\
-\hline
-Warwick & 2005 & 20,442 & 85,000 & 24.7 & 35 \\
-        & 2025 & 31,033 & 89,000 & 26.0 & 40 \\
-\hline
-Monroe & 2005 & 10,496 & 58,000 & 8.8 & 35 \\
-       & 2025 & 13,913 & 60,000 & 10.1 & 35 \\
-\hline
+\begin{tabular}{|l|rrrrrr|}
+  \hline
+ & Population & Wealth & \% Intergov Funding & Growth Rate & Estimate & 95 \% PI \\ 
+  \hline
+Warwick 2005 & 20442.00 & 85000.00 & 24.70 & 35.00 & 261.35 & ( 139.64 , 489.16 ) \\ 
+  Warwick 2025  & 31033.00 & 89000.00 & 26.00 & 40.00 & 271.37 & ( 144.64 , 509.12 ) \\ 
+  Monroe 2005 & 10496.00 & 58000.00 & 8.80 & 35.00 & 273.86 & ( 147.02 , 510.13 ) \\ 
+  Monroe 2025 & 13913.00 & 60000.00 & 10.10 & 35.00 & 273.93 & ( 147.08 , 510.18 ) \\ 
+   \hline
 \end{tabular}
-\caption{Projections for Warwick and Monroe we used to estimate future expenditures}
-\label{tab:projections}
+\caption{Projections for Warwick and Monroe along with predicted values and prediction intervals.} 
+\label{tbl:pred}
 \end{table}
+
+
+
 
 \section{Conclusion} \label{conclusion}
 
