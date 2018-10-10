@@ -28,7 +28,7 @@
 \maketitle
 
 \begin{abstract}
-In this paper we estimate future expenditures for two municipalites in New York based on various projected demographic and income-related factors. These estimates are obtained from a linear regression model chosen via a stepwise model selection procedure. The variables in the model are wealth per person, population, percent intergovernmental funding, and growth rate. The estimated expenditures for Warwick are 1, 2 for the years 2005 and 2025. The estimated expenditures for Monroe are 1, 2 for the years 2005 and 2025.
+In this paper we estimate future expenditures for two municipalites in New York based on various projected demographic and income-related factors. These estimates are obtained from a linear regression model chosen via a stepwise model selection procedure. The variables included in the model are wealth per person, population, percent intergovernmental funding, and growth rate. The estimated expenditures for Warwick are \$$261$ per person in $2005$ and \$$271$ per person for $2025$. The estimated expenditures for Monroe are \$$273$ per person for both $2005$ and $2025$. Based on the model, we can infer that increases in population and wealth per person lead to increases in expenditures while increases in intergovernmental funding and growth rate lead to decreases in expenditures.
 \end{abstract}
 
 
@@ -201,7 +201,7 @@ xtable(regress_tbl, label = "tbl:regress", align = "|l|rrrr|",
 
 \subsection{Predictions}
 
-The projections for Warwick and Monroe in $2005$ and $2025$, along with expenditure predictions and prediction intervals, can be found in Table \ref{tbl:pred}. The most obvious thing to note is the the estimated expenditure for Monroe is the same in $2005$ and $2025$. The increased expenditures from rising population and wealth from $2005$ to $2025$ is probably offset by the decrease in expenditure from rising intergovermental funding rate. The net effect being that the predicted expentures remain the same. Warwick on the other hand, is projected to see larger increases in population, wealth, and growth rate over the twenty year period than Monroe will. This leads to an increase in expenditures over the same period of \$$10$ per person for Warwick. Although Warwick should expect to see their expenditures rise, by $2025$ we expect to see roughly the same expenditure per person for both towns.
+The projections for Warwick and Monroe in $2005$ and $2025$, along with expenditure predictions and prediction intervals, can be found in Table \ref{tbl:pred}. The most obvious thing to note is the the estimated expenditure for Monroe is the same in $2005$ and $2025$. The increased expenditures from rising population and wealth from $2005$ to $2025$ is probably offset by the decrease in expenditure from rising intergovermental funding rate. The net effect being that the predicted expentures remain the same. Warwick on the other hand, is projected to see larger increases in population and wealth over the twenty year period than Monroe will. These large increases are not offset by the decrease in expenditure due to rising intergovernmental funding and growth rate which leads to an increase in expenditures over the same period of \$$10$ per person. Although Warwick should expect to see their expenditures rise, by $2025$ we expect to see roughly the same expenditure per person for both towns.
 
 <<r pred, echo = FALSE, cache = TRUE, results = "asis">>=
 # projected values for Warwick and Monroe for 2005 & 2025
