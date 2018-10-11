@@ -244,6 +244,311 @@ In this paper we developed a linear regression model in order to estimate future
 \end{knitrout}
 
 
+\newpage
+\section{R Code}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{library}\hlstd{(readr)} \hlcom{# read in data}
+\hlkwd{library}\hlstd{(dplyr)} \hlcom{# data manipulation}
+\hlkwd{library}\hlstd{(corrplot)} \hlcom{# correlation plotting}
+\hlkwd{library}\hlstd{(ggplot2)} \hlcom{# plotting}
+\hlkwd{library}\hlstd{(MASS)} \hlcom{# stepwise regression}
+\hlkwd{library}\hlstd{(car)} \hlcom{# regression helper}
+\hlkwd{library}\hlstd{(broom)} \hlcom{# tidy model output}
+\hlkwd{library}\hlstd{(here)} \hlcom{# file path helper}
+\hlkwd{library}\hlstd{(xtable)} \hlcom{# table formatting}
+
+\hlstd{ny} \hlkwb{<-} \hlkwd{read_csv}\hlstd{(}\hlkwd{here}\hlstd{(}\hlstr{"reports/ny_expenditure/ny_expend.csv"}\hlstd{))}
+
+\hlcom{# =======================================================}
+\hlcom{# ----------------- EDA ------------------------}
+\hlcom{# =======================================================}
+
+\hlcom{# ------ numerical summaries --------}
+\hlstd{ny} \hlkwb{<-} \hlkwd{filter}\hlstd{(ny,} \hlopt{!}\hlkwd{is.na}\hlstd{(expenditure))} \hlcom{# remove 2 rows with missing values}
+\hlkwd{dim}\hlstd{(ny)} \hlcom{# 914 x 7}
+\hlkwd{summary}\hlstd{(ny)}
+\hlstd{corr_mat} \hlkwb{<-} \hlkwd{cor}\hlstd{(ny)}
+\hlkwd{corrplot}\hlstd{(corr_mat,} \hlkwc{type} \hlstd{=} \hlstr{"upper"}\hlstd{,} \hlkwc{diag} \hlstd{=} \hlnum{FALSE}\hlstd{)} \hlcom{# correlation matrix plot}
+
+\hlcom{# highest correlations}
+\hlkwd{cor}\hlstd{(ny}\hlopt{$}\hlstd{pop, ny}\hlopt{$}\hlstd{pop_dens)} \hlcom{# 0.67}
+\hlkwd{cor}\hlstd{(ny}\hlopt{$}\hlstd{income, ny}\hlopt{$}\hlstd{pop_dens)} \hlcom{# 0.49}
+\hlkwd{cor}\hlstd{(ny}\hlopt{$}\hlstd{income, ny}\hlopt{$}\hlstd{perc_intergov)} \hlcom{# -0.30}
+\hlkwd{cor}\hlstd{(ny}\hlopt{$}\hlstd{income, ny}\hlopt{$}\hlstd{pop)} \hlcom{# 0.29}
+
+\hlstd{ny} \hlkwb{<-} \hlstd{ny} \hlopt{%>%}
+  \hlstd{dplyr}\hlopt{::}\hlkwd{select}\hlstd{(}\hlopt{-}\hlstd{pop_dens)} \hlcom{# remove population density}
+
+\hlcom{# ---  histograms and density plots ----}
+
+\hlcom{# function to create histogram and density given variable name}
+\hlcom{# as is, it's really only useful in this script}
+\hlstd{hist_dens} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{var}\hlstd{)\{}
+  \hlstd{plot_var} \hlkwb{<-} \hlkwd{enquo}\hlstd{(var)}
+  \hlkwd{ggplot}\hlstd{(ny,} \hlkwd{aes}\hlstd{(}\hlkwc{x} \hlstd{=} \hlopt{!!} \hlstd{plot_var,} \hlkwc{y} \hlstd{= ..density..))} \hlopt{+}
+    \hlkwd{geom_histogram}\hlstd{(}\hlkwc{bins} \hlstd{=} \hlnum{50}\hlstd{)} \hlopt{+}
+    \hlkwd{geom_density}\hlstd{()}
+\hlstd{\}}
+
+\hlkwd{hist_dens}\hlstd{(expenditure)}
+\hlkwd{hist_dens}\hlstd{(wealth)}
+\hlkwd{hist_dens}\hlstd{(income)}
+\hlkwd{hist_dens}\hlstd{(pop)}
+\hlkwd{hist_dens}\hlstd{(perc_intergov)}
+\hlkwd{hist_dens}\hlstd{(grow_rate)}
+
+\hlcom{# all variables are right-skewed so we log transform them all}
+\hlcom{# however, since growth rate contains negative values,}
+\hlcom{# we use a modified log transform}
+\hlstd{ny} \hlkwb{<-} \hlstd{ny} \hlopt{%>%}
+  \hlkwd{mutate}\hlstd{(}
+    \hlkwc{log_expenditure} \hlstd{=} \hlkwd{log}\hlstd{(expenditure),}
+    \hlkwc{log_wealth} \hlstd{=} \hlkwd{log}\hlstd{(wealth),}
+    \hlkwc{log_income} \hlstd{=} \hlkwd{log}\hlstd{(income),}
+    \hlkwc{log_pop} \hlstd{=} \hlkwd{log}\hlstd{(pop),}
+    \hlkwc{log_perc_intergov} \hlstd{=} \hlkwd{log}\hlstd{(perc_intergov),}
+    \hlkwc{log_grow_rate} \hlstd{=} \hlkwd{ifelse}\hlstd{(grow_rate} \hlopt{>} \hlnum{0}\hlstd{,}
+                           \hlkwd{log}\hlstd{(grow_rate} \hlopt{+} \hlnum{0.15}\hlstd{),}
+                           \hlopt{-}\hlkwd{log}\hlstd{(}\hlopt{-}\hlstd{grow_rate} \hlopt{+} \hlnum{0.15}\hlstd{))}
+  \hlstd{)}
+
+\hlkwd{hist_dens}\hlstd{(log_expenditure)}
+\hlkwd{hist_dens}\hlstd{(log_wealth)}
+\hlkwd{hist_dens}\hlstd{(log_income)}
+\hlkwd{hist_dens}\hlstd{(log_pop)}
+\hlkwd{hist_dens}\hlstd{(log_perc_intergov)}
+\hlkwd{hist_dens}\hlstd{(log_grow_rate)}
+
+
+\hlcom{# ---  scatterplots: response vs. predictors ----}
+
+\hlcom{# function to create scatterplot of log expenditure vs. log covariate given}
+\hlcom{# covariate name. also adds a scatter plot smooth}
+\hlstd{scatter_smooth_log} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{var}\hlstd{)\{}
+  \hlstd{x_var} \hlkwb{<-} \hlkwd{enquo}\hlstd{(var)}
+  \hlkwd{ggplot}\hlstd{(ny,} \hlkwd{aes}\hlstd{(}\hlkwc{x} \hlstd{=} \hlopt{!!} \hlstd{x_var,} \hlkwc{y} \hlstd{= log_expenditure))} \hlopt{+}
+    \hlkwd{geom_point}\hlstd{()}
+\hlstd{\}}
+
+\hlkwd{scatter_smooth_log}\hlstd{(log_wealth)}
+\hlkwd{scatter_smooth_log}\hlstd{(log_income)}
+\hlkwd{scatter_smooth_log}\hlstd{(log_pop)}
+\hlkwd{scatter_smooth_log}\hlstd{(log_perc_intergov)}
+\hlkwd{scatter_smooth_log}\hlstd{(log_grow_rate)}
+
+\hlcom{# all the above plots show an approximatley linear relationship }
+\hlcom{# except log expenditure vs. log population}
+\hlcom{# in the following plot, it looks like if we might be able to}
+\hlcom{# split log population into 2 groups and get an approximately linear relation}
+
+\hlstd{lpop_smooth} \hlkwb{<-} \hlkwd{lowess}\hlstd{(ny}\hlopt{$}\hlstd{log_pop, ny}\hlopt{$}\hlstd{log_expenditure)}
+
+\hlkwd{ggplot}\hlstd{(ny,} \hlkwd{aes}\hlstd{(}\hlkwc{x} \hlstd{= log_pop,} \hlkwc{y} \hlstd{= log_expenditure))} \hlopt{+}
+  \hlkwd{geom_point}\hlstd{()} \hlopt{+}
+  \hlkwd{geom_line}\hlstd{(}\hlkwd{aes}\hlstd{(}\hlkwc{x} \hlstd{= lpop_smooth}\hlopt{$}\hlstd{x,} \hlkwc{y} \hlstd{= lpop_smooth}\hlopt{$}\hlstd{y),} \hlkwc{color} \hlstd{=} \hlstr{"#00BFC4"}\hlstd{)} \hlopt{+}
+  \hlkwd{geom_segment}\hlstd{(}\hlkwd{aes}\hlstd{(}\hlkwc{x} \hlstd{=} \hlnum{8.3}\hlstd{,} \hlkwc{xend} \hlstd{=} \hlnum{8.3}\hlstd{,} \hlkwc{y} \hlstd{=} \hlnum{4}\hlstd{,} \hlkwc{yend} \hlstd{=} \hlnum{5.24}\hlstd{),} \hlkwc{color} \hlstd{=} \hlstr{"#00BA38"}\hlstd{)}
+
+\hlstd{ny_low} \hlkwb{<-} \hlstd{ny} \hlopt{%>%}
+  \hlkwd{filter}\hlstd{(log_pop} \hlopt{<=} \hlnum{8.3}\hlstd{)}
+
+\hlstd{ny_high} \hlkwb{<-} \hlstd{ny} \hlopt{%>%}
+  \hlkwd{filter}\hlstd{(log_pop} \hlopt{>} \hlnum{8.3}\hlstd{)}
+\hlkwd{dim}\hlstd{(ny_high)} \hlcom{# 266  12}
+
+\hlkwd{ggplot}\hlstd{(ny_low,} \hlkwd{aes}\hlstd{(}\hlkwc{x} \hlstd{= log_pop,} \hlkwc{y} \hlstd{= log_expenditure))} \hlopt{+}
+  \hlkwd{geom_point}\hlstd{()} \hlopt{+}
+  \hlkwd{geom_smooth}\hlstd{(}\hlkwc{method} \hlstd{= loess,} \hlkwc{formula} \hlstd{= y} \hlopt{~} \hlstd{x)}
+
+\hlstd{lpop_high_smooth} \hlkwb{<-} \hlkwd{lowess}\hlstd{(ny_high}\hlopt{$}\hlstd{log_pop, ny_high}\hlopt{$}\hlstd{log_expenditure)}
+
+\hlkwd{ggplot}\hlstd{(ny_high,} \hlkwd{aes}\hlstd{(}\hlkwc{x} \hlstd{= log_pop,} \hlkwc{y} \hlstd{= log_expenditure))} \hlopt{+}
+  \hlkwd{geom_point}\hlstd{()} \hlopt{+}
+  \hlkwd{geom_line}\hlstd{(}\hlkwd{aes}\hlstd{(}\hlkwc{x} \hlstd{= lpop_high_smooth}\hlopt{$}\hlstd{x,}
+                \hlkwc{y} \hlstd{= lpop_high_smooth}\hlopt{$}\hlstd{y),} \hlkwc{color} \hlstd{=} \hlstr{"#00BFC4"}\hlstd{)}
+
+\hlcom{# based on the above plots, it appears that the relationship between}
+\hlcom{# log expenditure and log population is approximately piecewise linear}
+
+\hlcom{# =======================================================}
+\hlcom{# ----------------- model building ----------------------}
+\hlcom{# =======================================================}
+
+\hlcom{# we will use stepwise regression for model selection}
+\hlcom{# with AIC as our criteria}
+\hlcom{# we consider quadratic log terms in the model }
+\hlcom{# mostly just to see what the results are}
+\hlstd{for_mod_fit_high} \hlkwb{<-} \hlstd{ny_high} \hlopt{%>%}
+  \hlstd{dplyr}\hlopt{::}\hlkwd{select}\hlstd{(log_expenditure,}
+                \hlstd{log_wealth,}
+                \hlstd{log_income,}
+                \hlstd{log_pop,}
+                \hlstd{log_perc_intergov,}
+                \hlstd{log_grow_rate)} \hlopt{%>%}
+  \hlkwd{mutate}\hlstd{(}
+    \hlkwc{log_wealth_2} \hlstd{= log_wealth}\hlopt{^}\hlnum{2}\hlstd{,}
+    \hlkwc{log_income_2} \hlstd{= log_income}\hlopt{^}\hlnum{2}\hlstd{,}
+    \hlkwc{log_pop_2} \hlstd{= log_pop}\hlopt{^}\hlnum{2}\hlstd{,}
+    \hlkwc{log_perc_intergov_2} \hlstd{= log_perc_intergov}\hlopt{^}\hlnum{2}\hlstd{,}
+    \hlkwc{log_grow_rate_2} \hlstd{= log_grow_rate}\hlopt{^}\hlnum{2}
+  \hlstd{)}
+
+\hlcom{# fit model without quadratic terms}
+\hlcom{# best AIC is -611.3}
+\hlstd{fit_high} \hlkwb{<-} \hlkwd{lm}\hlstd{(log_expenditure} \hlopt{~} \hlstd{log_wealth} \hlopt{+}
+                 \hlstd{log_income} \hlopt{+}
+                 \hlstd{log_pop} \hlopt{+}
+                 \hlstd{log_perc_intergov} \hlopt{+}
+                 \hlstd{log_grow_rate,}
+               \hlkwc{data} \hlstd{= for_mod_fit_high)}
+\hlstd{best_fit_high} \hlkwb{<-} \hlkwd{stepAIC}\hlstd{(fit_high)}
+\hlstd{best_fit_high}
+
+\hlcom{# fit model with quadratic terms}
+\hlcom{# best AIC is -622.91}
+\hlcom{# this model is not used because:}
+\hlcom{# there isn't much of an improvement in AIC compared to the simpler model above}
+\hlcom{# this model includes quadratic terms without their respective linear terms}
+\hlcom{# we just can not justify such a model}
+\hlstd{full_fit} \hlkwb{<-} \hlkwd{lm}\hlstd{(log_expenditure} \hlopt{~}\hlstd{.,} \hlkwc{data} \hlstd{= for_mod_fit_high)}
+\hlstd{best_full_fit} \hlkwb{<-} \hlkwd{stepAIC}\hlstd{(full_fit)}
+\hlstd{best_full_fit}
+
+\hlstd{final_fit} \hlkwb{<-} \hlkwd{lm}\hlstd{(log_expenditure} \hlopt{~}
+                  \hlstd{log_wealth} \hlopt{+}
+                  \hlstd{log_pop} \hlopt{+}
+                  \hlstd{log_perc_intergov} \hlopt{+}
+                  \hlstd{log_grow_rate,}
+                \hlkwc{data} \hlstd{= ny_high)}
+
+\hlcom{# =======================================================}
+\hlcom{# ----------------- model diagnostics -------------------}
+\hlcom{# =======================================================}
+
+
+\hlcom{# --------------- diagnostic plots ----------------}
+
+\hlcom{# add fitted values, residuals, etc. to orignal data frame used to fit the model}
+\hlstd{ny_high} \hlkwb{<-} \hlkwd{augment}\hlstd{(final_fit)} \hlcom{# (broom package)}
+
+\hlcom{# add studentized residuals to data frame}
+\hlstd{ny_high} \hlkwb{<-} \hlstd{ny_high} \hlopt{%>%}
+  \hlkwd{mutate}\hlstd{(}\hlkwc{stud_res} \hlstd{=} \hlkwd{rstudent}\hlstd{(final_fit))}
+
+\hlcom{# studentized residuals vs. fitted}
+\hlkwd{ggplot}\hlstd{(ny_high,} \hlkwd{aes}\hlstd{(}\hlkwc{x} \hlstd{= .fitted,} \hlkwc{y} \hlstd{= stud_res))} \hlopt{+}
+  \hlkwd{geom_point}\hlstd{()} \hlopt{+}
+  \hlkwd{geom_hline}\hlstd{(}\hlkwc{yintercept} \hlstd{=} \hlnum{0}\hlstd{)}
+
+\hlcom{# qq plot studentized residuals vs. t distribution}
+\hlstd{dist_pars} \hlkwb{=} \hlkwd{list}\hlstd{(}\hlkwc{df} \hlstd{= final_fit}\hlopt{$}\hlstd{df.residual)}
+\hlstd{ny_high} \hlopt{%>%}
+  \hlkwd{mutate}\hlstd{(}\hlkwc{stud} \hlstd{=} \hlkwd{rstudent}\hlstd{(final_fit))} \hlopt{%>%}
+  \hlkwd{ggplot}\hlstd{(}\hlkwd{aes}\hlstd{(}\hlkwc{sample} \hlstd{= stud))} \hlopt{+}
+  \hlkwd{stat_qq}\hlstd{(}\hlkwc{distribution} \hlstd{= qt,} \hlkwc{dparams} \hlstd{= dist_pars[[}\hlstr{"df"}\hlstd{]])} \hlopt{+}
+  \hlkwd{stat_qq_line}\hlstd{(}\hlkwc{distribution} \hlstd{= qt,} \hlkwc{dparams} \hlstd{= dist_pars[[}\hlstr{"df"}\hlstd{]])}
+
+\hlcom{# row with smallest studentized residual}
+\hlstd{ny_high} \hlopt{%>%}
+  \hlkwd{filter}\hlstd{(stud_res} \hlopt{==} \hlkwd{min}\hlstd{(stud_res))}
+
+\hlstd{ny_high} \hlopt{%>%}
+  \hlkwd{filter}\hlstd{(stud_res} \hlopt{==} \hlkwd{min}\hlstd{(stud_res))} \hlopt{%>%}
+  \hlstd{dplyr}\hlopt{::}\hlkwd{select}\hlstd{(stud_res)}
+
+\hlcom{# ----- regression summaries -------}
+
+\hlcom{# all p-values (except intercept) are significant at the 0.05 level}
+\hlcom{# F test significant at 0.05 level}
+\hlkwd{summary}\hlstd{(final_fit)}
+
+\hlcom{# all VIF's are less than 1.2}
+\hlkwd{vif}\hlstd{(final_fit)}  \hlcom{# (car package)}
+
+
+\hlcom{# the following code is mostly just formatting}
+\hlstd{ci_bounds} \hlkwb{=} \hlkwd{formatC}\hlstd{(}\hlkwd{signif}\hlstd{(}\hlkwd{confint}\hlstd{(final_fit),} \hlkwc{digits} \hlstd{=} \hlnum{6}\hlstd{),}
+                   \hlkwc{digits} \hlstd{=} \hlnum{2}\hlstd{,} \hlkwc{format} \hlstd{=} \hlstr{"f"}\hlstd{,} \hlkwc{flag} \hlstd{=} \hlstr{"#"}\hlstd{)}
+
+\hlstd{regress_tbl} \hlkwb{<-} \hlkwd{tidy}\hlstd{(final_fit)} \hlopt{%>%} \hlcom{# from broom}
+  \hlstd{dplyr}\hlopt{::}\hlkwd{select}\hlstd{(}\hlopt{-}\hlstd{statistic)} \hlopt{%>%}
+  \hlkwd{bind_cols}\hlstd{(}\hlkwc{`95% CI`} \hlstd{=} \hlkwd{paste}\hlstd{(}\hlstr{"("}\hlstd{, ci_bounds[,}\hlnum{1}\hlstd{],} \hlstr{","}\hlstd{, ci_bounds[,}\hlnum{2}\hlstd{],} \hlstr{")"}\hlstd{))} \hlopt{%>%}
+  \hlkwd{mutate}\hlstd{(}
+    \hlkwc{Estimate} \hlstd{=} \hlkwd{formatC}\hlstd{(}\hlkwd{signif}\hlstd{(estimate,} \hlkwc{digits} \hlstd{=} \hlnum{6}\hlstd{),}
+                       \hlkwc{digits} \hlstd{=} \hlnum{2}\hlstd{,} \hlkwc{format} \hlstd{=} \hlstr{"f"}\hlstd{,} \hlkwc{flag} \hlstd{=} \hlstr{"#"}\hlstd{),}
+    \hlkwc{SE} \hlstd{=} \hlkwd{formatC}\hlstd{(}\hlkwd{signif}\hlstd{(std.error,} \hlkwc{digits} \hlstd{=} \hlnum{6}\hlstd{),}
+                 \hlkwc{digits} \hlstd{=} \hlnum{2}\hlstd{,} \hlkwc{format} \hlstd{=} \hlstr{"f"}\hlstd{,} \hlkwc{flag} \hlstd{=} \hlstr{"#"}\hlstd{),}
+    \hlkwc{`p-value`} \hlstd{=} \hlkwd{formatC}\hlstd{(}\hlkwd{signif}\hlstd{(p.value,} \hlkwc{digits} \hlstd{=} \hlnum{6}\hlstd{),}
+                        \hlkwc{digits} \hlstd{=} \hlnum{3}\hlstd{,} \hlkwc{format} \hlstd{=} \hlstr{"f"}\hlstd{,} \hlkwc{flag} \hlstd{=} \hlstr{"#"}\hlstd{)}
+
+  \hlstd{)} \hlopt{%>%}
+  \hlstd{dplyr}\hlopt{::}\hlkwd{select}\hlstd{(Estimate, SE, `p-value`, `95% CI`)} \hlopt{%>%}
+  \hlkwd{as.data.frame}\hlstd{()}
+
+\hlkwd{rownames}\hlstd{(regress_tbl)} \hlkwb{=} \hlkwd{c}\hlstd{(}\hlstr{"Intercept"}\hlstd{,} \hlstr{"Log Wealth"}\hlstd{,} \hlstr{"Log Population"}\hlstd{,}
+                         \hlstr{"Log % Intergov Funding"}\hlstd{,} \hlstr{"Log Growth Rate"}\hlstd{)}
+
+\hlstd{regress_tbl}
+\hlcom{# convert to latex table}
+\hlkwd{xtable}\hlstd{(regress_tbl,} \hlkwc{label} \hlstd{=} \hlstr{"tbl:regress"}\hlstd{,} \hlkwc{align} \hlstd{=} \hlstr{"|l|rrrr|"}\hlstd{)}
+
+\hlcom{# =======================================================}
+\hlcom{# ----------------- predictions -------------------------}
+\hlcom{# =======================================================}
+
+\hlcom{# projected values for Warwick and Monroe for 2005 & 2025}
+\hlstd{projected} \hlkwb{<-} \hlkwd{data.frame}\hlstd{(}
+  \hlkwc{pop} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{20442L}\hlstd{,} \hlnum{31033L}\hlstd{,} \hlnum{10496L}\hlstd{,} \hlnum{13913L}\hlstd{),}
+  \hlkwc{wealth} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{85000L}\hlstd{,} \hlnum{89000L}\hlstd{,} \hlnum{58000L}\hlstd{,} \hlnum{60000L}\hlstd{),}
+  \hlkwc{perc_intergov} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{24.7}\hlstd{,} \hlnum{26.0}\hlstd{,} \hlnum{8.8}\hlstd{,} \hlnum{10.1}\hlstd{),}
+  \hlkwc{grow_rate} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{35.0}\hlstd{,} \hlnum{40.0}\hlstd{,} \hlnum{35.0}\hlstd{,} \hlnum{35.0}\hlstd{)}
+\hlstd{)}
+
+\hlstd{log_projected} \hlkwb{<-} \hlstd{projected} \hlopt{%>%}
+  \hlkwd{mutate}\hlstd{(}
+    \hlkwc{log_pop} \hlstd{=} \hlkwd{log}\hlstd{(pop),}
+    \hlkwc{log_wealth} \hlstd{=} \hlkwd{log}\hlstd{(wealth),}
+    \hlkwc{log_perc_intergov} \hlstd{=} \hlkwd{log}\hlstd{(perc_intergov),}
+    \hlkwc{log_grow_rate} \hlstd{=} \hlkwd{ifelse}\hlstd{(grow_rate} \hlopt{>} \hlnum{0}\hlstd{,}
+                           \hlkwd{log}\hlstd{(grow_rate} \hlopt{+} \hlnum{0.15}\hlstd{),}
+                           \hlopt{-}\hlkwd{log}\hlstd{(}\hlopt{-}\hlstd{grow_rate} \hlopt{+} \hlnum{0.15}\hlstd{))}
+  \hlstd{)} \hlopt{%>%}
+  \hlstd{dplyr}\hlopt{::}\hlkwd{select}\hlstd{(}\hlopt{-}\hlstd{(pop}\hlopt{:}\hlstd{grow_rate))}
+
+\hlstd{sd_fit} \hlkwb{<-} \hlkwd{sd}\hlstd{(final_fit}\hlopt{$}\hlstd{resid)}
+
+\hlstd{pred} \hlkwb{<-} \hlkwd{exp}\hlstd{(}\hlkwd{predict}\hlstd{(final_fit,}
+                    \hlkwc{newdata} \hlstd{= log_projected,}
+                    \hlkwc{interval} \hlstd{=} \hlstr{"prediction"}\hlstd{)} \hlopt{+} \hlstd{sd_fit}\hlopt{^}\hlnum{2}\hlopt{/}\hlnum{2}\hlstd{)}
+\hlstd{pred} \hlkwb{<-} \hlkwd{formatC}\hlstd{(}\hlkwd{signif}\hlstd{(pred,} \hlkwc{digits} \hlstd{=} \hlnum{6}\hlstd{),} \hlkwc{format} \hlstd{=} \hlstr{"d"}\hlstd{,} \hlkwc{flag} \hlstd{=} \hlstr{"#"}\hlstd{)}
+
+\hlcom{# format for latex output via xtable}
+\hlstd{pred_tbl} \hlkwb{<-} \hlstd{projected} \hlopt{%>%}
+  \hlkwd{mutate}\hlstd{(}
+    \hlkwc{perc_intergov} \hlstd{=} \hlkwd{formatC}\hlstd{(}\hlkwd{signif}\hlstd{(perc_intergov,} \hlkwc{digits} \hlstd{=} \hlnum{2}\hlstd{),}
+                            \hlkwc{digits} \hlstd{=} \hlnum{1}\hlstd{,} \hlkwc{format} \hlstd{=} \hlstr{"f"}\hlstd{,} \hlkwc{flag} \hlstd{=} \hlstr{"#"}\hlstd{),}
+    \hlkwc{grow_rate} \hlstd{=} \hlkwd{formatC}\hlstd{(}\hlkwd{signif}\hlstd{(grow_rate,} \hlkwc{digits} \hlstd{=} \hlnum{2}\hlstd{),}
+                        \hlkwc{digits} \hlstd{=} \hlnum{1}\hlstd{,} \hlkwc{format} \hlstd{=} \hlstr{"f"}\hlstd{,} \hlkwc{flag} \hlstd{=} \hlstr{"#"}\hlstd{)}
+  \hlstd{)} \hlopt{%>%}
+  \hlkwd{rename}\hlstd{(}
+    \hlkwc{Population} \hlstd{= pop,}
+    \hlkwc{Wealth} \hlstd{= wealth,}
+    \hlkwc{`% Intergov Funding`} \hlstd{= perc_intergov,}
+    \hlkwc{`Growth Rate`} \hlstd{= grow_rate}
+  \hlstd{)} \hlopt{%>%}
+  \hlkwd{bind_cols}\hlstd{(}\hlkwc{Estimate} \hlstd{= pred[,}\hlnum{1}\hlstd{])} \hlopt{%>%}
+  \hlkwd{bind_cols}\hlstd{(}\hlkwc{`95 % PI`} \hlstd{=} \hlkwd{paste}\hlstd{(}\hlstr{"("}\hlstd{, pred[,}\hlnum{2}\hlstd{],} \hlstr{","}\hlstd{, pred[,}\hlnum{3}\hlstd{],} \hlstr{")"}\hlstd{))}
+\hlkwd{rownames}\hlstd{(pred_tbl)} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlstr{"Warwick-2005"}\hlstd{,} \hlstr{"Warwick-2025 "}\hlstd{,}
+                        \hlstr{"Monroe-2005"}\hlstd{,} \hlstr{"Monroe-2025"}\hlstd{)}
+
+\hlkwd{xtable}\hlstd{(pred_tbl,} \hlkwc{align} \hlstd{=} \hlstr{"|l|rrrrrr|"}\hlstd{,} \hlkwc{label} \hlstd{=} \hlstr{"tbl:pred"}\hlstd{,}
+       \hlkwc{caption} \hlstd{=} \hlstr{"Projections for Warwick and Monroe along with predicted
+       expenditures and prediction intervals."}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
 
 
 \end{appendices}
