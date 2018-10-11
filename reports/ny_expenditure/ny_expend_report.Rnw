@@ -266,7 +266,7 @@ In this paper we developed a linear regression model in order to estimate future
 \section{Supplementary Plots} \label{appendix_plots}
 
 
-<<r append_hist, echo = FALSE, cache = TRUE, fig.cap = "Histograms of all variables with densities overlayed.">>=
+<<r append_hist, echo = FALSE, cache = TRUE, fig.pos = "h!", fig.cap = "Histograms of all variables with densities overlayed.">>=
 
 # function to create histogram and density given variable name
 # as is, it's really only useful in this script
@@ -310,8 +310,27 @@ grid.arrange(lexpen_hist, lwealth_hist, lincome_hist,
 @
 
 
+<<r append_scatter, echo = FALSE, cache = TRUE, fig.cap = "Scatter plots of log expenditure vs. log covariate for each covariate except population (see main text).">>=
 
-Scatter plots of log expenditure vs. log covariate for each covariate.
+scatter_smooth_log <- function(var){
+  x_var <- enquo(var)
+  ggplot(ny, aes(x = !! x_var, y = log_expenditure)) +
+    geom_point() +
+    ylab("Log Expenditure")
+}
+
+wealth_scat <- scatter_smooth_log(log_wealth) + xlab("Log Wealth")
+income_scat <- scatter_smooth_log(log_income) + xlab("Log Income")
+perc_scat <- scatter_smooth_log(log_perc_intergov) + 
+  xlab("Log % Intergov Funding")
+grow_scat <- scatter_smooth_log(log_grow_rate) + xlab("Log Growth Rate")
+
+grid.arrange(wealth_scat, income_scat,
+             perc_scat, grow_scat, ncol = 2)
+@
+
+
+
 
 \end{appendices}
 
