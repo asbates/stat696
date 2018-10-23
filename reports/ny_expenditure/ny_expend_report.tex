@@ -78,7 +78,7 @@
 \maketitle
 
 \begin{abstract}
-In this paper we estimate future expenditures for two New York municipalities, Warwick and Monroe, based on various projected demographic and income-related factors. These estimates are obtained from a linear regression model chosen via a stepwise model selection procedure. The variables included in the model are wealth per person, population, percent intergovernmental funding, and growth rate. The estimated expenditures for Warwick are \$$261$ per person for $2005$ and \$$271$ per person for $2025$. The estimated expenditures for Monroe are \$$273$ per person for both $2005$ and $2025$. Based on the model, we can infer that increases in population and wealth per person lead to increased expenditures while increases in intergovernmental funding and growth rate lead to a decrease in expenditures.
+In this paper we estimate future expenditures for two New York municipalities, Warwick and Monroe, based on various projected demographic and income-related factors. The desire for expenditure estimates were triggered by proposals for new housing construction. Warwick and Monroe wish to determine if they should increase funds to compensate for increased expenditures related to the housing projects. The estimates are obtained from a linear regression model chosen via a stepwise model selection procedure. The variables included in the model are wealth per person, population, percent intergovernmental funding, and growth rate. The estimated expenditures for Warwick are \$$261$ per person for $2005$ and \$$271$ per person for $2025$. The estimated expenditures for Monroe are \$$273$ per person for both $2005$ and $2025$. Based on the model, we can infer that with increases in population and wealth per person, we can expect increases in expenditures. Coversely, decreases in expenditures are associated with increases in intergovernmental funding and growth rate
 \end{abstract}
 
 
@@ -87,7 +87,7 @@ In this paper we estimate future expenditures for two New York municipalities, W
 Two New York towns, Warwick and Monroe, would like to estimate future expenditures triggered by new housing construction proposals. They are primarily interested in determining whether they should increase funds to compensate for increased expenditures related to the housing projects. To construct these estimates, Warwick and Monroe obtained data on expenditures along with various demographic and income-related variables from several New York municipalities. 
 
 
-The data used in this study consisted of 916 observations of seven variables. Each observation corresponds to a New York municipality for which each of the variables were collected. The response variable is expenditure per person. The covariates are as follows: wealth per person, population, revenue from state and federal grants, population density, mean income per person, and growth rate.
+The data used in this study consisted of 916 observations of seven variables. Each observation corresponds to a New York municipality for which each of the variables were collected. The response variable is expenditure per person. The covariates are as follows: wealth per person, population, revenue from state and federal grants, population density, mean income per person, and growth rate. Two observations were removed because they contained missing values.
 
 For reasons of simplicity and interpretability, a linear regression model was chosen to estimate future expenditures. The correlation between population and population density was high ($0.67$) so to prevent this from leading to colinearity issues, only population was considered in the analysis. The variables in this data set (including the response) were heavily skewed, so log transformations were applied to each. To ensure a linear relationship between the predictors and the response, the data was subsetted to include only those observations for which the population was larger than $4,000$. The projected covariates for Warwick and Monroe fall within the range of this subsetted data so we felt this method was appropriate. In addition, this method was favored over a more complicated method like including a quadratic term on log population which would be more difficult to interpret. The regression model was constructed via stepwise regression using Akaike Information Criteria (AIC) as the selection criterion. This model was then used to estimate future expenditures.
 
@@ -101,7 +101,7 @@ For reasons of simplicity and interpretability, a linear regression model was ch
 
 In this data set there were two measures of the size of a municipality: population and population density. Unsurprisingly, the correlation between these two measures was relatively high ($0.67$). In the interest of parsimony and to mitigate possible colinearity issues, we decided to consider only one of these variables to construct our model. Population density had a moderate correlation with mean income per person ($0.49$) whereas population had a comparably low correlation with income ($0.29$). To hedge against problems with colinearity, we decided to consider population for the model building process.
 
-Upon an initial visual examination of the data, it was evident that transformations would be necessary. Each of the covariates, and the response, were skewed (see Appendix \ref{appendix_plots}) and some were heavily skewed. As this might pose problems with linearity, we performed transformations on the variables. To remain in line with our goal of having a comprehensible model, we favored log transformations over a more complex procedure. To that end, we performed log transformations on all variables in the data set.  However, a straightforward application of the logarithm was not possible for one covariate. Growth rate contains some negative values as well as some zero values. To remedy this, we used the following pseudo-log transformation:
+Upon an initial visual examination of the data, it was evident that transformations would be necessary. Each of the covariates, and the response, were skewed (see Appendix \ref{append-before-subset}) and some were heavily skewed. As this might pose problems with linearity, we performed transformations on the variables. To remain in line with our goal of having a comprehensible model, we favored log transformations over a more complex procedure. To that end, we performed log transformations on all variables in the data set.  However, a straightforward application of the logarithm was not possible for one covariate. Growth rate contains some negative values as well as some zero values. To remedy this, we used the following pseudo-log transformation:
 \[
 \text{p-}\log(\text{growth rate}) = % plog for pseudo-log
   \begin{cases}
@@ -110,9 +110,7 @@ Upon an initial visual examination of the data, it was evident that transformati
   \end{cases}
 \]
 
-To ensure the linearity assumption of our model was satisfied, we examined the relationship between log expenditure and the log of each of the covariates. All covariates had an approximately linear relationship with log expenditure except for log population. Figure \ref{fig:vs_log_pop} is a plot of log expenditure vs. log population with the addition of a smoothing line. We see what appears to be a quadratic relationship. However, notice that on either side of the vertical reference line (corresponding to a log population of $8.3$), the relationship is approximately linear. So we were essentially faced with two choices. We could try to include the square of log population as an additional predictor or we could subset the data and have a roughly linear relationship between log expenditure and log population.
-
-
+To ensure the linearity assumption of our model was satisfied, we examined the relationship between log expenditure and the log of each of the covariates. All covariates had an approximately linear relationship with log expenditure except for log population. Figure \ref{fig:vs_log_pop} is a plot of log expenditure vs. log population with the addition of a smoothing line. It showswhat appears to be a quadratic relationship. However, notice that on either side of the vertical reference line (corresponding to a log population of $8.3$), the relationship is approximately linear. So we were essentially faced with two choices. We could try to include the square of log population as an additional predictor or we could subset the data and have a roughly linear relationship between log expenditure and log population.
 
 
 \begin{knitrout}
@@ -123,7 +121,7 @@ To ensure the linearity assumption of our model was satisfied, we examined the r
 
 \end{knitrout}
 
-We chose the latter method. As mentioned previously, we favored a simpler model for the interpretability that comes with it. Also, the projected covariates we would be predicting with fall within the range of the covariates in the subsetted data. For these reasons, we subsetted the data to include only those observations that had a population greater than $4,000$ (log population above $8.3$). This subsetted data set included $266$ of the original observations. Figure \ref{fig:vs_log_pop_subset} is a plot of log expenditure vs. log population for this subsetted data set along with a smoothing line. We can see that the relationship between the two variables is roughly linear. We do see minor deviation from linearity for high values of log population but overall the trend is approximately linear. Additionally, it is much more linear than the relationship we see in Figure \ref{fig:vs_log_pop}.
+We chose the latter method. As mentioned previously, we favored a simpler model for the interpretability that comes with it. Also, the projected covariates we would be predicting with fall within the range of the covariates in the subsetted data. For these reasons, we subsetted the data to include only those observations that had a population greater than $4,000$ (log population above $8.3$). This subsetted data set included $266$ of the original observations. Figure \ref{fig:vs_log_pop_subset} is a plot of log expenditure vs. log population for this subsetted data set along with a smoothing line. The relationship between the two variables is roughly linear. We do see minor deviation from linearity for high values of log population but overall the trend is approximately linear. Additionally, it is much more linear than the relationship we see in Figure \ref{fig:vs_log_pop}.
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{figure}[h]
@@ -143,7 +141,7 @@ After performing variable transformations and data subsetting, our regression mo
 
 
 
-Diagnostic plots from the fitted model are shown in Figure \ref{fig:diag}. The left figure is a plot of studentized residuals vs. fitted values. The horizontal line is a reference line at a residual of zero. Notice that there are no apparent patterns and the points are scattered roughly equally about the reference line. Nevertheless, there is a troublesome point with an unusually small value. This point corresponds to a municipality with a rather large value of wealth per person. It's not entirely surprising that such a municipality exists as wealth related data often contains abnormally high observations. Although this observation is a bit outside the range of most of the data, it is nonetheless a valid data point and this municipality may also wish to estimate their future expenditures at some point. For this reason, we decided to not remove this data point. The right-hand side of figure \ref{fig:diag} provides an alternative view of the model residuals. Here we have plotted quantiles of the studentized residuals against quantiles of a $t$ distribution which is the distribution that they should theoretically follow. The green line is a reference line, indicating what the theoretical relationship should be. Aside from the point just discussed, we see that the residuals follow their theoretical distribution quite well. As an additional diagnostic assessment, we computed variance inflation factors which were all less than $1.2$. Considering our diagnostic plots and metrics as a whole, we were satisfied with this model.
+Diagnostic plots from the fitted model are shown in Figure \ref{fig:diag}. The left figure is a plot of studentized residuals vs. fitted values. The horizontal line is a reference line at a residual of zero. There are no apparent patterns and the points are scattered roughly equally about the reference line. Nevertheless, there is a troublesome point with an unusually small value. This point corresponds to a municipality with a rather large value of wealth per person. It's not entirely surprising that such a municipality exists as wealth related data often contains abnormally high observations. This data point also contains the smallest value of growth rate for all the municipalities so we can expect it to be pesky. Although this observation is a bit outside the range of most of the data, it is nonetheless a valid data point and this municipality may also wish to estimate their future expenditures at some point. For this reason, we decided to not remove this data point. The right-hand side of figure \ref{fig:diag} provides an alternative view of the model residuals. Here we have plotted quantiles of the studentized residuals against quantiles of a $t$ distribution which is the distribution that they should theoretically follow. The green line is a reference line, indicating what the theoretical relationship should be. Aside from the point just discussed, the residuals follow their theoretical distribution quite well. As an additional diagnostic assessment, we computed variance inflation factors which were all less than $1.2$. Considering our diagnostic plots and metrics as a whole, we were satisfied with this model.
 
 
 \begin{knitrout}
@@ -221,7 +219,7 @@ In this paper we developed a linear regression model in order to estimate future
 
 \section{Supplementary Plots} \label{appendix_plots}
 
-\subsection{Histograms and Scatter Plots Before Subsetting}
+\subsection{Histograms and Scatter Plots Before Subsetting} \label{append-before-subset}
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{figure}[h!]
@@ -542,6 +540,10 @@ In this paper we developed a linear regression model in order to estimate future
 \hlcom{# row with smallest studentized residual}
 \hlstd{ny_high} \hlopt{%>%}
   \hlkwd{filter}\hlstd{(stud_res} \hlopt{==} \hlkwd{min}\hlstd{(stud_res))}
+
+\hlcom{# this row has a wealth per person as well as the smallest growth rate}
+\hlkwd{summary}\hlstd{(ny_high}\hlopt{$}\hlstd{wealth)}
+\hlkwd{min}\hlstd{(ny_high}\hlopt{$}\hlstd{grow_rate)}
 
 \hlstd{ny_high} \hlopt{%>%}
   \hlkwd{filter}\hlstd{(stud_res} \hlopt{==} \hlkwd{min}\hlstd{(stud_res))} \hlopt{%>%}

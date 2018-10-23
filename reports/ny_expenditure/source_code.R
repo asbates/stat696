@@ -253,6 +253,11 @@ ny_high %>%
 ny_high %>%
   filter(stud_res == min(stud_res))
 
+# this row has a wealth per person as well as the smallest growth rate
+summary(ny_high$wealth)
+min(ny_high$grow_rate)
+
+
 ny_high %>%
   filter(stud_res == min(stud_res)) %>%
   dplyr::select(stud_res)
