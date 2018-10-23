@@ -15,6 +15,8 @@ ny <- read_csv(here("reports/ny_expenditure/ny_expend.csv"))
 # ----------------- EDA ------------------------
 # =======================================================
 
+# ---- prior to subsetting ----
+
 # ------ numerical summaries --------
 ny <- filter(ny, !is.na(expenditure)) # remove 2 rows with missing values
 dim(ny) # 914 x 7
@@ -101,6 +103,8 @@ ggplot(ny, aes(x = log_pop, y = log_expenditure)) +
   geom_line(aes(x = lpop_smooth$x, y = lpop_smooth$y), color = "#00BFC4") +
   geom_segment(aes(x = 8.3, xend = 8.3, y = 4, yend = 5.24), color = "#00BA38")
 
+
+# ------ data subsetting ------
 ny_low <- ny %>%
   filter(log_pop <= 8.3)
 
@@ -118,6 +122,51 @@ ggplot(ny_high, aes(x = log_pop, y = log_expenditure)) +
   geom_point() +
   geom_line(aes(x = lpop_high_smooth$x,
                 y = lpop_high_smooth$y), color = "#00BFC4")
+
+
+# ----- histograms and density plots -----------
+
+hist_dens_high <- function(var){
+  plot_var <- enquo(var)
+  ggplot(ny_high, aes(x = !! plot_var, y = ..density..)) +
+    geom_histogram(bins = 50) +
+    geom_density(color = "#00BFC4") +
+    theme_classic()
+}
+
+hist_dens_high(expenditure) 
+hist_dens_high(wealth) 
+hist_dens_high(income) 
+hist_dens_high(pop) 
+hist_dens_high(perc_intergov) 
+hist_dens_high(grow_rate) 
+
+# ----- log transformed ----
+hist_dens_high(log_expenditure) 
+hist_dens_high(log_wealth) 
+hist_dens_high(log_income) 
+hist_dens_high(log_pop) 
+hist_dens_high(log_perc_intergov) 
+hist_dens_high(log_grow_rate) 
+
+
+# ----- scatterplots: response vs. predictors -----
+
+scatter_smooth_log_high <- function(var){
+  x_var <- enquo(var)
+  ggplot(ny_high, aes(x = !! x_var, y = log_expenditure)) +
+    geom_point() +
+    ylab("Log Expenditure")
+}
+
+scatter_smooth_log_high(log_wealth) + xlab("Log Wealth")
+scatter_smooth_log_high(log_income) + xlab("Log Income")
+scatter_smooth_log_high(log_perc_intergov) + 
+  xlab("Log % Intergov Funding")
+scatter_smooth_log_high(log_grow_rate) + xlab("Log Growth Rate")
+
+
+
 
 # based on the above plots, it appears that the relationship between
 # log expenditure and log population is approximately piecewise linear
@@ -181,7 +230,7 @@ final_fit <- lm(log_expenditure ~
 # --------------- diagnostic plots ----------------
 
 # add fitted values, residuals, etc. to orignal data frame used to fit the model
-ny_high <- augment(final_fit) # (broom package)
+ny_high <- augment(final_fit, data = ny_high) # (broom package)
 
 # add studentized residuals to data frame
 ny_high <- ny_high %>%

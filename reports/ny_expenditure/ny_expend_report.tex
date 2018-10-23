@@ -133,6 +133,10 @@ We chose the latter method. As mentioned previously, we favored a simpler model 
 
 \end{knitrout}
 
+
+After subsetting, we examined the same plots use for the unsubsetted data. That is, we plotted histograms of the untransformed and log transformed data as well as scatterplots of log expenditure vs. the log of each covariate. These plots are available in Appendix \ref{append-after-subset}. The results are similar to the unsubsetted data. All variables were skewed and thus suggested a log transformation. After log transformations, the response was reasonably close to normal and the covariates were symmetric. The scatterplots show a linear relationship between expenditures and each of the predictor variables.
+
+
 \subsection{Modeling and Diagnostics} \label{modeling}
 
 After performing variable transformations and data subsetting, our regression model was ready to be constructed. We used backward stepwise regression to build the model. AIC was used as our model selection criterion. This was partly due to the ubiquity of AIC and partly because it penalizes larger models. This penalization aligns itself with our preference for simpler models. That being said, we did investigate the inclusion of squared log transformations for all the covariates ($\log^2(\text{income})$, etc.). However, there was not much of an improvement that could be gained by including these terms. The AIC for the model without the quadratic log terms was $-611$ while the AIC for the model with the extra terms was $-622$, only slightly better. Furthermore, the model with the quadratic variables included contained some quadratic terms without their corresponding linear components. We simply could not justify such a model. The final model used log expenditure as the response with the following covariates: log wealth, log population, log percent intergovernmental funding, and log growth rate.
@@ -217,6 +221,7 @@ In this paper we developed a linear regression model in order to estimate future
 
 \section{Supplementary Plots} \label{appendix_plots}
 
+\subsection{Histograms and Scatter Plots Before Subsetting}
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{figure}[h!]
@@ -247,6 +252,39 @@ In this paper we developed a linear regression model in order to estimate future
 
 
 \newpage
+\subsection{Histograms and Scatter Plots After Subsetting} \label{append-after-subset}
+
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{figure}[h!]
+\includegraphics[width=\maxwidth]{figure/r_append_hist_subset-1} \caption[Histograms of all variables after subsetting with densities overlayed]{Histograms of all variables after subsetting with densities overlayed.}\label{fig:r append_hist_subset}
+\end{figure}
+
+
+\end{knitrout}
+
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{figure}
+\includegraphics[width=\maxwidth]{figure/r_append_log_hist_subset-1} \caption[Histograms of log transformed variables after subsetting with densities overlayed]{Histograms of log transformed variables after subsetting with densities overlayed.}\label{fig:r append_log_hist_subset}
+\end{figure}
+
+
+\end{knitrout}
+
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{figure}
+\includegraphics[width=\maxwidth]{figure/r_append_scatter_subset-1} \caption[Scatter plots of log expenditure vs]{Scatter plots of log expenditure vs. log covariate for each covariate except population (see main text) after subsetting.}\label{fig:r append_scatter_subset}
+\end{figure}
+
+
+\end{knitrout}
+
+
+
+
+\newpage
 \section{R Code}
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
@@ -256,7 +294,7 @@ In this paper we developed a linear regression model in order to estimate future
 \hlkwd{library}\hlstd{(corrplot)} \hlcom{# correlation plotting}
 \hlkwd{library}\hlstd{(ggplot2)} \hlcom{# plotting}
 \hlkwd{library}\hlstd{(MASS)} \hlcom{# stepwise regression}
-\hlkwd{library}\hlstd{(car)} \hlcom{# regression helper}
+\hlkwd{library}\hlstd{(car)}
 \hlkwd{library}\hlstd{(broom)} \hlcom{# tidy model output}
 \hlkwd{library}\hlstd{(here)} \hlcom{# file path helper}
 \hlkwd{library}\hlstd{(xtable)} \hlcom{# table formatting}
@@ -266,6 +304,8 @@ In this paper we developed a linear regression model in order to estimate future
 \hlcom{# =======================================================}
 \hlcom{# ----------------- EDA ------------------------}
 \hlcom{# =======================================================}
+
+\hlcom{# ---- prior to subsetting ----}
 
 \hlcom{# ------ numerical summaries --------}
 \hlstd{ny} \hlkwb{<-} \hlkwd{filter}\hlstd{(ny,} \hlopt{!}\hlkwd{is.na}\hlstd{(expenditure))} \hlcom{# remove 2 rows with missing values}
@@ -331,7 +371,8 @@ In this paper we developed a linear regression model in order to estimate future
 \hlstd{scatter_smooth_log} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{var}\hlstd{)\{}
   \hlstd{x_var} \hlkwb{<-} \hlkwd{enquo}\hlstd{(var)}
   \hlkwd{ggplot}\hlstd{(ny,} \hlkwd{aes}\hlstd{(}\hlkwc{x} \hlstd{=} \hlopt{!!} \hlstd{x_var,} \hlkwc{y} \hlstd{= log_expenditure))} \hlopt{+}
-    \hlkwd{geom_point}\hlstd{()}
+    \hlkwd{geom_point}\hlstd{()} \hlopt{+}
+    \hlkwd{geom_smooth}\hlstd{(}\hlkwc{method} \hlstd{= loess,} \hlkwc{formula} \hlstd{= y} \hlopt{~} \hlstd{x)} \hlcom{# see also method = lm}
 \hlstd{\}}
 
 \hlkwd{scatter_smooth_log}\hlstd{(log_wealth)}
@@ -352,6 +393,8 @@ In this paper we developed a linear regression model in order to estimate future
   \hlkwd{geom_line}\hlstd{(}\hlkwd{aes}\hlstd{(}\hlkwc{x} \hlstd{= lpop_smooth}\hlopt{$}\hlstd{x,} \hlkwc{y} \hlstd{= lpop_smooth}\hlopt{$}\hlstd{y),} \hlkwc{color} \hlstd{=} \hlstr{"#00BFC4"}\hlstd{)} \hlopt{+}
   \hlkwd{geom_segment}\hlstd{(}\hlkwd{aes}\hlstd{(}\hlkwc{x} \hlstd{=} \hlnum{8.3}\hlstd{,} \hlkwc{xend} \hlstd{=} \hlnum{8.3}\hlstd{,} \hlkwc{y} \hlstd{=} \hlnum{4}\hlstd{,} \hlkwc{yend} \hlstd{=} \hlnum{5.24}\hlstd{),} \hlkwc{color} \hlstd{=} \hlstr{"#00BA38"}\hlstd{)}
 
+
+\hlcom{# ------ data subsetting ------}
 \hlstd{ny_low} \hlkwb{<-} \hlstd{ny} \hlopt{%>%}
   \hlkwd{filter}\hlstd{(log_pop} \hlopt{<=} \hlnum{8.3}\hlstd{)}
 
@@ -369,6 +412,51 @@ In this paper we developed a linear regression model in order to estimate future
   \hlkwd{geom_point}\hlstd{()} \hlopt{+}
   \hlkwd{geom_line}\hlstd{(}\hlkwd{aes}\hlstd{(}\hlkwc{x} \hlstd{= lpop_high_smooth}\hlopt{$}\hlstd{x,}
                 \hlkwc{y} \hlstd{= lpop_high_smooth}\hlopt{$}\hlstd{y),} \hlkwc{color} \hlstd{=} \hlstr{"#00BFC4"}\hlstd{)}
+
+
+\hlcom{# ----- histograms and density plots -----------}
+
+\hlstd{hist_dens_high} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{var}\hlstd{)\{}
+  \hlstd{plot_var} \hlkwb{<-} \hlkwd{enquo}\hlstd{(var)}
+  \hlkwd{ggplot}\hlstd{(ny_high,} \hlkwd{aes}\hlstd{(}\hlkwc{x} \hlstd{=} \hlopt{!!} \hlstd{plot_var,} \hlkwc{y} \hlstd{= ..density..))} \hlopt{+}
+    \hlkwd{geom_histogram}\hlstd{(}\hlkwc{bins} \hlstd{=} \hlnum{50}\hlstd{)} \hlopt{+}
+    \hlkwd{geom_density}\hlstd{(}\hlkwc{color} \hlstd{=} \hlstr{"#00BFC4"}\hlstd{)} \hlopt{+}
+    \hlkwd{theme_classic}\hlstd{()}
+\hlstd{\}}
+
+\hlkwd{hist_dens_high}\hlstd{(expenditure)}
+\hlkwd{hist_dens_high}\hlstd{(wealth)}
+\hlkwd{hist_dens_high}\hlstd{(income)}
+\hlkwd{hist_dens_high}\hlstd{(pop)}
+\hlkwd{hist_dens_high}\hlstd{(perc_intergov)}
+\hlkwd{hist_dens_high}\hlstd{(grow_rate)}
+
+\hlcom{# ----- log transformed ----}
+\hlkwd{hist_dens_high}\hlstd{(log_expenditure)}
+\hlkwd{hist_dens_high}\hlstd{(log_wealth)}
+\hlkwd{hist_dens_high}\hlstd{(log_income)}
+\hlkwd{hist_dens_high}\hlstd{(log_pop)}
+\hlkwd{hist_dens_high}\hlstd{(log_perc_intergov)}
+\hlkwd{hist_dens_high}\hlstd{(log_grow_rate)}
+
+
+\hlcom{# ----- scatterplots: response vs. predictors -----}
+
+\hlstd{scatter_smooth_log_high} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{var}\hlstd{)\{}
+  \hlstd{x_var} \hlkwb{<-} \hlkwd{enquo}\hlstd{(var)}
+  \hlkwd{ggplot}\hlstd{(ny_high,} \hlkwd{aes}\hlstd{(}\hlkwc{x} \hlstd{=} \hlopt{!!} \hlstd{x_var,} \hlkwc{y} \hlstd{= log_expenditure))} \hlopt{+}
+    \hlkwd{geom_point}\hlstd{()} \hlopt{+}
+    \hlkwd{ylab}\hlstd{(}\hlstr{"Log Expenditure"}\hlstd{)}
+\hlstd{\}}
+
+\hlkwd{scatter_smooth_log_high}\hlstd{(log_wealth)} \hlopt{+} \hlkwd{xlab}\hlstd{(}\hlstr{"Log Wealth"}\hlstd{)}
+\hlkwd{scatter_smooth_log_high}\hlstd{(log_income)} \hlopt{+} \hlkwd{xlab}\hlstd{(}\hlstr{"Log Income"}\hlstd{)}
+\hlkwd{scatter_smooth_log_high}\hlstd{(log_perc_intergov)} \hlopt{+}
+  \hlkwd{xlab}\hlstd{(}\hlstr{"Log % Intergov Funding"}\hlstd{)}
+\hlkwd{scatter_smooth_log_high}\hlstd{(log_grow_rate)} \hlopt{+} \hlkwd{xlab}\hlstd{(}\hlstr{"Log Growth Rate"}\hlstd{)}
+
+
+
 
 \hlcom{# based on the above plots, it appears that the relationship between}
 \hlcom{# log expenditure and log population is approximately piecewise linear}
@@ -432,7 +520,7 @@ In this paper we developed a linear regression model in order to estimate future
 \hlcom{# --------------- diagnostic plots ----------------}
 
 \hlcom{# add fitted values, residuals, etc. to orignal data frame used to fit the model}
-\hlstd{ny_high} \hlkwb{<-} \hlkwd{augment}\hlstd{(final_fit)} \hlcom{# (broom package)}
+\hlstd{ny_high} \hlkwb{<-} \hlkwd{augment}\hlstd{(final_fit,} \hlkwc{data} \hlstd{= ny_high)} \hlcom{# (broom package)}
 
 \hlcom{# add studentized residuals to data frame}
 \hlstd{ny_high} \hlkwb{<-} \hlstd{ny_high} \hlopt{%>%}
@@ -441,7 +529,7 @@ In this paper we developed a linear regression model in order to estimate future
 \hlcom{# studentized residuals vs. fitted}
 \hlkwd{ggplot}\hlstd{(ny_high,} \hlkwd{aes}\hlstd{(}\hlkwc{x} \hlstd{= .fitted,} \hlkwc{y} \hlstd{= stud_res))} \hlopt{+}
   \hlkwd{geom_point}\hlstd{()} \hlopt{+}
-  \hlkwd{geom_hline}\hlstd{(}\hlkwc{yintercept} \hlstd{=} \hlnum{0}\hlstd{,} \hlkwc{color} \hlstd{=} \hlstr{"#00BA38"}\hlstd{)}
+  \hlkwd{geom_hline}\hlstd{(}\hlkwc{yintercept} \hlstd{=} \hlnum{0}\hlstd{)}
 
 \hlcom{# qq plot studentized residuals vs. t distribution}
 \hlstd{dist_pars} \hlkwb{=} \hlkwd{list}\hlstd{(}\hlkwc{df} \hlstd{= final_fit}\hlopt{$}\hlstd{df.residual)}
@@ -449,8 +537,7 @@ In this paper we developed a linear regression model in order to estimate future
   \hlkwd{mutate}\hlstd{(}\hlkwc{stud} \hlstd{=} \hlkwd{rstudent}\hlstd{(final_fit))} \hlopt{%>%}
   \hlkwd{ggplot}\hlstd{(}\hlkwd{aes}\hlstd{(}\hlkwc{sample} \hlstd{= stud))} \hlopt{+}
   \hlkwd{stat_qq}\hlstd{(}\hlkwc{distribution} \hlstd{= qt,} \hlkwc{dparams} \hlstd{= dist_pars[[}\hlstr{"df"}\hlstd{]])} \hlopt{+}
-  \hlkwd{stat_qq_line}\hlstd{(}\hlkwc{distribution} \hlstd{= qt,} \hlkwc{dparams} \hlstd{= dist_pars[[}\hlstr{"df"}\hlstd{]],}
-               \hlkwc{color} \hlstd{=} \hlstr{"#00BA38"}\hlstd{)}
+  \hlkwd{stat_qq_line}\hlstd{(}\hlkwc{distribution} \hlstd{= qt,} \hlkwc{dparams} \hlstd{= dist_pars[[}\hlstr{"df"}\hlstd{]])}
 
 \hlcom{# row with smallest studentized residual}
 \hlstd{ny_high} \hlopt{%>%}
