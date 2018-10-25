@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2018.9.5)  25 OCT 2018 14:44
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2018.9.5)  25 OCT 2018 14:57
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -453,112 +453,112 @@ File: figure/r_diag_plots-1.pdf Graphic file (type pdf)
 <use figure/r_diag_plots-1.pdf>
 Package pdftex.def Info: figure/r_diag_plots-1.pdf  used on input line 149.
 (pdftex.def)             Requested size: 469.03268pt x 248.84932pt.
- [4 <./figure/r_diag_plots-1.pdf>] [5] [6]
-Package color Info: Redefining color shadecolor on input line 231.
-<figure/r_append_hist-1.pdf, id=51, 505.89pt x 505.89pt>
+ [4 <./figure/r_diag_plots-1.pdf>] [5]
+Package color Info: Redefining color shadecolor on input line 230.
+<figure/r_append_hist-1.pdf, id=48, 505.89pt x 505.89pt>
 File: figure/r_append_hist-1.pdf Graphic file (type pdf)
 <use figure/r_append_hist-1.pdf>
-Package pdftex.def Info: figure/r_append_hist-1.pdf  used on input line 232.
+Package pdftex.def Info: figure/r_append_hist-1.pdf  used on input line 231.
 (pdftex.def)             Requested size: 469.03268pt x 469.04477pt.
-Package color Info: Redefining color shadecolor on input line 241.
-<figure/r_append_log_hist-1.pdf, id=52, 505.89pt x 505.89pt>
+Package color Info: Redefining color shadecolor on input line 240.
+<figure/r_append_log_hist-1.pdf, id=49, 505.89pt x 505.89pt>
 File: figure/r_append_log_hist-1.pdf Graphic file (type pdf)
 <use figure/r_append_log_hist-1.pdf>
-Package pdftex.def Info: figure/r_append_log_hist-1.pdf  used on input line 242
+Package pdftex.def Info: figure/r_append_log_hist-1.pdf  used on input line 241
 .
 (pdftex.def)             Requested size: 469.03268pt x 469.04477pt.
-Package color Info: Redefining color shadecolor on input line 250.
-<figure/r_append_scatter-1.pdf, id=53, 505.89pt x 505.89pt>
+Package color Info: Redefining color shadecolor on input line 249.
+<figure/r_append_scatter-1.pdf, id=50, 505.89pt x 505.89pt>
 File: figure/r_append_scatter-1.pdf Graphic file (type pdf)
 <use figure/r_append_scatter-1.pdf>
-Package pdftex.def Info: figure/r_append_scatter-1.pdf  used on input line 251.
+Package pdftex.def Info: figure/r_append_scatter-1.pdf  used on input line 250.
 
 (pdftex.def)             Requested size: 469.03268pt x 469.04477pt.
- [7 <./figure/r_append_hist-1.pdf>] [8 <./figure/r_append_log_hist-1.pdf>] [9 <
+ [6 <./figure/r_append_hist-1.pdf>] [7 <./figure/r_append_log_hist-1.pdf>] [8 <
 ./figure/r_append_scatter-1.pdf>]
-Package color Info: Redefining color shadecolor on input line 263.
-<figure/r_append_hist_subset-1.pdf, id=79, 505.89pt x 505.89pt>
+Package color Info: Redefining color shadecolor on input line 262.
+<figure/r_append_hist_subset-1.pdf, id=76, 505.89pt x 505.89pt>
 File: figure/r_append_hist_subset-1.pdf Graphic file (type pdf)
 <use figure/r_append_hist_subset-1.pdf>
 Package pdftex.def Info: figure/r_append_hist_subset-1.pdf  used on input line 
-264.
+263.
 (pdftex.def)             Requested size: 469.03268pt x 469.04477pt.
-Package color Info: Redefining color shadecolor on input line 272.
-<figure/r_append_log_hist_subset-1.pdf, id=80, 505.89pt x 505.89pt>
+Package color Info: Redefining color shadecolor on input line 271.
+<figure/r_append_log_hist_subset-1.pdf, id=77, 505.89pt x 505.89pt>
 File: figure/r_append_log_hist_subset-1.pdf Graphic file (type pdf)
 <use figure/r_append_log_hist_subset-1.pdf>
 Package pdftex.def Info: figure/r_append_log_hist_subset-1.pdf  used on input l
-ine 273.
+ine 272.
 (pdftex.def)             Requested size: 469.03268pt x 469.04477pt.
-Package color Info: Redefining color shadecolor on input line 281.
-<figure/r_append_scatter_subset-1.pdf, id=81, 505.89pt x 505.89pt>
+Package color Info: Redefining color shadecolor on input line 280.
+<figure/r_append_scatter_subset-1.pdf, id=78, 505.89pt x 505.89pt>
 File: figure/r_append_scatter_subset-1.pdf Graphic file (type pdf)
 <use figure/r_append_scatter_subset-1.pdf>
 Package pdftex.def Info: figure/r_append_scatter_subset-1.pdf  used on input li
-ne 282.
+ne 281.
 (pdftex.def)             Requested size: 469.03268pt x 469.04477pt.
- [10 <./figure/r_append_hist_subset-1.pdf>] [11 <./figure/r_append_log_hist_sub
-set-1.pdf>] [12 <./figure/r_append_scatter_subset-1.pdf>]
-Package color Info: Redefining color shadecolor on input line 294.
+ [9 <./figure/r_append_hist_subset-1.pdf>] [10 <./figure/r_append_log_hist_subs
+et-1.pdf>] [11 <./figure/r_append_scatter_subset-1.pdf>]
+Package color Info: Redefining color shadecolor on input line 293.
 LaTeX Font Info:    Font shape `OT1/cmtt/bx/n' in size <10> not available
-(Font)              Font shape `OT1/cmtt/m/n' tried instead on input line 296.
-LaTeX Font Info:    Try loading font information for OMS+cmtt on input line 334
+(Font)              Font shape `OT1/cmtt/m/n' tried instead on input line 295.
+LaTeX Font Info:    Try loading font information for OMS+cmtt on input line 333
 .
 
 (/Library/Frameworks/R.framework/Resources/share/texmf/tex/latex/omscmtt.fd
 File: omscmtt.fd 
 )
 LaTeX Font Info:    Font shape `OMS/cmtt/m/n' in size <10> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 334.
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 333.
 
-Overfull \vbox (0.34698pt too high) detected at line 647
+Overfull \vbox (0.34698pt too high) detected at line 646
+ []
+
+[12]
+Underfull \vbox (badness 10000) detected at line 646
+ []
+
+
+Underfull \vbox (badness 10000) detected at line 646
  []
 
 [13]
-Underfull \vbox (badness 10000) detected at line 647
+Underfull \vbox (badness 10000) detected at line 646
  []
 
 
-Underfull \vbox (badness 10000) detected at line 647
+Underfull \vbox (badness 10000) detected at line 646
  []
 
 [14]
-Underfull \vbox (badness 10000) detected at line 647
+Underfull \vbox (badness 10000) detected at line 646
  []
 
 
-Underfull \vbox (badness 10000) detected at line 647
+Underfull \vbox (badness 10000) detected at line 646
  []
 
 [15]
-Underfull \vbox (badness 10000) detected at line 647
+Underfull \vbox (badness 10000) detected at line 646
  []
 
 
-Underfull \vbox (badness 10000) detected at line 647
+Underfull \vbox (badness 10000) detected at line 646
  []
 
 [16]
-Underfull \vbox (badness 10000) detected at line 647
+Underfull \vbox (badness 10000) detected at line 646
  []
 
 
-Underfull \vbox (badness 10000) detected at line 647
+Underfull \vbox (badness 10000) detected at line 646
  []
 
-[17]
-Underfull \vbox (badness 10000) detected at line 647
- []
-
-
-Underfull \vbox (badness 10000) detected at line 647
- []
-
-[18] [19] (./ny_expend_report.aux) ) 
+[17] [18] (./ny_expend_report.aux) ) 
 Here is how much of TeX's memory you used:
  4378 strings out of 492642
  62650 string characters out of 6129385
- 210146 words of memory out of 5000000
+ 210144 words of memory out of 5000000
  8175 multiletter control sequences out of 15000+600000
  11910 words of font info for 48 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
@@ -579,10 +579,10 @@ ts/cm/cmsy10.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfont
 s/cm/cmtt10.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/cm-super
 /sfrm0900.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/cm-super/s
 frm1000.pfb>
-Output written on ny_expend_report.pdf (19 pages, 703707 bytes).
+Output written on ny_expend_report.pdf (18 pages, 702343 bytes).
 PDF statistics:
- 178 PDF objects out of 1000 (max. 8388607)
- 123 compressed objects within 2 object streams
+ 174 PDF objects out of 1000 (max. 8388607)
+ 120 compressed objects within 2 object streams
  0 named destinations out of 1000 (max. 500000)
  46 words of extra memory for PDF output out of 10000 (max. 10000000)
 
