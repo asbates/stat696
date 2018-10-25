@@ -78,7 +78,7 @@
 \maketitle
 
 \begin{abstract}
-In this paper we estimate future expenditures for two New York municipalities, Warwick and Monroe, based on various projected demographic and income-related factors. The desire for expenditure estimates were triggered by proposals for new housing construction. Warwick and Monroe wish to determine if they should increase funds to compensate for increased expenditures related to the housing projects. The estimates are obtained from a linear regression model chosen via a stepwise model selection procedure. The variables included in the model are wealth per person, population, percent intergovernmental funding, and growth rate. The estimated expenditures for Warwick are \$$261$ per person for $2005$ and \$$271$ per person for $2025$. The estimated expenditures for Monroe are \$$273$ per person for both $2005$ and $2025$. Based on the model, we can infer that with increases in population and wealth per person, we can expect increases in expenditures. Coversely, decreases in expenditures are associated with increases in intergovernmental funding and growth rate
+In this paper we estimate future expenditures for two New York municipalities, Warwick and Monroe, based on various projected demographic and income-related factors. The desire for expenditure estimates were triggered by proposals for new housing construction. Warwick and Monroe wish to determine if they should increase funds to compensate for increased expenditures related to the housing projects. The estimates are obtained from a linear regression model chosen via a stepwise model selection procedure. The variables included in the model are wealth per person, population, percent intergovernmental funding, and growth rate. The estimated expenditures for Warwick are \$$261$ per person for $2005$ and \$$271$ per person for $2025$. The estimated expenditures for Monroe are \$$273$ per person for both $2005$ and $2025$. Based on the model, we can infer that with increases in population and wealth per person, we can expect increases in expenditures. Conversely, decreases in expenditures are associated with increases in intergovernmental funding and growth rate
 \end{abstract}
 
 
@@ -110,7 +110,7 @@ Upon an initial visual examination of the data, it was evident that transformati
   \end{cases}
 \]
 
-To ensure the linearity assumption of our model was satisfied, we examined the relationship between log expenditure and the log of each of the covariates. All covariates had an approximately linear relationship with log expenditure except for log population. Figure \ref{fig:vs_log_pop} is a plot of log expenditure vs. log population with the addition of a smoothing line. It showswhat appears to be a quadratic relationship. However, notice that on either side of the vertical reference line (corresponding to a log population of $8.3$), the relationship is approximately linear. So we were essentially faced with two choices. We could try to include the square of log population as an additional predictor or we could subset the data and have a roughly linear relationship between log expenditure and log population.
+To ensure the linearity assumption of our model was satisfied, we examined the relationship between log expenditure and the log of each of the covariates. All covariates had an approximately linear relationship with log expenditure except for log population. Figure \ref{fig:vs_log_pop} is a plot of log expenditure vs. log population with the addition of a smoothing line. It shows what appears to be a quadratic relationship. However, notice that on either side of the vertical reference line (corresponding to a log population of $8.3$), the relationship is approximately linear. So we were essentially faced with two choices. We could try to include the square of log population as an additional predictor or we could subset the data and have a roughly linear relationship between log expenditure and log population.
 
 
 \begin{knitrout}
@@ -154,11 +154,17 @@ Diagnostic plots from the fitted model are shown in Figure \ref{fig:diag}. The l
 
 A summary of the regression model can be found in Table \ref{tbl:regress}. Note that all p-values (except the intercept) are significant at the $0.05$ level. The largest coefficient is for wealth per person which is $0.49$ on the log scale. We can interpret this as follows. For a \$$1,000$ increase in the wealth per person, the municipality can expect expenditures to increase by \$$30$ per person, provided the other covariates remain constant. This may seem odd in that one might expect wealthier people to require less money from their local government. But perhaps the increase in expenditures comes from providing additional community resources, infrastructure improvements, or increased funding for public schools. Increased expenditures on items such as these tend to be more common in wealthier areas compared to their less wealthy counterparts. The values of the remaining coefficients can be interpreted in a similar manner. But note that the signs of the coefficients for the other covariates are a bit more inline with what we might initially expect. A municipality with a larger population will likely need to spend more money than a smaller one. The more funding a local municipality receives from state and federal governments, the less they will need to spend themselves. A town that sees a quick influx of new residents will probably require increased expenditures eventually but given the typical pace of government entities, this increase will not be immediate.
 
-% one unit increase in wealth corresponds to $1,000 increase
-% one unit increase in wealth = log(1000) = 0.69 unit increase in log expend
-%  = 6.9 * 0.49 = 3.4 increase in log expend
-%  = exp(3.4) = 30 unit increase in expenditure
-%  = $30 increase in expenditure per person
+A summary of the regression model can be found in Table \ref{tbl:regress}. Since both the response and predictor variables were log transformed, the interpretation of the coefficients is different than the standard case when there are no transformations. Instead of interpreting a coefficient in terms of a unit increase in the respective dependent variable, we interpret it in terms of a percent increase. We illustrate this procedure for wealth here but the interpretation for the other variables is similar. Suppose wealth per person increases by $10\%$. Then, since the coefficient of wealth is $0.49$, we take $1 + 10\%$ and raise it to the power of $0.49$. This gives $1.047$. Subtract one from this and multiply by $100$ and we have $4.78$. This tells us that if all other variables remain constant, a $10\%$ increase in wealth per person corresponds to a roughly $5\%$ increase in expenditure per person. This may seem odd in that one might expect wealthier people to require less money from their local government. But perhaps the increase in expenditures comes from providing additional community resources, infrastructure improvements, or increased funding for public schools. Increased expenditures on items such as these tend to be more common in wealthier areas compared to their less wealthy counterparts. 
+
+% coefficient of wealth is 0.49
+% for 10% increase in wealth, expect expenditures to change as follows:
+% (1 + 0.10)^( 0.49 ) = (1.10)^( 0.49) = 1.04781
+% (1.04781 - 1) * 100 = 4.781%
+
+% so, all else being equal, for a 10% increse in wealth we should expect
+% a 5% increase in expenditures
+
+% see https://stats.idre.ucla.edu/other/mult-pkg/faq/general/faqhow-do-i-interpret-a-regression-model-when-some-variables-are-log-transformed/
 
 
 
@@ -210,7 +216,7 @@ Warwick-2005 & 20442 & 85000 & 25.0 & 35.0 & 261 & ( 139 , 489 ) \\
 
 \section{Conclusion} \label{conclusion}
 
-In this paper we developed a linear regression model in order to estimate future expenditures for two New York municipalities, Warwick and Monroe. The model was constructed via a stepwise regression procedure with the final model containing the following covariates: population, wealth per person, percent intergovernmental funding, and growth rate. The model suggests that a rise in either population or growth rate will contribute to a rise in expenditures. On the other hand, a rise in intergovernmental funding or growth rate will lead to a decrease in expenditures. The predicted expenditures for Warwick are \$$261$ per person in $2005$ and \$$271$ per person for $2025$. The estimated expenditures for Monroe are \$$273$ per person for both $2005$ and $2025$.
+In this paper we developed a linear regression model in order to estimate future expenditures for two New York municipalities, Warwick and Monroe. The model was constructed via a stepwise regression procedure with the final model containing the following covariates: population, wealth per person, percent intergovernmental funding, and growth rate. The model suggests that a rise in either population or growth rate is associated with a rise in expenditures. On the other hand, a rise in intergovernmental funding or growth rate is connected to a decrease in expenditures. The predicted expenditures for Warwick are \$$261$ per person in $2005$ and \$$271$ per person for $2025$. The estimated expenditures for Monroe are \$$273$ per person for both $2005$ and $2025$.
 
 
 
