@@ -1,0 +1,95 @@
+---
+title: "Stat 696 Report Template"
+author: "Your Name"
+date: "The date"
+# header-includes:
+#   - \usepackage[title]{appendix}
+output: 
+  bookdown::pdf_document2:
+    toc: false
+geometry: margin=1in
+fontsize: 11pt
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+# Executive Summary {-}
+
+this is my summary
+
+
+# Introduction
+
+
+Note: you need to install the R package `bookdown` for this to work.
+
+If you want the Appendices to be labeled "Appendix A", then you can remove the comments in the header (just the "#", not any spaces) and the end of the document.
+
+  
+
+
+
+
+# Analysis
+
+blah blah blah blah blah blah blah blah blah
+
+## Exploratory Analysis
+
+The data is in Table \@ref(tab:cars-data).
+
+```{r cars-data}
+knitr::kable(head(mtcars),
+             caption = "The data.")
+```
+
+
+blah blah blah blah blah blah blah blah blah
+
+Figure \@ref(fig:cars-plot) is a box plot
+
+```{r cars-plot, fig.cap = "A box plot."}
+boxplot(mpg ~ cyl, data = mtcars)
+```
+
+
+
+## Modeling and Diagnostics
+
+blah blah blah blah blah blah blah blah blah
+
+
+# Conclusion
+
+
+
+\newpage
+
+# Appendix {-}
+
+# (APPENDIX) Appendix A {-}
+
+
+# Supplementary Figures and Model Stuff
+
+## Figures
+
+## Model Stuff
+
+
+# R Code
+
+
+<!--
+\begin{appendices}
+
+\section{Supplementary Figures}
+
+\section{Model Stuff}
+
+\end{appendices}
+-->
+
+
