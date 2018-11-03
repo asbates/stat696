@@ -9,8 +9,13 @@ geometry: margin=1in
 fontsize: 11pt
 ---
 
-```{r setup, include=FALSE}
+```{r setup, include=FALSE, message = FALSE}
 knitr::opts_chunk$set(echo = FALSE)
+library(here)
+library(readr)
+library(dplyr)
+
+prostate <- read_tsv(here("data", "prostate.txt"))
 ```
 
 # Executive Summary {-}
@@ -20,11 +25,34 @@ this is my summary
 
 # Introduction
 
-In this paper, we investigate the relationship between the results of various prostae related exams along with individual factors and whether tumor penetration of the prostatic capsule has occured.
+In this paper, we investigate the relationship between the results of various prostae related exams and whether tumor penetration of the prostatic capsule has occured. We examine a subset of data collected by the Ohio State University Comprehensive Cancer Center as part of a study to determine the potential of standard exam results to predict whether a tumor will penetrate the prostatic capsule. Out of $380$ patients $153$ have experienced capsule penetration and $227$ have not. The data set contains six explanatory variables: the patients age and race (Black or White), results of a digital rectal exam, whether capsular involvement was detected, Prostatic Specif Antigen value, and total Gleason score.
 
-The data at hand is a subset of data collected by the Ohio State University Comprehensive Cancer Center as part of a study to determine the potential of standard exam results in predicting whether a tumor has penetrated the prostatic capsule.
-  
+<!-- Table: (\#tab:var-description) Description of variables in the data set. -->
 
+<!-- | Variable Name | Description | Details | -->
+<!-- |:------|:-----|:-----| -->
+<!-- | capsule | Did the tumor penetrate the prostatic capsule | Yes, no | -->
+<!-- | age | Patient age| In years | -->
+<!-- | race | Patient race | Black or White | -->
+<!-- | dre | Results of digital rectal exam | No nodule, unilobar nodule left, unilobar nodule left right, bilobar nodule | -->
+<!-- | caps | Detection of capsular involvement | Yes, no | -->
+<!-- | psa | Prostatic Specific Antigen value | mg/ml | -->
+<!-- | gleason | Total Gleason score | 0-10 | -->
+
+
+Table \@ref(tab:var-desc) contains a detailed description of the variables in this data set.
+
+```{r var-desc, results = "asis"}
+description <- data.frame(
+  Name = c("capsule", "age", "race", "dre", "caps", "psa", "gleason"),
+  Description = c("Tumor penetration of prostatic capsule?", "Patient age", "Patient race", "Results of digital rectal exam", "Detection of capsular involvement?", "Prostatic Specific Antigen value", "Total Gleason score"),
+  Details = c("Yes, no", "Years", "Black, White", "No nodule, unilobar left, unilobar right, bilobar", "Yes, no", "mg/ml", "0-10")
+)
+
+knitr::kable(description,
+             caption = "Description of variables in the data set.")
+
+```
 
 
 
@@ -33,22 +61,6 @@ The data at hand is a subset of data collected by the Ohio State University Comp
 blah blah blah blah blah blah blah blah blah
 
 ## Exploratory Analysis
-
-The data is in Table \@ref(tab:cars-data).
-
-```{r cars-data}
-knitr::kable(head(mtcars),
-             caption = "The data.")
-```
-
-
-blah blah blah blah blah blah blah blah blah
-
-Figure \@ref(fig:cars-plot) is a box plot
-
-```{r cars-plot, fig.cap = "A box plot."}
-boxplot(mpg ~ cyl, data = mtcars)
-```
 
 
 
