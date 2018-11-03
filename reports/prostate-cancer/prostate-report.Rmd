@@ -1,9 +1,7 @@
 ---
-title: "Stat 696 Report Template"
-author: "Your Name"
-date: "The date"
-# header-includes:
-#   - \usepackage[title]{appendix}
+title: "Something About Prostate Cancer"
+author: "Andrew Bates"
+date: "November 15, 2018"
 output: 
   bookdown::pdf_document2:
     toc: false
@@ -22,11 +20,9 @@ this is my summary
 
 # Introduction
 
+In this paper, we investigate the relationship between the results of various prostae related exams along with individual factors and whether tumor penetration of the prostatic capsule has occured.
 
-Note: you need to install the R package `bookdown` for this to work.
-
-If you want the Appendices to be labeled "Appendix A", then you can remove the comments in the header (just the "#", not any spaces) and the end of the document.
-
+The data at hand is a subset of data collected by the Ohio State University Comprehensive Cancer Center as part of a study to determine the potential of standard exam results in predicting whether a tumor has penetrated the prostatic capsule.
   
 
 
@@ -82,14 +78,5 @@ blah blah blah blah blah blah blah blah blah
 # R Code
 
 
-<!--
-\begin{appendices}
-
-\section{Supplementary Figures}
-
-\section{Model Stuff}
-
-\end{appendices}
--->
 
 
