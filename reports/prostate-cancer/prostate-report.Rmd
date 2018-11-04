@@ -24,11 +24,29 @@ prostate <- read_tsv(here("data", "prostate.txt"))
 
 
 
-
-
 # Introduction
 
-In this paper, we investigate the relationship between the results of various prostae related exams and whether tumor penetration of the prostatic capsule has occured. We examine a subset of data collected by the Ohio State University Comprehensive Cancer Center as part of a study to determine the potential of standard exam results to predict whether a tumor will penetrate the prostatic capsule. Out of $380$ patients $153$ have experienced capsule penetration and $227$ have not. The data set contains six explanatory variables: the patients age and race (Black or White), results of a digital rectal exam, whether capsular involvement was detected, Prostatic Specif Antigen value, and total Gleason score.
+In this paper, we investigate the relationship between the results of various prostae related exams and whether tumor penetration of the prostatic capsule has occured. 
+The objective of this analysis is to determine if there are any factors that have a particularly influential relationship with prostatic capsule penetration.
+Additionally, we wish to develop a model to predict capsule penetration so it can be used as a diagnostic tool for future patients.
+
+# Methods
+
+In this analysis we examine a subset of data collected by the Ohio State University Comprehensive Cancer Center as part of a study to determine the potential of standard exam results to predict whether a tumor will penetrate the prostatic capsule.
+Out of $380$ patients, $153$ have experienced capsule penetration and $227$ have not. 
+The data set contains six explanatory variables: the patients age and race, results of a digital rectal exam, whether capsular involvement was detected, Prostatic Specific Antigen (PSA) value, and total Gleason score.
+For a detailed description of each variable see Table \@ref(tab:var-desc). Observe that race is recorded as only Black or White.
+This may be the reason why three observations contain missing values for race. Perhaps three of the patients were neither Black nor White.
+However, without access to details of the study and the population considered, we can only speculate. 
+Furthermore, the other variables in these observations do not point to any particular reason as to why race is not recorded.
+Because of this, we decided to omit these three observations. 
+The data set used for analysis then, consists of 377 observations. 
+Of these, 151 patients have experienced tumor penetration of the prostatic capsule, and 226 have not.
+
+Go on to talk about modeling. We used a logistic regression model. The model was chosen by backwards stepwise selection with AIC (spell this out) as model selection criteria. The full fit was considering all 2 way interactions. after stepwise regression procedure, variables that were not significant were removed from the model, as well as any interactions containing these variables. diagnostics were run, log odds ratios were calculated, and predictions were made. predictive power was examined through a confusion matrix. What's more important here, false negatives or false positives?
+
+The response varible, tumor penetration status of prostatic capsule, is especially well balanced with 40% of the observations having capsular penetration and 60% not having penetration. As such, procedures designed to assist with class imbalances, such as downsampling, were not considered.
+
 
 <!-- Table: (\#tab:var-description) Description of variables in the data set. -->
 
@@ -42,12 +60,9 @@ In this paper, we investigate the relationship between the results of various pr
 <!-- | psa | Prostatic Specific Antigen value | mg/ml | -->
 <!-- | gleason | Total Gleason score | 0-10 | -->
 
-
-Table \@ref(tab:var-desc) contains a detailed description of the variables in this data set.
-
 ```{r var-desc, results = "asis"}
 description <- data.frame(
-  Name = c("capsule", "age", "race", "dre", "caps", "psa", "gleason"),
+  Name = c("penetrate", "age", "race", "dre", "caps", "psa", "gleason"),
   Description = c("Tumor penetration of prostatic capsule?", "Patient age", "Patient race", "Results of digital rectal exam", "Detection of capsular involvement?", "Prostatic Specific Antigen value", "Total Gleason score"),
   Details = c("Yes, no", "Years", "Black, White", "No nodule, unilobar left, unilobar right, bilobar", "Yes, no", "mg/ml", "0-10")
 )
