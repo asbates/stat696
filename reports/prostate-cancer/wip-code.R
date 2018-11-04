@@ -77,11 +77,24 @@ prostate %>%
 
 # contingency tables
 
-# age has 31 levels, probably treat as continuous
-table(prostate$penetrate, prostate$age) 
-table(prostate$penetrate, prostate$dre)
-table(prostate$penetrate, prostate$caps)
-table(prostate$penetrate, prostate$gleason)
+race_tab <- table(prostate$penetrate, prostate$race)
+dre_tab <- table(prostate$penetrate, prostate$dre)
+caps_tab <- table(prostate$penetrate, prostate$caps) # deparse.level = 2
+gleason_tab <- table(prostate$penetrate, prostate$gleason)
+
+
+race_tab
+dre_tab
+caps_tab
+gleason_tab
+
+# proportion tables marginalized by covariate
+prop.table(race_tab, margin = 2) * 100
+prop.table(dre_tab, margin = 2) * 100
+prop.table(caps_tab, margin = 2) * 100
+prop.table(gleason_tab, margin = 2) * 100
+
+
 
 # -------------- plots ----------------
 
