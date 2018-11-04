@@ -3,6 +3,7 @@ library(here)
 library(readr)
 library(dplyr)
 library(forcats)
+library(ggplot2)
 
 prostate <- read_tsv(here("data", "prostate.txt"))
 
@@ -11,7 +12,7 @@ prostate <- read_tsv(here("data", "prostate.txt"))
 # ======================================
 
 
-# ------ numerical summaries -----------
+# --------- numerical summaries ----------
 
 dim(prostate)
 names(prostate)
@@ -74,3 +75,23 @@ prostate %>%
   summarise(n = n())
 
 
+# contingency tables
+
+# age has 31 levels, probably treat as continuous
+table(prostate$penetrate, prostate$age) 
+table(prostate$penetrate, prostate$dre)
+table(prostate$penetrate, prostate$caps)
+table(prostate$penetrate, prostate$gleason)
+
+# -------------- plots ----------------
+
+# penetrate vs. age bar plot
+ggplot(prostate, aes(x = age, fill = penetrate)) +
+  geom_bar(position = "dodge") +
+  labs(fill = "Capsule Penetration")
+
+ggplot(prostate, aes(x = penetrate, y = psa)) +
+  geom_boxplot()
+
+ggplot(prostate, aes(x = penetrate, y = age)) +
+  geom_boxplot()
