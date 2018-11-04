@@ -38,14 +38,22 @@ The data set contains six explanatory variables: the patients age and race, resu
 For a detailed description of each variable see Table \@ref(tab:var-desc). Observe that race is recorded as only Black or White.
 This may be the reason why three observations contain missing values for race. Perhaps three of the patients were neither Black nor White.
 However, without access to details of the study and the population considered, we can only speculate. 
-Furthermore, the other variables in these observations do not point to any particular reason as to why race is not recorded.
+Furthermore, the other variables in these observations do not point to any particular reason as to why race is not recorded[^1].
 Because of this, we decided to omit these three observations. 
 The data set used for analysis then, consists of 377 observations. 
 Of these, 151 patients have experienced tumor penetration of the prostatic capsule, and 226 have not.
 
-Go on to talk about modeling. We used a logistic regression model. The model was chosen by backwards stepwise selection with AIC (spell this out) as model selection criteria. The full fit was considering all 2 way interactions. after stepwise regression procedure, variables that were not significant were removed from the model, as well as any interactions containing these variables. diagnostics were run, log odds ratios were calculated, and predictions were made. predictive power was examined through a confusion matrix. What's more important here, false negatives or false positives?
+To investigate the relationship between the covariates and tumor penetration status, we use a logistic regression model. 
+The response is especially well balanced with 40% of the observations having capsular penetration and 60% not having penetration. 
+As such, procedures designed to assist with class imbalances, such as downsampling, are not considered in this analysis.
+In addition to the explanatory variables included in the data set, all two-way interaction terms are examined. 
+Using this as a starting point, the model is chosen via a backwards elimination procedure using Akaike Information Criteria (AIC) as the model selection criterion.
+(variable name) is not significant at the 0.05 level so it is subsequently removed, along with its corresponding interaction terms.
 
-The response varible, tumor penetration status of prostatic capsule, is especially well balanced with 40% of the observations having capsular penetration and 60% not having penetration. As such, procedures designed to assist with class imbalances, such as downsampling, were not considered.
+Diagnostics take the form of examining explanatory variable patterns. 
+also do blah test.
+
+log odds ratios were calculated, and predictions were made. predictive power was examined through a confusion matrix. What's more important here, false negatives or false positives?
 
 
 <!-- Table: (\#tab:var-description) Description of variables in the data set. -->
@@ -73,12 +81,13 @@ knitr::kable(description,
 ```
 
 
+[^1]: As in, some have experienced capusle penetration, the ages and PSA scores vary significantly across the observations, etc.
 
 # Analysis
 
-blah blah blah blah blah blah blah blah blah
-
 ## Exploratory Analysis
+
+We begin by inspecting contingency tables.
 
 
 
@@ -98,11 +107,17 @@ blah blah blah blah blah blah blah blah blah
 # (APPENDIX) Appendix A {-}
 
 
-# Supplementary Figures and Model Stuff
+# Exploratory Analysis
+
+## Tables
 
 ## Figures
 
-## Model Stuff
+# Model Building and Diagnostics
+
+## Intermediate Models
+
+## Diagnostics
 
 
 # R Code
