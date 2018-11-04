@@ -2,11 +2,15 @@
 title: "Something About Prostate Cancer"
 author: "Andrew Bates"
 date: "November 15, 2018"
+header-includes:
+  - \renewcommand{\abstractname}{Executive Summary}
 output: 
   bookdown::pdf_document2:
     toc: false
+documentclass: article
 geometry: margin=1in
 fontsize: 11pt
+abstract: "This is the executive summary. Unfortunately, it has to be typed in the .yaml header. The only other thing i can think of is to have a separate file for the abstract. I'm not sure I want to do this. But actually, this may not be so bad. Each section could have a different file. this might make things a bit easier to edit. because then i would only have to look at say, the conclusion file instead of having to scroll all the way down, passing it, srolling up, passing it, etc."
 ---
 
 ```{r setup, include=FALSE, message = FALSE}
@@ -18,9 +22,8 @@ library(dplyr)
 prostate <- read_tsv(here("data", "prostate.txt"))
 ```
 
-# Executive Summary {-}
 
-this is my summary
+
 
 
 # Introduction
