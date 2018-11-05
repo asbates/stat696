@@ -77,10 +77,14 @@ prostate %>%
 
 # contingency tables
 
-race_tab <- table(prostate$penetrate, prostate$race)
-dre_tab <- table(prostate$penetrate, prostate$dre)
-caps_tab <- table(prostate$penetrate, prostate$caps) # deparse.level = 2
-gleason_tab <- table(prostate$penetrate, prostate$gleason)
+race_tab <- table(`Capsule Penetration` = prostate$penetrate,
+                  Race = prostate$race)
+dre_tab <- table(`Capsule Penetration` = prostate$penetrate,
+                 `DRE Result` = prostate$dre)
+caps_tab <- table(`Capsule Penetration` = prostate$penetrate,
+                  `Capsular Involvement` = prostate$caps) # deparse.level = 2
+gleason_tab <- table(`Capsule Penetration` = prostate$penetrate,
+                     `Gleason Score` = prostate$gleason)
 
 
 race_tab
