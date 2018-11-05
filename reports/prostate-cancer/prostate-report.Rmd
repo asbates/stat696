@@ -15,11 +15,45 @@ abstract: "This is the executive summary. Unfortunately, it has to be typed in t
 
 ```{r setup, include=FALSE, message = FALSE}
 knitr::opts_chunk$set(echo = FALSE)
-library(here)
-library(readr)
-library(dplyr)
+library(here)  # handles directories
+library(readr)  # read in data
+library(dplyr)  # manipulate data
+library(forcats) # handle factors
+library(ggplot2)  # plotting
 
 prostate <- read_tsv(here("data", "prostate.txt"))
+# remove id, rename
+prostate <- prostate %>%
+  select(-id)
+
+prostate <- prostate %>%
+  rename(
+    penetrate = capsule,
+    dre = dpros,
+    caps = dcaps
+  )
+
+# re-encode variables
+prostate <- prostate %>%
+  mutate(
+    penetrate = as.factor(penetrate),
+    race = as.factor(race),
+    dre = as.factor(dre),
+    caps = as.factor(caps)
+  ) %>%
+  mutate(
+    penetrate = fct_recode(penetrate, yes = "1", no = "0"),
+    race = fct_recode(race, white = "1", black = "2"),
+    caps = fct_recode(caps, no = "1", yes = "2"),
+    dre = fct_recode(dre,
+                     "no nodule" = "1",
+                     "unilobar left" = "2",
+                     "unilobar right" = "3",
+                     "bilobar" = "4")
+  )
+# remove missing observations
+prostate <- prostate %>%
+  filter(!is.na(race))
 ```
 
 
@@ -110,6 +144,26 @@ blah blah blah blah blah blah blah blah blah
 # Exploratory Analysis
 
 ## Tables
+
+```{r app-race-tab, echo = FALSE}
+race_tab <- table(prostate$penetrate,
+                  Race = prostate$race)
+rownames(race_tab) <- c("No Penetration", "Penetration")
+kableExtra::kable(race_tab) %>%
+  kableExtra::add_header_above(c(" " = 1, "Race" = 2))
+
+```
+
+```{r app-dre-tab, echo = FALSE}
+dre_tab <- table(prostate$penetrate,
+                 `DRE Result` = prostate$dre)
+rownames(dre_tab) <- c("No Penetration", "Penetration")
+kableExtra::kable(dre_tab) #%>%
+  #kableExtra::add_header_above(c(" " = 1, "DRE Result" = 2))
+
+```
+
+
 
 ## Figures
 

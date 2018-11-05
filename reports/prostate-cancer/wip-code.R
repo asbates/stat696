@@ -1,9 +1,14 @@
 
-library(here)
-library(readr)
-library(dplyr)
-library(forcats)
-library(ggplot2)
+library(here)  # handles directories
+library(readr)  # read in data
+library(dplyr)  # manipulate data
+library(forcats) # handle factors
+library(ggplot2)  # plotting
+library(knitr)  # for outputting data.frames and tables
+library(kableExtra) # formatting for outputted data.frames and tables
+
+# note: knitr and KableExtra are used to format the .pdf output
+# as such, they are not necessary to conduct the analysis
 
 prostate <- read_tsv(here("data", "prostate.txt"))
 
@@ -77,7 +82,7 @@ prostate %>%
 
 # contingency tables
 
-race_tab <- table(`Capsule Penetration` = prostate$penetrate,
+race_tab <- table(prostate$penetrate,
                   Race = prostate$race)
 dre_tab <- table(`Capsule Penetration` = prostate$penetrate,
                  `DRE Result` = prostate$dre)
@@ -98,6 +103,22 @@ prop.table(dre_tab, margin = 2) * 100
 prop.table(caps_tab, margin = 2) * 100
 prop.table(gleason_tab, margin = 2) * 100
 
+# function used to output clean table
+#  dplyr, knitr, and KableExtra are needed for this to work
+format_tab <- function(tab){
+  m <- nrow(tab)
+  n <- ncol(tab)
+  tab %>%
+    prop.table(., margin = 2) %>%
+    round(., 2) %>%
+    kable() %>%
+    column_spec(1, bold = TRUE, border_right = TRUE) %>%
+    column_spec(n, border_right = TRUE) %>%
+    row_spec(1, bold = TRUE, hline_after = TRUE) %>%
+    row_spec(m, hline_after = TRUE)
+}
+
+format_tab(race_tab)
 
 
 # -------------- plots ----------------
