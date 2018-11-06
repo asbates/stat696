@@ -21,6 +21,9 @@ library(dplyr)  # manipulate data
 library(forcats) # handle factors
 library(ggplot2)  # plotting
 
+library(knitr)
+library(kableExtra)
+
 prostate <- read_tsv(here("data", "prostate.txt"))
 # remove id, rename
 prostate <- prostate %>%
@@ -146,22 +149,42 @@ blah blah blah blah blah blah blah blah blah
 ## Tables
 
 ```{r app-race-tab, echo = FALSE}
-race_tab <- table(prostate$penetrate,
-                  Race = prostate$race)
+race_tab <- table(prostate$penetrate, prostate$race) %>% 
+  prop.table(., margin = 2) %>% 
+  round(., 2)
 rownames(race_tab) <- c("No Penetration", "Penetration")
-kableExtra::kable(race_tab) %>%
-  kableExtra::add_header_above(c(" " = 1, "Race" = 2))
+race_tab %>% 
+  kable() %>%
+  add_header_above(c(" " = 1, "Race" = 2))
 
 ```
 
 ```{r app-dre-tab, echo = FALSE}
-dre_tab <- table(prostate$penetrate,
-                 `DRE Result` = prostate$dre)
+dre_tab <- table(prostate$penetrate, prostate$dre) %>%
+  prop.table(., margin = 2) %>% 
+  round(., 2)
 rownames(dre_tab) <- c("No Penetration", "Penetration")
-kableExtra::kable(dre_tab) #%>%
-  #kableExtra::add_header_above(c(" " = 1, "DRE Result" = 2))
+dre_tab %>%
+  kable() %>% 
+  add_header_above(c(" " = 1, "DRE Result" = 4))
 
 ```
+
+
+```{r app-caps-tab, echo = FALSE}
+caps_tab <- table(prostate$penetrate, prostate$caps) %>%
+  prop.table(., margin = 2) %>% 
+  round(., 2)
+rownames(caps_tab) <- c("No Penetration", "Tumor Penetration")
+caps_tab %>%
+  kable() %>% 
+  #column_spec(1, bold = TRUE, border_left = TRUE) %>% 
+  #column_spec(3, border_right = TRUE) %>% 
+  add_header_above(c(" ", "Capsular Involvement" = 2), bold = TRUE) %>% 
+  column_spec(1, bold = TRUE)
+
+```
+
 
 
 
