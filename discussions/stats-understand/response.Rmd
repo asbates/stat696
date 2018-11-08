@@ -5,26 +5,79 @@ date: "11/7/2018"
 output: pdf_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
 
-## R Markdown
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+> Around the last presidential election, a number of news outlets made statements such as "Don't trust the polls" (The Guardian) and "Can Policy Polling Be Trusted?" (Huffington Post).  
+> Do you agree or disagree with this statement?  
+> Considering the idea of how we as statisticians communicate statistical results to the media, provide a response of at least 500 words supporting your opinion.
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
 
-```{r cars}
-summary(cars)
-```
+I don't like statements such as these.
+What specifically irks me is the use of the work 'trust.'
+To say that we can't _trust_ polls implies that there is some nefarious activity behind them.
+It implies that pollsters are actively trying to decieve us.
+It's not too hard to believe that something like this might happen, especially for polls that tend to be biased towards a particular party.
+However, I can't imagine that intentional deception happens very often.
+Regardless, the implication is still there.
 
-## Including Plots
+I understand why the news media make claims such as these. 
+They need to sell more papers and get more website visits and they do that by creating attention-grabbing headlines. 
+Along with these strongly worded headlines, the articles they write also contain very strong opinions.
+This is especially true in political articles.
+In my opinion, this is because we as a society _expect_ people to hold extremely strong beliefs.
+It often seems to me that it's more important to have a "stick to your guns" attitude than actually believing in a particular policy or party.
+Perhaps this is because uncertainty is often viewed as a weakness.
+For example, when going to a job interview we are told we must be confident.
+A lack of confidence can make one seem weak and someone who is weak is not a good candidate.
 
-You can also embed plots, for example:
 
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
+Headlines such as these also have implications for statisticians.
+They suggest that we can't trust statistics and therefore can't trust statisticians.
+This is not limited to political polls though.
+The most obvious example is weather forecasting.
+It's become part of our culture to not trust weather forecasts.
+We play a sort of game where the weather reporter says there is a 60% chance of rain, we say "I better take my umbrella", it doesn't rain, and we say "I knew it wouldn't rain."
+Then we remember the times when the forecast was off from what actually happened, think about how terrible the weather reporter is at their job, and repeat the process over again.
+This lack of trust seems to be rooted in lack of understanding of probability.
+Even if the weather reporter says there is only a 10% chance of rain, some people take that to mean that it will rain.
+And when the chance is higher, say 90%, they assume rain is inevitable.
+Statisticians may be surprised if it doesn't but they probably won't blame the weather reporter.
+As a society, we have poor understanding of uncertainty and more generally numbers.
+This lack of understanding leads to a lack of trust in anything related to numbers.
+We are typically statistics averse and when a headline comes along telling us to not trust statistics, this only feeds into that averseness.
+It confirms what already believed: anything with statistics is wrong and anyone reporting them is trying to deceive us.
+Again, I think the root problem is lack of knowledge and understanding.
+As such, if we want the media to more accurately report statistics related stories, we need to increase their understanding.
+If we want the layperson to be able to understand those reports, we need to increase their knowledge as well.
+So what do we do? 
+Do we make statistics a requirement for high school graduation? 
+Should statistics courses be mandatory for those studying journalism? 
+These actions would surely help but they are a bit lofty.
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+I think we start by improving training for statisticians.
+We can sit back and watch a gross misunderstanding or misapplication of statistics and then complain about it.
+Or we could do something about it.
+It's easy to criticize people who don't have as much statistics training and take the attitude that "they did it wrong, not me."
+But if we really care about statistics being used appropriately[^1], we need to start by ensuring the people we call statisticians are trained appropriately.
+How many of them know about data in the abstract, but have no idea what to do when they have data in front of them?
+Do they know what to do if their data doesn't fit into the framework of linear regression or ANOVA?
+What if they need to build a model for prediction?
+We can't expect non-statistician types to correctly apply statistical methods if we don't train our statistician types to correctly apply them.
+This is even more true if they only learn a few basic methods.
+The current statisticians-in-training will be the ones teaching others about statistics in the future and we need to make sure they are prepared to do so. 
+I realize I may have gone a bit astray from "Don't trust the polls."
+But I think that issues with statistics in the media is only part of a larger issue.
+We need to address the root of the problem and not just the particular problem itself.
+In the long run, playing Whack-a-mole won't get us anywhere.
+
+
+[^1]: We should care. Misuse and misunderstanding of statistics ultimately gets linked back to statisticians.
+
+
+
+
+
+
+
+
+
