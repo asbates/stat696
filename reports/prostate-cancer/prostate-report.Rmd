@@ -71,7 +71,7 @@ Additionally, we wish to develop a model to predict capsule penetration so it ca
 
 In this analysis we examine a subset of data collected by the Ohio State University Comprehensive Cancer Center as part of a study to determine the potential of standard exam results to predict whether a tumor will penetrate the prostatic capsule.
 Out of $380$ patients, $153$ have experienced capsule penetration and $227$ have not. 
-The data set contains six explanatory variables: the patients age and race, results of a digital rectal exam, whether capsular involvement was detected, Prostatic Specific Antigen (PSA) value, and total Gleason score.
+The data set contains six explanatory variables: the patients age and race, results of a digital rectal exam (DRE), whether capsular involvement was detected, Prostatic Specific Antigen (PSA) value, and total Gleason score.
 For a detailed description of each variable see Table \@ref(tab:var-desc). Observe that race is recorded as only Black or White.
 This may be the reason why three observations contain missing values for race. Perhaps three of the patients were neither Black nor White.
 However, without access to details of the study and the population considered, we can only speculate. 
@@ -125,8 +125,23 @@ kable(description,
 
 ## Exploratory Analysis
 
-We begin by inspecting tables. Rather than examing contingency tables, we find it more informative to view the marginal distribution
+We begin by inspecting tables of the categorical variables against whether tumor penetration has occured. Rather than examing contingency tables of counts, we find it more informative to view tables marginalized by the covariates. This provides more context by allowing us to see, for example, the proportion of Black patients who had tumor penetration and the proportion who did not. Table \@ref(tab:dre-tab) displays the proportion of patients who did and did not experience tumor penetration of the prostatic capsule grouped by the results of a digital rectal exam. It shows that the majority of patients who do not have a nodule have not experience tumor penetration. For those patients who did have a nodule, the rate of tumor penetration is reversed. The most pronounced difference is for patients who had a bilobar nodule with 65% experiencing tumor penetration. The relationship we see here tells us that DRE results will likely be a valuable predictor.
 
+
+```{r dre-tab}
+dre_tab <- table(prostate$penetrate, prostate$dre) %>%
+  prop.table(., margin = 2) * 100 
+rownames(dre_tab) <- c("No Penetration", "Penetration")
+dre_tab %>%
+  signif(., digits = 4) %>%
+  formatC(., digits = 1, format = "f") %>% 
+  kable(caption = "Results of digital rectal exam vs. whether tumor pentration of prostatic capsule occured, marginalized by the digital rectal exam results.") %>% 
+  add_header_above(c(" " = 1, "DRE Result" = 4), bold = TRUE) %>%
+  column_spec(1, bold = TRUE)
+
+```
+
+The relationship for the remaining categorical variables can be found in Tables \@ref(tab:app-race-tab) to \@ref(tab:app-gleason-tab) in the appendix. For detection of capsular involvment and Gleason score, we find a similar story as DRE results. For patients where capsular involvement was detected, tumor penetration occured at more than twice the rate than patients where involvement was not detected (35% vs. 75%). As Gleason score increases from zero to nine, the tumor penetration rate increases from zero to 92%. Where we do not see a significant change in the rate of tumor penetration is with race. Both Black and White patients have a tumor penetration rate of approximately 40%.
 
 
 ## Modeling and Diagnostics
@@ -156,21 +171,8 @@ rownames(race_tab) <- c("No Penetration", "Penetration")
 race_tab %>% 
   signif(., digits = 4) %>% 
   formatC(., digits = 1, format = "f") %>%
-  kable() %>%
+  kable(caption = "Race vs. whether tumor penetration of prostatic capsule has occured, marginalized by race.") %>%
   add_header_above(c(" " = 1, "Race" = 2), bold = TRUE) %>%
-  column_spec(1, bold = TRUE)
-
-```
-
-```{r app-dre-tab}
-dre_tab <- table(prostate$penetrate, prostate$dre) %>%
-  prop.table(., margin = 2) * 100 
-rownames(dre_tab) <- c("No Penetration", "Penetration")
-dre_tab %>%
-  signif(., digits = 4) %>%
-  formatC(., digits = 1, format = "f") %>% 
-  kable() %>% 
-  add_header_above(c(" " = 1, "DRE Result" = 4), bold = TRUE) %>%
   column_spec(1, bold = TRUE)
 
 ```
@@ -183,7 +185,7 @@ rownames(caps_tab) <- c("No Penetration", "Tumor Penetration")
 caps_tab %>%
   signif(., digits = 4) %>% 
   formatC(., digits = 1, format = "f") %>% 
-  kable() %>% 
+  kable(caption = "Detection of capsular involvement vs. whether tumor pentration of prostatic capsule occured, marginalized by capsular involvment.") %>% 
   #column_spec(1, bold = TRUE, border_left = TRUE) %>% 
   #column_spec(3, border_right = TRUE) %>% 
   add_header_above(c(" ", "Capsular Involvement" = 2), bold = TRUE) %>% 
@@ -199,7 +201,7 @@ rownames(gleason_tab) <- c("No Penetration", "Tumor Penetration")
 gleason_tab %>%
   signif(., digits = 4) %>%
   formatC(., digits = 1, format = "f") %>% 
-  kable() %>%
+  kable(caption = "Total Gleason score vs. whether tumor penetration of prostatic capsule occured, marginalized by Gleason score.") %>%
   add_header_above(c(" ", "Gleason Score" = 7), bold = TRUE) %>%
   column_spec(1, bold = TRUE)
 ```
