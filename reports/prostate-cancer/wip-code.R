@@ -1,19 +1,19 @@
 
 library(here)  # handles directories
 library(readr)  # read in data
+library(MASS) # stepwise regression
 library(dplyr)  # manipulate data
 library(forcats) # handle factors
 library(ggplot2)  # plotting
+library(broom) # tidy model output
 
 
 prostate <- read_tsv(here("data", "prostate.txt"))
 
-# ======================================
-# =============== EDA ==================
-# ======================================
 
-
-# --------- numerical summaries ----------
+# =====================================
+# ======== SETUP/CLEANING =============
+# =====================================
 
 dim(prostate)
 names(prostate)
@@ -75,6 +75,9 @@ prostate %>%
   group_by(penetrate) %>%
   summarise(n = n())
 
+# ======================================
+# =============== EDA ==================
+# ======================================
 
 # ----- categorical predictors -----
 race_tab <- table(`Capsule Penetration` = prostate$penetrate,
@@ -149,3 +152,40 @@ ggplot(prostate, aes(x = psa, fill = penetrate)) +
 ggplot(prostate, aes(x = penetrate, y = psa)) +
   geom_boxplot()
 
+
+# =====================================
+# ========== MODELING =================
+# =====================================
+
+
+# fit a 'full' model with all first-order interactions
+full_fit <- glm(penetrate ~.*.,
+                data = prostate,
+                family = binomial(link = "logit"))
+
+# 'best' fit by stepwise regression
+best_step <- stepAIC(full_fit, data = prostate)
+
+best_step
+summary(best_step)
+
+
+final_fit <- glm(penetrate ~ dre + psa + gleason,
+                 data = prostate,
+                 family = binomial(link = "logit"))
+
+# =====================================
+# ========== DIAGNOSTICS ==============
+# =====================================
+
+
+
+
+
+
+# =====================================
+# ========== INFERENCE ================
+# =====================================
+
+final_fit
+summary(final_fit)

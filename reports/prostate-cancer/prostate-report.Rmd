@@ -17,12 +17,14 @@ abstract: "This is the executive summary. Unfortunately, it has to be typed in t
 knitr::opts_chunk$set(echo = FALSE)
 library(here)  # handles directories
 library(readr)  # read in data
+library(MASS) # stepwise regression
 library(dplyr)  # manipulate data
 library(forcats) # handle factors
 library(ggplot2)  # plotting
+library(broom) # tidy model output
 
-library(knitr)
-library(kableExtra)
+library(knitr)  # table formatting
+library(kableExtra) # table formatting
 
 prostate <- read_tsv(here("data", "prostate.txt"))
 # remove id, rename
@@ -154,10 +156,29 @@ ggplot(prostate, aes(x = psa, fill = penetrate)) +
 ```
 
 
+Before we move on to the modeling phase of our analysis, it might be beneficial to summarize what we have found so far.
 
-## Modeling and Diagnostics
+## Modeling
 
-blah blah blah blah blah blah blah blah blah
+```{r model-setup}
+best_step <- glm(penetrate ~ age + race + dre + psa + gleason + 
+    age:dre + age:gleason + race:psa, 
+    family = binomial(link = "logit"), 
+    data = prostate)
+
+```
+
+
+To model the relationship between tumor penetration and the predictor variables, we use a logistic regression model. As most of the covariates are tests covering different aspects of of the prostate, it is not hard to imagine there some of them connected in their relationship with tumor penetration. For this reason, the initial model is fit using all first-order interaction terms. This serves as the starting point for model selection which is done via stepwise regression with AIC as the selection criteria. The model chosen via the stepwise procedure includes race, age, DRE results, PSA value, and Gleason score as well as age interacted with DRE result and race interacted with PSA value. A detailed summary can be found in Table \@ref(tab:app-best-step-sum). We note here that the AIC is 391 and the p-values for age and race are quite high at 0.11 and 0.99, respectively.
+
+Since some of the p-values of the model obtained via stepwise regression, we remove this terms and refit our model. Specifically, we remove age and race along with interaction terms associated with them. We can not justify keeping variables in interactions that themselves are not included in the model. Note that for this model, removing the relevant interaction terms actually means removing all interaction terms. Once this is done, we are left with a model that relates tumor penetration to just three variables: DRE results, PSA value, and Gleason score.
+
+## Diagnostics
+
+```{r final-fit-diag}
+
+```
+
 
 
 # Conclusion
@@ -281,6 +302,24 @@ ggplot(prostate, aes(x = penetrate, y = age)) +
 # Model Building and Diagnostics
 
 ## Intermediate Models
+
+```{r app-best-step-sum}
+tidy_best_step <- tidy(best_step) %>% 
+  select(-statistic) %>%
+  mutate(
+    Term = term,
+    Estimate = formatC(signif(estimate, digits = 4), digits = 2, format = "f"),
+    SE = formatC(signif(std.error, digits = 4), digits = 2, format = "f"),
+    `p-value` = formatC(signif(p.value, digits = 4), digits = 3, format = "f")
+  ) %>% 
+  select(Term, Estimate, SE, `p-value`)
+
+tidy_best_step %>%
+  kable(caption = "Coefficient, standard error, and p-value for model chosen via stepwise procedure. AIC = 391") %>%
+  row_spec(0, bold = TRUE)
+
+```
+
 
 ## Diagnostics
 
