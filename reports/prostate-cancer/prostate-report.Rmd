@@ -143,6 +143,17 @@ dre_tab %>%
 
 The relationship for the remaining categorical variables can be found in Tables \@ref(tab:app-race-tab) to \@ref(tab:app-gleason-tab) in the appendix. For detection of capsular involvment and Gleason score, we find a similar story as DRE results. For patients where capsular involvement was detected, tumor penetration occured at more than twice the rate than patients where involvement was not detected (35% vs. 75%). As Gleason score increases from zero to nine, the tumor penetration rate increases from zero to 92%. Where we do not see a significant change in the rate of tumor penetration is with race. Both Black and White patients have a tumor penetration rate of approximately 40%.
 
+For the numeric variables, we examine summary statistics and plots of age and PSA grouped by whether prostatic capusle penetration has occured. Summary statistics and a box plot for age can be found in Table \@ref(tab:app-age-sum) and Figure \@ref(fig:app-age-box). There is virtually no difference in the age distribution of patients who have experience tumor penetration and those who have not. As such, we do not expect it to make a significant contribution to our model. On the other hand, PSA value seems like it may be an important predictor.
+Figure \@ref(fig:psa-hist) is a histogram of PSA value where color indicates tumor penetration of the prostatic capsule. The distribution has a similar shape for low PSA values however, for PSA values above 67 mg/ml there are no cases where tumor penetration has occured. 
+
+
+```{r psa-hist, fig.cap = "Histogram of prostatic specific antigen value colored by whether tumor penetration of prostatic capsule occured.", fig.height = 3.5, fig.width = 6}
+ggplot(prostate, aes(x = psa, fill = penetrate)) +
+  geom_histogram(bins = 50) +
+  theme_classic()
+```
+
+
 
 ## Modeling and Diagnostics
 
@@ -207,9 +218,65 @@ gleason_tab %>%
 ```
 
 
+```{r app-age-sum}
+age_summary <- prostate %>% 
+  group_by(penetrate) %>%
+  summarise(
+    min = min(age),
+    median = median(age),
+    mean = mean(age),
+    max = max(age)
+  ) %>% 
+  mutate(
+    min = formatC(signif(min, digits = 4), digits = 1, format = "f"),
+    median = formatC(signif(median, digits = 4), digits = 1, format = "f"),
+    mean = formatC(signif(mean, digits = 4), digits = 1, format = "f"),
+    max = formatC(signif(max, digits = 4), digits = 1, format = "f")
+  ) %>%
+  select(-penetrate) %>% 
+  as.data.frame()
+rownames(age_summary) <- c("No Penetration", "Tumor Penetration")
+age_summary %>%
+  kable(caption = "Summary statistics of patient age grouped by whether tumor penetration of prostatic capsule occured.") %>% 
+  column_spec(1, bold = TRUE) %>% 
+  row_spec(0, bold = TRUE)
+```
+
+```{r app-psa-sum}
+psa_summary <- prostate %>% 
+  group_by(penetrate) %>% 
+  summarise(
+    min = min(psa),
+    median = median(psa),
+    mean = mean(psa),
+    max = max(psa)
+  ) %>%
+  mutate(
+    min = formatC(signif(min, digits = 4), digits = 1, format = "f"),
+    median = formatC(signif(median, digits = 4), digits = 1, format = "f"),
+    mean = formatC(signif(mean, digits = 4), digits = 1, format = "f"),
+    max = formatC(signif(max, digits = 4), digits = 1, format = "f")
+  ) %>%
+  select(-penetrate) %>% 
+  as.data.frame()
+rownames(psa_summary) <- c("No Penetration", "Tumor Penetration")
+psa_summary %>% 
+  kable(caption = "Summary statistics for prostatic specific antigen value grouped by whether tumor penetration of prostatic capsule occured.") %>%
+  column_spec(1, bold = TRUE) %>% 
+  row_spec(0, bold = TRUE)
+```
+
 
 
 ## Figures
+
+
+```{r app-age-box, fig.cap = "Boxplot of age vs. whether tumor penetration of prostatic capsule occured.", fig.height = 3, fig.width = 5}
+ggplot(prostate, aes(x = penetrate, y = age)) +
+  geom_boxplot() +
+  theme_classic()
+```
+
 
 # Model Building and Diagnostics
 

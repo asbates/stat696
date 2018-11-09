@@ -76,7 +76,7 @@ prostate %>%
   summarise(n = n())
 
 
-# contingency tables
+# ----- categorical predictors -----
 race_tab <- table(`Capsule Penetration` = prostate$penetrate,
                   Race = prostate$race)
 dre_tab <- table(`Capsule Penetration` = prostate$penetrate,
@@ -98,7 +98,20 @@ prop.table(caps_tab, margin = 2) * 100
 prop.table(gleason_tab, margin = 2) * 100
 
 
-# -------------- plots ----------------
+# ------------ numeric predictors --------------
+
+# ---- age -----
+
+# sumarize age by prostate
+age_sum <- prostate %>% 
+  group_by(penetrate) %>%
+  summarise(
+    min = min(age),
+    median = median(age),
+    mean = mean(age),
+    max = max(age)
+  )
+
 
 # bar chart of age
 ggplot(prostate, aes(x = age)) +
@@ -109,13 +122,30 @@ ggplot(prostate, aes(x = age, fill = penetrate)) +
   geom_bar(position = "dodge") +
   labs(fill = "Capsule Penetration")
 
-prostate %>% pull(age) %>% as.factor() %>% levels() %>% length()
-age_tab <- table(prostate$penetrate, prostate$age)
-prop.table(age_tab, margin = 2) * 100
+# boxplot - age vs. penetrate
+ggplot(prostate, aes(x = penetrate, y = age)) +
+  geom_boxplot()
 
+# ----- psa ----
+# summary stats for psa by prostate
+prostate %>% 
+  group_by(penetrate) %>% 
+  summarise(
+    min = min(psa),
+    median = median(psa),
+    mean = mean(psa),
+    max = max(psa)
+  )
 
+# histogram of psa
+ggplot(prostate, aes(x = psa)) +
+  geom_histogram(bins = 50)
+
+# histogram of psa vs. penetrate
+ggplot(prostate, aes(x = psa, fill = penetrate)) +
+  geom_histogram(bins = 50)
+
+# boxplot - psa vs. penetrate
 ggplot(prostate, aes(x = penetrate, y = psa)) +
   geom_boxplot()
 
-ggplot(prostate, aes(x = penetrate, y = age)) +
-  geom_boxplot()
