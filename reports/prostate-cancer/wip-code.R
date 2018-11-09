@@ -77,7 +77,6 @@ prostate %>%
 
 
 # contingency tables
-
 race_tab <- table(`Capsule Penetration` = prostate$penetrate,
                   Race = prostate$race)
 dre_tab <- table(`Capsule Penetration` = prostate$penetrate,
@@ -86,7 +85,6 @@ caps_tab <- table(`Capsule Penetration` = prostate$penetrate,
                   `Capsular Involvement` = prostate$caps)
 gleason_tab <- table(`Capsule Penetration` = prostate$penetrate,
                      `Gleason Score` = prostate$gleason)
-
 
 race_tab
 dre_tab
@@ -100,16 +98,21 @@ prop.table(caps_tab, margin = 2) * 100
 prop.table(gleason_tab, margin = 2) * 100
 
 
-
-
-
-
 # -------------- plots ----------------
+
+# bar chart of age
+ggplot(prostate, aes(x = age)) +
+  geom_bar()
 
 # penetrate vs. age bar plot
 ggplot(prostate, aes(x = age, fill = penetrate)) +
   geom_bar(position = "dodge") +
   labs(fill = "Capsule Penetration")
+
+prostate %>% pull(age) %>% as.factor() %>% levels() %>% length()
+age_tab <- table(prostate$penetrate, prostate$age)
+prop.table(age_tab, margin = 2) * 100
+
 
 ggplot(prostate, aes(x = penetrate, y = psa)) +
   geom_boxplot()
