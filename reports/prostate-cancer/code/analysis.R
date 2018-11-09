@@ -8,7 +8,7 @@ library(ggplot2)  # plotting
 library(broom) # tidy model output
 
 
-prostate <- read_tsv(here("data", "prostate.txt"))
+prostate_raw <- read_tsv(here("data", "prostate.txt"))
 
 
 # =====================================
@@ -20,7 +20,7 @@ names(prostate)
 str(prostate)
 
 # remove id, rename
-prostate <- prostate %>%
+prostate <- prostate_raw %>%
   select(-id)
 
 prostate <- prostate %>%
@@ -178,10 +178,81 @@ final_fit <- glm(penetrate ~ dre + psa + gleason,
 # ========== DIAGNOSTICS ==============
 # =====================================
 
+# functions used for residual analysis
+one_fourth_root=function(x){
+  x^(0.25)
+}
+source(here("reports", "prostate-cancer","code","examine.logistic.reg.R"))
+
+# note: we're using the 'raw' data here with the default encoding
+pros_diag <- prostate_raw %>% 
+  rename(
+    penetrate = capsule,
+    dre = dpros,
+    caps = dcaps
+  )
 
 
+# Create EVPs by binning continuous covariates
+g <- 5 # number of categories
+psa_interval = cut(pros_diag$psa,
+                   quantile(pros_diag$psa, 0:g/g), include.lowest = TRUE)
 
+w <- aggregate(penetrate ~ psa_interval + gleason + dre,
+               data = pros_diag,
+               FUN = sum)
+n <- aggregate(penetrate ~ psa_interval + gleason + dre,
+               data = pros_diag,
+               FUN = length)
+wn <- data.frame(
+  w,
+  trials = n$penetrate, 
+  prop = round(w$penetrate / n$penetrate, 2)
+)
 
+dim(wn)  # 74 EVPs
+
+fit <- glm(penetrate/trials ~ psa_interval + gleason + dre,
+           data = wn,
+           family = binomial(link = "logit"),
+           weights = trials)
+
+examine <- examine.logistic.reg(fit,
+                             identify.points = FALSE,
+                             scale.n = one_fourth_root,
+                             scale.cookd = sqrt)
+
+wn_diag <- data.frame(
+  wn,
+  pi_hat = round(examine$pi.hat, 2),
+  std_res = round(examine$stand.resid, 2),
+  cooks_d = round(examine$cookd, 2),
+  h = round(examine$h, 2)
+)
+
+p <- length(fit$coefficients)
+# locate points of interest
+which_look_at <- 
+  abs(wn_diag$std_res) > 2 | 
+  wn_diag$cooks_d > 4 / nrow(wn) | 
+  wn_diag$h > 3*p / nrow(wn)
+look_at <- wn_diag[which_look_at, ]
+
+# look at points of interest
+look_at
+
+# what are the actual values for the cutoffs
+#  of cooks d and leverage h?
+4/nrow(wn)
+3 * p / nrow(wn)
+
+# do any EVPs violate all criteria?
+# no, they don't
+which_violate_all <- 
+  abs(wn_diag$std_res) > 2 & 
+  wn_diag$cooks_d > 4 / nrow(wn) & 
+  wn_diag$h > 3*p / nrow(wn)
+any(which_violate_all)
 
 # =====================================
 # ========== INFERENCE ================
