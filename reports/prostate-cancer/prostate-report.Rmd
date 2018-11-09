@@ -105,15 +105,16 @@ log odds ratios were calculated, and predictions were made. predictive power was
 <!-- | psa | Prostatic Specific Antigen value | mg/ml | -->
 <!-- | gleason | Total Gleason score | 0-10 | -->
 
-```{r var-desc, results = "asis"}
+```{r var-desc}
 description <- data.frame(
   Name = c("penetrate", "age", "race", "dre", "caps", "psa", "gleason"),
   Description = c("Tumor penetration of prostatic capsule?", "Patient age", "Patient race", "Results of digital rectal exam", "Detection of capsular involvement?", "Prostatic Specific Antigen value", "Total Gleason score"),
   Details = c("Yes, no", "Years", "Black, White", "No nodule, unilobar left, unilobar right, bilobar", "Yes, no", "mg/ml", "0-10")
 )
 
-knitr::kable(description,
-             caption = "Description of variables in the data set.")
+kable(description,
+      caption = "Description of variables in the data set.") %>%
+  row_spec(0, bold = TRUE)
 
 ```
 
@@ -124,7 +125,7 @@ knitr::kable(description,
 
 ## Exploratory Analysis
 
-We begin by inspecting contingency tables.
+We begin by inspecting tables. Rather than examing contingency tables, we find it more informative to view the marginal distribution
 
 
 
@@ -153,7 +154,8 @@ race_tab <- table(prostate$penetrate, prostate$race) %>%
   prop.table(., margin = 2) * 100
 rownames(race_tab) <- c("No Penetration", "Penetration")
 race_tab %>% 
-  round(., 2) %>%
+  signif(., digits = 4) %>% 
+  formatC(., digits = 1, format = "f") %>%
   kable() %>%
   add_header_above(c(" " = 1, "Race" = 2), bold = TRUE) %>%
   column_spec(1, bold = TRUE)
@@ -165,7 +167,8 @@ dre_tab <- table(prostate$penetrate, prostate$dre) %>%
   prop.table(., margin = 2) * 100 
 rownames(dre_tab) <- c("No Penetration", "Penetration")
 dre_tab %>%
-  round(., 2) %>% 
+  signif(., digits = 4) %>%
+  formatC(., digits = 1, format = "f") %>% 
   kable() %>% 
   add_header_above(c(" " = 1, "DRE Result" = 4), bold = TRUE) %>%
   column_spec(1, bold = TRUE)
@@ -178,7 +181,8 @@ caps_tab <- table(prostate$penetrate, prostate$caps) %>%
   prop.table(., margin = 2) * 100
 rownames(caps_tab) <- c("No Penetration", "Tumor Penetration")
 caps_tab %>%
-  round(., 2) %>%
+  signif(., digits = 4) %>% 
+  formatC(., digits = 1, format = "f") %>% 
   kable() %>% 
   #column_spec(1, bold = TRUE, border_left = TRUE) %>% 
   #column_spec(3, border_right = TRUE) %>% 
@@ -193,7 +197,8 @@ gleason_tab <- table(prostate$penetrate, prostate$gleason) %>%
   prop.table(., margin = 2) * 100
 rownames(gleason_tab) <- c("No Penetration", "Tumor Penetration")
 gleason_tab %>%
-  round(., 2) %>%
+  signif(., digits = 4) %>%
+  formatC(., digits = 1, format = "f") %>% 
   kable() %>%
   add_header_above(c(" ", "Gleason Score" = 7), bold = TRUE) %>%
   column_spec(1, bold = TRUE)
