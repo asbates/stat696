@@ -102,6 +102,8 @@ prop.table(gleason_tab, margin = 2) * 100
 
 
 
+
+
 # -------------- plots ----------------
 
 # penetrate vs. age bar plot

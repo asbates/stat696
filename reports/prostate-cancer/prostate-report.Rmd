@@ -148,41 +148,55 @@ blah blah blah blah blah blah blah blah blah
 
 ## Tables
 
-```{r app-race-tab, echo = FALSE}
+```{r app-race-tab}
 race_tab <- table(prostate$penetrate, prostate$race) %>% 
-  prop.table(., margin = 2) %>% 
-  round(., 2)
+  prop.table(., margin = 2) * 100
 rownames(race_tab) <- c("No Penetration", "Penetration")
 race_tab %>% 
+  round(., 2) %>%
   kable() %>%
-  add_header_above(c(" " = 1, "Race" = 2))
+  add_header_above(c(" " = 1, "Race" = 2), bold = TRUE) %>%
+  column_spec(1, bold = TRUE)
 
 ```
 
-```{r app-dre-tab, echo = FALSE}
+```{r app-dre-tab}
 dre_tab <- table(prostate$penetrate, prostate$dre) %>%
-  prop.table(., margin = 2) %>% 
-  round(., 2)
+  prop.table(., margin = 2) * 100 
 rownames(dre_tab) <- c("No Penetration", "Penetration")
 dre_tab %>%
+  round(., 2) %>% 
   kable() %>% 
-  add_header_above(c(" " = 1, "DRE Result" = 4))
+  add_header_above(c(" " = 1, "DRE Result" = 4), bold = TRUE) %>%
+  column_spec(1, bold = TRUE)
 
 ```
 
 
-```{r app-caps-tab, echo = FALSE}
+```{r app-caps-tab}
 caps_tab <- table(prostate$penetrate, prostate$caps) %>%
-  prop.table(., margin = 2) %>% 
-  round(., 2)
+  prop.table(., margin = 2) * 100
 rownames(caps_tab) <- c("No Penetration", "Tumor Penetration")
 caps_tab %>%
+  round(., 2) %>%
   kable() %>% 
   #column_spec(1, bold = TRUE, border_left = TRUE) %>% 
   #column_spec(3, border_right = TRUE) %>% 
   add_header_above(c(" ", "Capsular Involvement" = 2), bold = TRUE) %>% 
   column_spec(1, bold = TRUE)
 
+```
+
+
+```{r app-gleason-tab}
+gleason_tab <- table(prostate$penetrate, prostate$gleason) %>%
+  prop.table(., margin = 2) * 100
+rownames(gleason_tab) <- c("No Penetration", "Tumor Penetration")
+gleason_tab %>%
+  round(., 2) %>%
+  kable() %>%
+  add_header_above(c(" ", "Gleason Score" = 7), bold = TRUE) %>%
+  column_spec(1, bold = TRUE)
 ```
 
 
