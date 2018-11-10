@@ -66,6 +66,8 @@ prostate <- prostate %>%
 
 # Introduction
 
+this seems too short. maybe comibne w/methods again? call it something like Intro and Methods or Intro and Overview?
+
 In this paper, we investigate the relationship between the results of various prostae related exams and whether tumor penetration of the prostatic capsule has occured. 
 The objective of this analysis is to determine if there are any factors that have a particularly influential relationship with prostatic capsule penetration.
 Additionally, we wish to develop a model to predict capsule penetration so it can be used as a diagnostic tool for future patients.
@@ -75,7 +77,7 @@ Additionally, we wish to develop a model to predict capsule penetration so it ca
 In this analysis we examine a subset of data collected by the Ohio State University Comprehensive Cancer Center as part of a study to determine the potential of standard exam results to predict whether a tumor will penetrate the prostatic capsule.
 Out of $380$ patients, $153$ have experienced capsule penetration and $227$ have not. 
 The data set contains six explanatory variables: the patients age and race, results of a digital rectal exam (DRE), whether capsular involvement was detected, Prostatic Specific Antigen (PSA) value, and total Gleason score.
-For a detailed description of each variable see Table \@ref(tab:var-desc). Observe that race is recorded as only Black or White.
+For a detailed description of each variable see Table \@ref(tab:var-desc). There are two continuous variables, PSA and age, and the remaining variables are categorical. Observe that race is recorded as only Black or White.
 This may be the reason why three observations contain missing values for race. Perhaps three of the patients were neither Black nor White.
 However, without access to details of the study and the population considered, we can only speculate. 
 Furthermore, the other variables in these observations do not point to any particular reason as to why race is not recorded[^1].
@@ -90,8 +92,7 @@ In addition to the explanatory variables included in the data set, all two-way i
 Using this as a starting point, the model is chosen via a backwards elimination procedure using Akaike Information Criteria (AIC) as the model selection criterion.
 (variable name) is not significant at the 0.05 level so it is subsequently removed, along with its corresponding interaction terms.
 
-Diagnostics take the form of examining explanatory variable patterns. 
-also do blah test. fit same logistic regression model on EVPs weighted by number of original data points in each EVP. Hosmer-Lemeshow test - basically a chi squared goodness of fit test. Note: we do NOT want to reject the null here. the null is that the model fits the data well
+
 
 log odds ratios were calculated, and predictions were made. predictive power was examined through a confusion matrix. What's more important here, false negatives or false positives?
 
@@ -128,6 +129,8 @@ kable(description,
 
 ## Exploratory Analysis
 
+say something about the variable types and removing of missing values.
+
 We begin by inspecting tables of the categorical variables against whether tumor penetration has occured. Rather than examing contingency tables of counts, we find it more informative to view tables marginalized by the covariates. This provides more context by allowing us to see, for example, the proportion of Black patients who had tumor penetration and the proportion who did not. Table \@ref(tab:dre-tab) displays the proportion of patients who did and did not experience tumor penetration of the prostatic capsule grouped by the results of a digital rectal exam. It shows that the majority of patients who do not have a nodule have not experience tumor penetration. For those patients who did have a nodule, the rate of tumor penetration is reversed. The most pronounced difference is for patients who had a bilobar nodule with 65% experiencing tumor penetration. The relationship we see here tells us that DRE results will likely be a valuable predictor.
 
 
@@ -157,7 +160,7 @@ ggplot(prostate, aes(x = psa, fill = penetrate)) +
 ```
 
 
-Before we move on to the modeling phase of our analysis, it might be beneficial to summarize what we have found so far.
+
 
 ## Modeling
 
@@ -218,10 +221,29 @@ aug_diag <- aug_diag %>%
   mutate(
     .std.resid = rstandard(diag_fit, type = "pearson")
   )
+
+p <- length(diag_fit$coefficients)
+cook_cutoff <- 4 / nrow(wn)
+h_cutoff2 <- 2 * p / nrow(wn)
+h_cutoff3 <- 3 * p / nrow(wn)
+
+source(here("reports", "prostate-cancer", "code", "HLTest.R"))
+
+# 6 groups used b/c that's minimum number such that expected counts are
+#  greater than 5
+hl_test <- HLTest(diag_fit, 6)
+
 ```
 
 
-```{r resid-plot, fig.height = 3.5, fig.width = 6, fig.cap = "Residual vs. fitted values via Explanatory Variable Patterns (74). The horizontal reference lines indicate the usual residual cutoffs of +-2 and +- 3."}
+To assess the model we use diagnostic tools on explanatory variable patterns[^2] (EVP). We collapse the orginal data into groups where each group shares the same covariate values. Recall that one of the variables, PSA, is continous so we first cut the values into nonoverlapping bins. Then we fit the model to the EVPs using the number of original observations in each EVP as weights. Standardized Pearson residuals, Cook's distance, and leverage from the EVP model are what we use to perform our diagnostics. A plot of the residuals vs. fitted probabilites is shown in Figure \@ref(fig:resid-plot). The dotted horizontal lines indicate the standard cut off values of -3, -2, 2, and 3. One EVP is slightly smaller than the lowest cut off bound, having a value of `r round(aug_diag[73, ]$.std.resid, 1)`. This is only a minor violation and the cut off values are simply rules-of-thumb so we consider this EVP satisfactory. 
+
+Further diagnostic plots can be found in Figure \@ref(fig:app-diag-plots) in the appendix. Only one other EVP is of any concern as its Cook's distance and leverage values are both outside the standard cut off values. However, this EVP is also only faintly outside the boundaries[^3]. Twenty two of the original observations are contained in this EVP. Given that the Cook's distance and leverage for this EVP are just barely outside their respective cut off, this is not enough justification to remove this many data points.
+
+As a final diagnostic measure we perform a Homer-Lemeshow goodness-of-fit test using the model fit to the EVPs. The EVP data is separated into bins according ot quantiles of the fitted values. Then observed and expected counts are computed for each bin and a $\chi^2$ test is performed. This test is an overall assessment of how well the model fits the data. The obtained test statistic is `r round(hl_test$statistic[[1]], 1)` with a corresponding p-value of `r round(hl_test$p.value, 2)`. The p-value may seem unfruitful at first as we are typically looking for small values. However in the situation at hand this is not the case. The null hypothesis in this test is that the model fits the data well so we do _not_ want to reject the null in our situation. So based on this test our model seems to fit the data well and we can move on to inferences.
+
+
+```{r resid-plot, fig.height = 3.5, fig.width = 6, fig.cap = "Pearson residuals vs. fitted values via Explanatory Variable Patterns (74). The horizontal reference lines indicate the usual residual cutoffs of +-2 and +- 3."}
 ggplot(aug_diag, aes(x = .fitted, y = .std.resid)) +
   geom_point() +
   geom_hline(yintercept = 2, linetype = "dotted") +
@@ -234,6 +256,13 @@ ggplot(aug_diag, aes(x = .fitted, y = .std.resid)) +
 ```
 
 
+[^2]: Also called covariate patterns.
+[^3]: Cook's distance = `r round(aug_diag[25, ]$.cooksd, 2)`, leverage = `r round(aug_diag[25, ]$.hat, 2)` with cutoff values of `r round(cook_cutoff, 2)` and `r round(h_cutoff3, 2)`.
+
+## Inferences
+
+
+log odds ratios were calculated, and predictions were made. predictive power was examined through a confusion matrix. What's more important here, false negatives or false positives?
 
 # Conclusion
 
@@ -377,11 +406,7 @@ tidy_best_step %>%
 
 ## Diagnostics
 
-```{r app-diag-plots}
-p <- length(diag_fit$coefficients)
-cook_cutoff <- 4 / nrow(wn)
-h_cutoff2 <- 2 * p / nrow(wn)
-h_cutoff3 <- 3 * p / nrow(wn)
+```{r app-diag-plots, fig.cap = "Diagnostic plots for the model fit on explanatory variable patterns. Left: Cook's distance vs. leverage. Right: squared Pearson standardized residuals vs. fitted probabilities"}
 
 cook_vs_lev <- ggplot(aug_diag, aes(x = .hat, y = .cooksd)) +
   geom_point() +

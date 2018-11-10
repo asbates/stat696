@@ -345,8 +345,11 @@ source(here("reports", "prostate-cancer", "code", "HLTest.R"))
 
 # 6 groups used b/c that's minimum number such that expected counts are
 #  greater than 5
-HLTest(diag_fit, 6)
+hl_test <- HLTest(diag_fit, 6)
+hl_test
 
+# contingency table of observed vs. expected
+cbind(hl_test$observed, hl_test$expect)
 
 # =====================================
 # ========== INFERENCE ================
