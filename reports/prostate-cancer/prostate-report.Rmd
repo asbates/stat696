@@ -91,7 +91,7 @@ Using this as a starting point, the model is chosen via a backwards elimination 
 (variable name) is not significant at the 0.05 level so it is subsequently removed, along with its corresponding interaction terms.
 
 Diagnostics take the form of examining explanatory variable patterns. 
-also do blah test.
+also do blah test. fit same logistic regression model on EVPs weighted by number of original data points in each EVP. Hosmer-Lemeshow test - basically a chi squared goodness of fit test. Note: we do NOT want to reject the null here. the null is that the model fits the data well
 
 log odds ratios were calculated, and predictions were made. predictive power was examined through a confusion matrix. What's more important here, false negatives or false positives?
 
@@ -177,12 +177,6 @@ Since some of the p-values of the model obtained via stepwise regression, we rem
 ## Diagnostics
 
 ```{r diag-setup, fig.show = "hide"}
-# functions used for residual analysis
-one_fourth_root=function(x){
-  x^(0.25)
-}
-source(here("reports", "prostate-cancer","code","examine.logistic.reg.R"))
-
 # note: we're using the 'raw' data here with the default encoding
 pros_diag <- prostate_raw %>% 
   rename(
@@ -190,7 +184,6 @@ pros_diag <- prostate_raw %>%
     dre = dpros,
     caps = dcaps
   )
-
 
 # Create EVPs by binning continuous covariates
 g <- 5 # number of categories
@@ -215,24 +208,30 @@ diag_fit <- glm(penetrate/trials ~ psa_interval + gleason + dre,
            family = binomial(link = "logit"),
            weights = trials)
 
-examine <- examine.logistic.reg(diag_fit,
-                             identify.points = FALSE,
-                             scale.n = one_fourth_root,
-                             scale.cookd = sqrt)
+# add relavent values (cooks d, etc.) to data
+aug_diag <- augment(diag_fit, 
+                    data = wn,
+                    type.predict = "response")
 
-wn_diag <- data.frame(
-  wn,
-  pi_hat = examine$pi.hat,
-  std_res = examine$stand.resid,
-  cooks_d = examine$cookd,
-  h = round(examine$h, 2),
-  fitted = diag_fit$fitted.values,
-  dxsquare = examine$stand.resid^2
-)
-p <- length(diag_fit$coefficients)
+# for some reason, augment() is only returning deviance residuals
+aug_diag <- aug_diag %>% 
+  mutate(
+    .std.resid = rstandard(diag_fit, type = "pearson")
+  )
 ```
 
 
+```{r resid-plot, fig.height = 3.5, fig.width = 6, fig.cap = "Residual vs. fitted values via Explanatory Variable Patterns (74). The horizontal reference lines indicate the usual residual cutoffs of +-2 and +- 3."}
+ggplot(aug_diag, aes(x = .fitted, y = .std.resid)) +
+  geom_point() +
+  geom_hline(yintercept = 2, linetype = "dotted") +
+  geom_hline(yintercept = 3, linetype = "dotted") +
+  geom_hline(yintercept = -2, linetype = "dotted") +
+  geom_hline(yintercept = -3, linetype = "dotted") +
+  ylab("Standardized Residuals") +
+  xlab("Fitted Values") +
+  theme_classic()
+```
 
 
 
@@ -379,22 +378,12 @@ tidy_best_step %>%
 ## Diagnostics
 
 ```{r app-diag-plots}
-
-resid_vs_fit <- ggplot(wn_diag, aes(x = fitted, y = std_res)) +
-  geom_point() +
-  geom_hline(yintercept = 2, linetype = "dotted") +
-  geom_hline(yintercept = 3, linetype = "dotted") +
-  geom_hline(yintercept = -2, linetype = "dotted") +
-  geom_hline(yintercept = -3, linetype = "dotted") +
-  ylab("Standardized Residuals") +
-  xlab("Fitted Values") +
-  theme_classic()
-
+p <- length(diag_fit$coefficients)
 cook_cutoff <- 4 / nrow(wn)
 h_cutoff2 <- 2 * p / nrow(wn)
 h_cutoff3 <- 3 * p / nrow(wn)
 
-cook_vs_lev <- ggplot(wn_diag, aes(x = h, y = cooks_d)) +
+cook_vs_lev <- ggplot(aug_diag, aes(x = .hat, y = .cooksd)) +
   geom_point() +
   geom_vline(xintercept = h_cutoff2, linetype = "dotted") +
   geom_vline(xintercept = h_cutoff3, linetype = "dotted") +
@@ -403,7 +392,7 @@ cook_vs_lev <- ggplot(wn_diag, aes(x = h, y = cooks_d)) +
   xlab("Leverage") +
   theme_classic()
   
-deltax_vs_fit <- ggplot(wn_diag, aes(x = fitted, y = dxsquare)) +
+deltax_vs_fit <- ggplot(aug_diag, aes(x = .fitted, y = .std.resid^2)) +
   geom_point() +
   geom_hline(yintercept = 4) +
   geom_hline(yintercept = 9) +
@@ -412,7 +401,7 @@ deltax_vs_fit <- ggplot(wn_diag, aes(x = fitted, y = dxsquare)) +
   theme_classic()
 
 
-grid.arrange(resid_vs_fit, cook_vs_lev, deltax_vs_fit, ncol = 2) 
+grid.arrange(cook_vs_lev, deltax_vs_fit, ncol = 2) 
 ```
 
 

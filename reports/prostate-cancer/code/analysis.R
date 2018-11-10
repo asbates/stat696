@@ -217,10 +217,22 @@ diag_fit <- glm(penetrate/trials ~ psa_interval + gleason + dre,
            family = binomial(link = "logit"),
            weights = trials)
 
+# with identify.points = TRUE we can click points 
+#  and see their location in the data frame
+# In residuals vs. fitted, we see EVP 73 has a small residual (< 3)
+# In Cook's distance vs. leverage, we find EVP 25 with large Cook's
+#  distance and loarge leverage
+# In delta X^2 (squared residuals) vs. fitted (size prop. to trials)
+#   we find EVP 73 with high delta X^2 (>9)
+# In delta X^2 vs. fitted (size prop. to Cook's distance)
+#  we find EVP 73 with high delta x^2 (>9)
+# there are a few other EVPs that are outside some cutoffs
+#  but these two are the worst
 examine <- examine.logistic.reg(diag_fit,
                              identify.points = FALSE,
                              scale.n = one_fourth_root,
                              scale.cookd = sqrt)
+
 
 wn_diag <- data.frame(
   wn,
@@ -232,6 +244,7 @@ wn_diag <- data.frame(
 
 
 p <- length(diag_fit$coefficients)
+
 # locate points of interest
 which_look_at <- 
   abs(wn_diag$std_res) > 2 | 
@@ -242,9 +255,16 @@ look_at <- wn_diag[which_look_at, ]
 # look at points of interest
 look_at
 
+dim(look_at)  # 12 EVPs
+sum(look_at$trials)  # 114 points
+
+# look at only the points identified above
+wn_diag[c(25, 73), ]
+
 # what are the actual values for the cutoffs
 #  of cooks d and leverage h?
 4/nrow(wn)
+2 * p / nrow(wn)
 3 * p / nrow(wn)
 
 # do any EVPs violate all criteria?
@@ -254,6 +274,79 @@ which_violate_all <-
   wn_diag$cooks_d > 4 / nrow(wn) & 
   wn_diag$h > 3*p / nrow(wn)
 any(which_violate_all)
+
+# EVP 25 contains 22 observations
+#  its Cook's distance and leverage are above the cutoffs
+#  however, only slightly on both accounts
+#  not enough for us to justify removing this many points
+# EVP 73 has 2 observations
+#  it is above the residual cutoff thus above the delta X^2 cutoff
+#  again, this is only a minor violation
+#  not quite strong enough for us to consider removing.
+
+# as for the remaining EVPs
+# the ones that do violate the cutoffs do so only slightly
+# additionally, they mostly surpass one cutoff, not two
+# lastly, almost all of them contain more than 6 original points, up to 14
+# we will proceed with the model as is
+
+
+
+# note: in the analysis we used the examine.logistic.reg function
+# because of it's interactivity
+# the plots in the report were made with the following code
+
+# add relavent values (cooks d, etc.) to data
+aug_diag <- augment(diag_fit, 
+                    data = wn,
+                    type.predict = "response")
+
+# for some reason, augment() is only returning deviance residuals
+aug_diag <- aug_diag %>% 
+  mutate(
+    .std.resid = rstandard(diag_fit, type = "pearson")
+  )
+
+# make diagnostic plots. 
+# same plots as examine.logistic.reg but using ggplot2
+
+ggplot(aug_diag, aes(x = .fitted, y = .std.resid)) +
+  geom_point() +
+  geom_hline(yintercept = 2, linetype = "dotted") +
+  geom_hline(yintercept = 3, linetype = "dotted") +
+  geom_hline(yintercept = -2, linetype = "dotted") +
+  geom_hline(yintercept = -3, linetype = "dotted")
+
+cook_cutoff <- 4 / nrow(wn)
+h_cutoff2 <- 2 * p / nrow(wn)
+h_cutoff3 <- 3 * p / nrow(wn)
+
+ggplot(aug_diag, aes(x = .hat, y = .cooksd)) +
+  geom_point() +
+  geom_vline(xintercept = h_cutoff2, linetype = "dotted") +
+  geom_vline(xintercept = h_cutoff3, linetype = "dotted") +
+  geom_hline(yintercept = cook_cutoff, linetype = "dotted") +
+  ylab("Cook's Distance") +
+  xlab("Leverage") +
+  theme_classic()
+
+ggplot(aug_diag, aes(x = .fitted, y = .std.resid^2)) +
+  geom_point() +
+  geom_hline(yintercept = 4) +
+  geom_hline(yintercept = 9) +
+  ylab("Squared Residuals") +
+  xlab("Fitted Values") +
+  theme_classic()
+
+
+# Hosmer-Lemeshow goodness-of-fit test
+
+source(here("reports", "prostate-cancer", "code", "HLTest.R"))
+
+# 6 groups used b/c that's minimum number such that expected counts are
+#  greater than 5
+HLTest(diag_fit, 6)
+
 
 # =====================================
 # ========== INFERENCE ================
