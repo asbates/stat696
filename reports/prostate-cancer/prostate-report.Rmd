@@ -153,7 +153,7 @@ For the numeric variables, we examine summary statistics and plots of age and PS
 Figure \@ref(fig:psa-hist) is a histogram of PSA value where color indicates tumor penetration of the prostatic capsule. The distribution has a similar shape for low PSA values however, for PSA values above 67 mg/ml there are no cases where tumor penetration has occured. 
 
 
-```{r psa-hist, fig.cap = "Histogram of prostatic specific antigen value colored by whether tumor penetration of prostatic capsule occured.", fig.height = 3.5, fig.width = 6}
+```{r psa-hist, fig.cap = "Histogram of prostatic specific antigen value colored by whether tumor penetration of prostatic capsule occured.", fig.height = 3, fig.width = 6}
 ggplot(prostate, aes(x = psa, fill = penetrate)) +
   geom_histogram(bins = 50) +
   theme_classic()
@@ -236,14 +236,14 @@ hl_test <- HLTest(diag_fit, 6)
 ```
 
 
-To assess the model we use diagnostic tools on explanatory variable patterns[^2] (EVP). We collapse the orginal data into groups where each group shares the same covariate values. Recall that one of the variables, PSA, is continous so we first cut the values into nonoverlapping bins. Then we fit the model to the EVPs using the number of original observations in each EVP as weights. Standardized Pearson residuals, Cook's distance, and leverage from the EVP model are what we use to perform our diagnostics. A plot of the residuals vs. fitted probabilites is shown in Figure \@ref(fig:resid-plot). The dotted horizontal lines indicate the standard cut off values of -3, -2, 2, and 3. One EVP is slightly smaller than the lowest cut off bound, having a value of `r round(aug_diag[73, ]$.std.resid, 1)`. This is only a minor violation and the cut off values are simply rules-of-thumb so we consider this EVP satisfactory. 
+To assess the model we use diagnostic tools on explanatory variable patterns[^2] (EVP). We collapse the orginal data into groups where each group shares the same covariate values. Recall that one of the variables, PSA, is continous so we first cut the values into nonoverlapping bins. Then we fit the model to the EVPs using the number of original observations in each EVP as weights. Standardized Pearson residuals, Cook's distance, and leverage from the EVP model are what we use to perform our diagnostics. A plot of the residuals vs. fitted probabilites is shown in Figure \@ref(fig:resid-plot). The dotted horizontal lines indicate the standard cut off values of -3, -2, 2, and 3. There are no discernible patterns in the residuals and they are scattered roughly equally about zero. For larger fitted probabilities there is a bit more variability in the residuals but nothing too concerning. One EVP (lower right hand corner of plot) is slightly smaller than the lowest cut off bound, having a value of `r round(aug_diag[73, ]$.std.resid, 1)`. This is only a minor violation and the cut off values are simply rules-of-thumb so we consider this EVP satisfactory.
 
 Further diagnostic plots can be found in Figure \@ref(fig:app-diag-plots) in the appendix. Only one other EVP is of any concern as its Cook's distance and leverage values are both outside the standard cut off values. However, this EVP is also only faintly outside the boundaries[^3]. Twenty two of the original observations are contained in this EVP. Given that the Cook's distance and leverage for this EVP are just barely outside their respective cut off, this is not enough justification to remove this many data points.
 
 As a final diagnostic measure we perform a Homer-Lemeshow goodness-of-fit test using the model fit to the EVPs. The EVP data is separated into bins according ot quantiles of the fitted values. Then observed and expected counts are computed for each bin and a $\chi^2$ test is performed. This test is an overall assessment of how well the model fits the data. The obtained test statistic is `r round(hl_test$statistic[[1]], 1)` with a corresponding p-value of `r round(hl_test$p.value, 2)`. The p-value may seem unfruitful at first as we are typically looking for small values. However in the situation at hand this is not the case. The null hypothesis in this test is that the model fits the data well so we do _not_ want to reject the null in our situation. So based on this test our model seems to fit the data well and we can move on to inferences.
 
 
-```{r resid-plot, fig.height = 3.5, fig.width = 6, fig.cap = "Pearson residuals vs. fitted values via Explanatory Variable Patterns (74). The horizontal reference lines indicate the usual residual cutoffs of +-2 and +- 3."}
+```{r resid-plot, fig.height = 3, fig.width = 6, fig.cap = "Pearson residuals vs. fitted values via Explanatory Variable Patterns (74). The horizontal reference lines indicate the usual residual cutoffs of +-2 and +- 3."}
 ggplot(aug_diag, aes(x = .fitted, y = .std.resid)) +
   geom_point() +
   geom_hline(yintercept = 2, linetype = "dotted") +
