@@ -146,7 +146,7 @@ examine.logistic.reg <- function(mod.fit.obj = mod.fit, identify.points = TRUE, 
    } }
   else {
    # Empty plot because the last plot would be exactly the same
-   plot(x = c(0, 1), y = c(0,1), type = "n", axes = FALSE, xlab = " ", ylab = " ",)
+   plot(x = c(0, 1), y = c(0,1), type = "n", axes = FALSE, xlab = " ", ylab = " ")
   }
 
 

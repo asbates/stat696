@@ -212,12 +212,12 @@ wn <- data.frame(
 
 dim(wn)  # 74 EVPs
 
-fit <- glm(penetrate/trials ~ psa_interval + gleason + dre,
+diag_fit <- glm(penetrate/trials ~ psa_interval + gleason + dre,
            data = wn,
            family = binomial(link = "logit"),
            weights = trials)
 
-examine <- examine.logistic.reg(fit,
+examine <- examine.logistic.reg(diag_fit,
                              identify.points = FALSE,
                              scale.n = one_fourth_root,
                              scale.cookd = sqrt)
@@ -230,7 +230,8 @@ wn_diag <- data.frame(
   h = round(examine$h, 2)
 )
 
-p <- length(fit$coefficients)
+
+p <- length(diag_fit$coefficients)
 # locate points of interest
 which_look_at <- 
   abs(wn_diag$std_res) > 2 | 
