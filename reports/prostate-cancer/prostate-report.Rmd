@@ -380,7 +380,7 @@ tidy_best_step %>%
 
 ```{r app-diag-plots}
 
-resid_vs_fit <- ggplot(wn_diag, aes(x = std_res, y = fitted)) +
+resid_vs_fit <- ggplot(wn_diag, aes(x = fitted, y = std_res)) +
   geom_point() +
   geom_hline(yintercept = 2, linetype = "dotted") +
   geom_hline(yintercept = 3, linetype = "dotted") +
