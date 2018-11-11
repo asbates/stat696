@@ -15,6 +15,7 @@ abstract: "This is the executive summary. Unfortunately, it has to be typed in t
 
 ```{r setup, include=FALSE, message = FALSE}
 knitr::opts_chunk$set(echo = FALSE)
+
 library(here)  # handles directories
 library(readr)  # read in data
 library(MASS) # stepwise regression
@@ -23,6 +24,7 @@ library(forcats) # handle factors
 library(ggplot2)  # plotting
 library(broom) # tidy model output
 library(gridExtra) # matrix of ggplot's 
+library(pROC) # assess predictions
 
 library(knitr)  # table formatting
 library(kableExtra) # table formatting
@@ -70,13 +72,14 @@ this seems too short. maybe comibne w/methods again? call it something like Intr
 
 In this paper, we investigate the relationship between the results of various prostae related exams and whether tumor penetration of the prostatic capsule has occured. 
 The objective of this analysis is to determine if there are any factors that have a particularly influential relationship with prostatic capsule penetration.
-Additionally, we wish to develop a model to predict capsule penetration so it can be used as a diagnostic tool for future patients.
+Additionally, we wish to develop a model to predict capsule penetration so it may be used as a diagnostic tool for future patients.
 
 # Methods
 
 In this analysis we examine a subset of data collected by the Ohio State University Comprehensive Cancer Center as part of a study to determine the potential of standard exam results to predict whether a tumor will penetrate the prostatic capsule.
 Out of $380$ patients, $153$ have experienced capsule penetration and $227$ have not. 
-The data set contains six explanatory variables: the patients age and race, results of a digital rectal exam (DRE), whether capsular involvement was detected, Prostatic Specific Antigen (PSA) value, and total Gleason score.
+The data set contains six explanatory variables: the patients age and race, results of a digital rectal exam (DRE), whether capsular involvement was detected, prostate specific antigen (PSA) value, and total Gleason score.
+Also included in the data set was an identification code which is not used in this analysis as it simply identifies the patient.
 For a detailed description of each variable see Table \@ref(tab:var-desc). There are two continuous variables, PSA and age, and the remaining variables are categorical. Observe that race is recorded as only Black or White.
 This may be the reason why three observations contain missing values for race. Perhaps three of the patients were neither Black nor White.
 However, without access to details of the study and the population considered, we can only speculate. 
@@ -84,6 +87,8 @@ Furthermore, the other variables in these observations do not point to any parti
 Because of this, we decided to omit these three observations. 
 The data set used for analysis then, consists of 377 observations. 
 Of these, 151 patients have experienced tumor penetration of the prostatic capsule, and 226 have not.
+
+
 
 To investigate the relationship between the covariates and tumor penetration status, we use a logistic regression model. 
 The response is especially well balanced with 40% of the observations having capsular penetration and 60% not having penetration. 
@@ -112,7 +117,7 @@ log odds ratios were calculated, and predictions were made. predictive power was
 ```{r var-desc}
 description <- data.frame(
   Name = c("penetrate", "age", "race", "dre", "caps", "psa", "gleason"),
-  Description = c("Tumor penetration of prostatic capsule?", "Patient age", "Patient race", "Results of digital rectal exam", "Detection of capsular involvement?", "Prostatic Specific Antigen value", "Total Gleason score"),
+  Description = c("Tumor penetration of prostatic capsule?", "Patient age", "Patient race", "Results of digital rectal exam", "Detection of capsular involvement?", "Prostate specific antigen value", "Total Gleason score"),
   Details = c("Yes, no", "Years", "Black, White", "No nodule, unilobar left, unilobar right, bilobar", "Yes, no", "mg/ml", "0-10")
 )
 
@@ -153,7 +158,7 @@ For the numeric variables, we examine summary statistics and plots of age and PS
 Figure \@ref(fig:psa-hist) is a histogram of PSA value where color indicates tumor penetration of the prostatic capsule. The distribution has a similar shape for low PSA values however, for PSA values above 67 mg/ml there are no cases where tumor penetration has occured. 
 
 
-```{r psa-hist, fig.cap = "Histogram of prostatic specific antigen value colored by whether tumor penetration of prostatic capsule occured.", fig.height = 3, fig.width = 6}
+```{r psa-hist, fig.cap = "Histogram of prostate specific antigen value colored by whether tumor penetration of prostatic capsule occured.", fig.height = 3, fig.width = 6}
 ggplot(prostate, aes(x = psa, fill = penetrate)) +
   geom_histogram(bins = 50) +
   theme_classic()
@@ -173,13 +178,13 @@ best_step <- glm(penetrate ~ age + race + dre + psa + gleason +
 ```
 
 
-To model the relationship between tumor penetration and the predictor variables, we use a logistic regression model. As most of the covariates are tests covering different aspects of of the prostate, it is not hard to imagine there some of them connected in their relationship with tumor penetration. For this reason, the initial model is fit using all first-order interaction terms. This serves as the starting point for model selection which is done via stepwise regression with AIC as the selection criteria. The model chosen via the stepwise procedure includes race, age, DRE results, PSA value, and Gleason score as well as age interacted with DRE result and race interacted with PSA value. A detailed summary can be found in Table \@ref(tab:app-best-step-sum). We note here that the AIC is 391 and the p-values for age and race are quite high at 0.11 and 0.99, respectively.
+To model the relationship between tumor penetration and the predictor variables, we use a logistic regression model. As most of the covariates are tests covering different aspects of of the prostate, it is not hard to imagine there some of them connected in their relationship with tumor penetration. For this reason, the initial model is fit using all first-order interaction terms. This serves as the starting point for model selection which is done via stepwise regression with AIC as the selection criteria. The model chosen via the stepwise procedure includes race, age, DRE results, PSA value, and Gleason score as well as age interacted with DRE result and race interacted with PSA value. A detailed summary can be found in Table \@ref(tab:app-best-step-sum). We note here that the AIC is `r round(best_step$aic, 0)` and the p-values for age and race are quite high at 0.11 and 0.99, respectively.
 
-Since some of the p-values of the model obtained via stepwise regression, we remove this terms and refit our model. Specifically, we remove age and race along with interaction terms associated with them. We can not justify keeping variables in interactions that themselves are not included in the model. Note that for this model, removing the relevant interaction terms actually means removing all interaction terms. Once this is done, we are left with a model that relates tumor penetration to just three variables: DRE results, PSA value, and Gleason score.
+Since some of the p-values of the model obtained via stepwise regression are large, we remove these terms and refit our model. Specifically, we remove age and race along with interaction terms associated with them. We can not justify keeping variables in interactions that themselves are not included in the model. Note that for this model, removing the relevant interaction terms actually means removing all interaction terms. Once this is done, we are left with a model that relates tumor penetration to just three variables: DRE results, PSA value, and Gleason score.
 
 ## Diagnostics
 
-```{r diag-setup, fig.show = "hide"}
+```{r diag-setup}
 # note: we're using the 'raw' data here with the default encoding
 pros_diag <- prostate_raw %>% 
   rename(
@@ -261,8 +266,41 @@ ggplot(aug_diag, aes(x = .fitted, y = .std.resid)) +
 
 ## Inferences
 
+```{r inf-setup}
+final_fit <- glm(penetrate ~ dre + psa + gleason,
+                 data = prostate,
+                 family = binomial(link = "logit"))
 
-log odds ratios were calculated, and predictions were made. predictive power was examined through a confusion matrix. What's more important here, false negatives or false positives?
+fit_roc <- roc(prostate$penetrate, predict(final_fit, type = "response"))
+```
+
+
+Table \@ref(tab:model-summary) contains a summary of the final model used in this analysis. Included in the table are estimates for the coefficients with their associated standard errors and p-values. Also include are the odds ratio for each term and 95% confidence intervals for the odds ratio. The largest odds ratio corresponds to a digital rectal exam where a unilobar nodule is found on the patient's ride side. The odds of experiencing tumor penetration of the prostatic capsule for such patients is `r round(exp(coefficients(final_fit))[3], 2)` times more than the odds for patients which did not have a nodule present. Interestingly, the odds for patients with a unilobar nodule on the left are about half the odds of tumor pentration for patients with either a nodule on the right or a bilobar nodule. The odds ratio for Gleason score indicates that each unit increase in score corresponds to increase in odds of `r round(exp(coefficients(final_fit))[6],2)` times, if all other variables are held constant. Since the odds ratio for PSA is smaller than two, it has a slightly different interpretation. One additional mg/ml of PSA is associated with a `r round(1 - exp(-coefficients(final_fit))[5],2) * 100`% increase in odds.
+
+
+```{r model-summary}
+tidy(final_fit, conf.int = TRUE) %>% 
+  mutate(
+    Term = c("Intercept", "DRE: unilobar left", "DRE: unilobar right", "DRE: bilobar nodule", "Prostate specific antigen value", "Gleason score"),
+    Estimate = formatC(signif(estimate, 4), 2, format = "f"),
+    SE = formatC(signif(std.error, 4), 2, format = "f"),
+    `p-value` = formatC(signif(p.value, 5), 3, format = "f"),
+    `Odds ratio` = formatC(signif(exp(estimate), 4), 2, format = "f"),
+    `OR 95% CI` = paste("(", 
+                        formatC(signif(exp(conf.low), 4), 2, format = "f"),
+                        ", ",
+                        formatC(signif(exp(conf.high), 4), 2, format = "f"),
+                        ")"
+                        )
+  ) %>% 
+  select(Term, Estimate, SE, `p-value`, `Odds ratio`, `OR 95% CI`) %>% 
+  kable(align = c("l", "r", "r", "r", "r", "r"), caption = "Summary for final model fitting tumor penetration of prostatic capsule with covariates digital rectal exam result, prostate specific antigen value, and total Gleason score. Coefficient estimates with standard errors and p-values are provided along with odds ratios and 95\\% confidence intervals for odd ratios. AIC for the model is 393.") %>% 
+  row_spec(0, bold = TRUE)
+```
+
+
+In addition to making inferences on the odds ratios of each of the variables in our model, we can assess the models potential predictive ability. The primary goal of this analysis is to determine which factors have a particularly strong influence on tumor penetration. So this is not a prediction problem per se and so we did follow the usual paradigm of splitting our data into a training and testing set. This means that the predictions we consider here are in sample predictions and will no doubt have much better performance that what would actually be seen in practice. Nonetheless, we can still get some sense of how well the model performs at predicting tumor penetration. To that end, we plotted a receiver operating characteristic (ROC) curve which we leave in the appendix (Figure \@ref(fig:app-roc)) for the curious reader. The curve indicates that our model performs significantly better than the default comparison of randomly assigning whether tumor penetration will occur. The area under the ROC curve (AUC) for our final model was `r round(fit_roc$auc, 2)` which is quite good. The ROC curve and AUC indicate that the model developed here has potential as an overall diagnostic tool that combines the results of a digital rectal exam, prostate specific antigen value, and Gleason score into a single measure of risk, rather than considering each measure individually.
+
 
 # Conclusion
 
@@ -346,6 +384,7 @@ age_summary %>%
   row_spec(0, bold = TRUE)
 ```
 
+
 ```{r app-psa-sum}
 psa_summary <- prostate %>% 
   group_by(penetrate) %>% 
@@ -365,7 +404,7 @@ psa_summary <- prostate %>%
   as.data.frame()
 rownames(psa_summary) <- c("No Penetration", "Tumor Penetration")
 psa_summary %>% 
-  kable(caption = "Summary statistics for prostatic specific antigen value grouped by whether tumor penetration of prostatic capsule occured.") %>%
+  kable(caption = "Summary statistics for prostate specific antigen value grouped by whether tumor penetration of prostatic capsule occured.") %>%
   column_spec(1, bold = TRUE) %>% 
   row_spec(0, bold = TRUE)
 ```
@@ -398,7 +437,7 @@ tidy_best_step <- tidy(best_step) %>%
   select(Term, Estimate, SE, `p-value`)
 
 tidy_best_step %>%
-  kable(caption = "Coefficient, standard error, and p-value for model chosen via stepwise procedure. AIC = 391") %>%
+  kable(caption = "Summary of best stepwise fit of tumor penetration of prostatic capsule against age, race, digital rectal exam result, prostate specific antigen value, total Gleason score and the interaction terms age * dre results and race * psa. AIC is 391.") %>%
   row_spec(0, bold = TRUE)
 
 ```
@@ -406,7 +445,7 @@ tidy_best_step %>%
 
 ## Diagnostics
 
-```{r app-diag-plots, fig.cap = "Diagnostic plots for the model fit on explanatory variable patterns. Left: Cook's distance vs. leverage. Right: squared Pearson standardized residuals vs. fitted probabilities"}
+```{r app-diag-plots, fig.height = 3, fig.width = 7, fig.cap = "Diagnostic plots for the model fit on explanatory variable patterns. Left: Cook's distance vs. leverage. Right: squared Pearson standardized residuals vs. fitted probabilities"}
 
 cook_vs_lev <- ggplot(aug_diag, aes(x = .hat, y = .cooksd)) +
   geom_point() +
@@ -429,6 +468,20 @@ deltax_vs_fit <- ggplot(aug_diag, aes(x = .fitted, y = .std.resid^2)) +
 grid.arrange(cook_vs_lev, deltax_vs_fit, ncol = 2) 
 ```
 
+## Inferences
+
+```{r app-roc, fig.height = 3, fig.width = 6, fig.cap = "Reciever Operating Characteristic curve for final model fitting tumor penetration of prostatic capsule with covariates digital rectal exam result, prostate specific antigen value, and total Gleason score. The dotted line is a reference line indicating what the curve would be if we randomly decided whether tumor penetration occured."}
+data.frame(
+  sensitivity = fit_roc$sensitivities,
+  specificity = fit_roc$specificities
+) %>% 
+  ggplot(aes(x = 1 - specificity, y = sensitivity)) +
+  geom_line() +
+  geom_abline(slope = 1, intercept = 0, linetype = "dotted") +
+  annotate("text", label = paste0("AUC = ", round(fit_roc$auc, 2)),
+           x = 0.75, y = 0.5) +
+  theme_classic()
+```
 
 
 # R Code

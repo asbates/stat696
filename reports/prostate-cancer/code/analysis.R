@@ -6,6 +6,7 @@ library(dplyr)  # manipulate data
 library(forcats) # handle factors
 library(ggplot2)  # plotting
 library(broom) # tidy model output
+library(pROC) # assess predictions
 
 
 prostate_raw <- read_tsv(here("data", "prostate.txt"))
@@ -169,10 +170,13 @@ best_step <- stepAIC(full_fit, data = prostate)
 best_step
 summary(best_step)
 
+# or via the broom package
+tidy(best_step)
 
-final_fit <- glm(penetrate ~ dre + psa + gleason,
-                 data = prostate,
-                 family = binomial(link = "logit"))
+
+# if we remove variables from best_step according to p-value
+# we are left with penetrate ~ dre + psa + gleason
+
 
 # =====================================
 # ========== DIAGNOSTICS ==============
@@ -355,5 +359,31 @@ cbind(hl_test$observed, hl_test$expect)
 # ========== INFERENCE ================
 # =====================================
 
+final_fit <- glm(penetrate ~ dre + psa + gleason,
+                 data = prostate,
+                 family = binomial(link = "logit"))
+
+# summary and confidence intervals for final fit
 final_fit
 summary(final_fit)
+confint(final_fit)
+
+# also via the broom package
+tidy(final_fit, conf.int = TRUE)
+
+
+# ---- predictive power ----
+
+fit_roc <- roc(prostate$penetrate, predict(final_fit, type = "response"))
+plot(fit_roc, legacy.axes = TRUE, print.auc = TRUE)
+
+# or using ggplot
+data.frame(
+  sensitivity = fit_roc$sensitivities,
+  specificity = fit_roc$specificities
+) %>% 
+  ggplot(aes(x = 1 - specificity, y = sensitivity)) +
+  geom_line() +
+  geom_abline(slope = 1, intercept = 0) +
+  annotate("text", label = paste0("AUC = ", round(fit_roc$auc, 2)),
+           x = 0.75, y = 0.5)
