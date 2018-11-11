@@ -10,12 +10,9 @@ output:
 documentclass: article
 geometry: margin=1in
 fontsize: 11pt
-abstract: "This is the executive summary. Unfortunately, it has to be typed in the .yaml header. The only other thing i can think of is to have a separate file for the abstract. I'm not sure I want to do this. But actually, this may not be so bad. Each section could have a different file. this might make things a bit easier to edit. because then i would only have to look at say, the conclusion file instead of having to scroll all the way down, passing it, srolling up, passing it, etc."
+abstract: "In this analysis we investigate various prostate exam results and their relationship with tumor pentration of the prostatic capsule. A logistic regression model is constructed based on a subset of data collected by the Ohio State University Comprehensive Cancer Center in order to quantify the relationship. The components of the model are the results of a digital rectal exam, total Gleason score, and prostate specific antigen value. The most significant factor is whether a nodule was detected in a digital rectal exam. Presence of a nodule is associated with up to a 4.7 times increase in odds of tumor pentration compared to absence of a nodule. Provided the other variables are fixed, a one unit increase in Gleason score is associated with a 2.7 times increase in odds of tumor penetration. Prostate specific antigen value is related to tumor penetration via a 3% increase in odds of penetration for each additional mg/ml increase. We also assess the potential of using the model as an overall diagnostic tool that combines the results of a digital rectal exam, prostate specific antigen value and Gleason score into a single measure of risk, rather than considering each measure individually."
 ---
 
-In this analysis we developed a logistic regression model to aid in the understanding of how various factors relate to tumor penetration of the prostatic capsule. Along with this we compared the strength of the relationship by examing the odds ratio for each factor. The patient's age and race were not included in the model from which we can infer that these have a weak relationship with tumor penetration, if any. The most significant factor was whether a nodule was detected in a digital rectal exam. Presence of a unilobar nodule on the right relates to a 4.7 times increase in odds than for patients with no nodule detected. An increase in Gleason score by one is associated with a 2.7 times increase in odds provided the remaining covariates are fixed. For a one mg/ml increase in prostate specific antigen value, we can expect a 3% increase in odds if the other variables remain constant. The predictive power of the model was assessed via AUC which was 0.82. This led us to believe the model has the potential to be used as a tool to help determine if a given patient has experienced tummor penetration. We also discussed how the model can be used in practice for this purpose.
-
-The most significant factor was whether a nodule was detected in a digital rectal exam. Presence of a nodule is associated with up to a 4.7 times increase in the odds compared to absence of a nodule.
 
 ```{r setup, include=FALSE, message = FALSE}
 knitr::opts_chunk$set(echo = FALSE)
@@ -104,6 +101,8 @@ Using this as a starting point, the model is chosen via a backwards elimination 
 
 
 log odds ratios were calculated, and predictions were made. predictive power was examined through a confusion matrix. What's more important here, false negatives or false positives?
+
+mention software: R, R Markdown, code available in appendix, etc.
 
 
 <!-- Table: (\#tab:var-description) Description of variables in the data set. -->
@@ -303,7 +302,34 @@ tidy(final_fit, conf.int = TRUE) %>%
 ```
 
 
-In addition to making inferences on the odds ratios of each of the variables in our model, we can assess the models potential predictive ability. The primary goal of this analysis is to determine which factors have a particularly strong influence on tumor penetration. So this is not a prediction problem per se and so we did follow the usual paradigm of splitting our data into a training and testing set. This means that the predictions we consider here are in sample predictions and will no doubt have much better performance that what would actually be seen in practice. Nonetheless, we can still get some sense of how well the model performs at predicting tumor penetration. To that end, we plotted a receiver operating characteristic (ROC) curve which we leave in the appendix (Figure \@ref(fig:app-roc)) for the curious reader. The curve indicates that our model performs significantly better than the default comparison of randomly assigning whether tumor penetration will occur. The area under the ROC curve (AUC) for our final model was `r round(fit_roc$auc, 2)` which is quite good. The ROC curve and AUC indicate that the model developed here has potential as an overall diagnostic tool that combines the results of a digital rectal exam, prostate specific antigen value, and Gleason score into a single measure of risk, rather than considering each measure individually.
+In addition to making inferences on the odds ratios of each of the variables in our model, we can assess the models potential predictive ability. The primary goal of this analysis is to determine which factors have a particularly strong influence on tumor penetration. This is not a prediction problem per se and so we did not follow the usual paradigm of splitting our data into a training and testing set. This means that the predictions we consider here are in sample predictions and will no doubt have much better performance than what would actually be seen in practice. Nonetheless, we can still get some sense of how well the model performs at predicting tumor penetration. To that end, we plotted a receiver operating characteristic (ROC) curve which we leave in the appendix (Figure \@ref(fig:app-roc)) for the curious reader. The curve indicates that our model performs significantly better than the default comparison of randomly assigning whether tumor penetration will occur. The area under the ROC curve (AUC) for our final model was `r round(fit_roc$auc, 2)` which is quite good. The ROC curve and AUC indicate that the model developed here has potential as an overall diagnostic tool that combines the results of a digital rectal exam, prostate specific antigen value, and Gleason score into a single measure of risk, rather than considering each measure individually.
+
+
+We now illustrate how our model can be used as the aformentioned diagnostic tool. Let us suppose that we have three patients who have had a digitial rectal exam, have a PSA test done, and have received a Gleason score. Of course in reality we would have this information available but for the sake of demonstration we will use hypothetical values. The predictions are easy to obtain with software so we will focus on what to do once we have the predictions. Table \@ref(tab:preds) presents the supposed values as well as the probability of tumor penetration obtained from the model. Doctors would likely be satisfied with the first two patients whose predicted probability of tumor penetration are quite low. However, further investigation would likely be desired for the third patient how has a reasonably high chance of tumor penetration according to the model. 
+
+But is this probability really that high? What if it was 0.85 instead of 0.88? How would we determine what is considered 'high' and what is considered 'low'? One way we can do this is by considering the false positive rate and the false negative rate. We start by setting a cutoff value, say 0.85, for which values above we say that tumor penetration has occured and otherwise we say that it has not. A false postive occurs when we say tumor pentration has occured when it actually has not. Similarly, a false negative is when we claim that tumor penetration has not occured when it actually has. Both false positives and false negatives are inevitable so the game here is to find an appropriate balance between the two and determine which one is more important. For example, we may want to minimize the false negative rate because this means a patient walks away thinking they have not experienced tumor penetration when in reality they have. Ultimately, a team of physicians would need to weigh the costs and benefits of an incorrect prediction from which an appropriate cutoff value can be determined.
+
+
+```{r preds}
+new_data <- data.frame(
+  dre = c("no nodule", "unilobar right", "no nodule"),
+  psa = c(15.26, 8.70, 80.42),
+  gleason = c(6, 4, 8)
+)
+
+augment(final_fit, newdata = new_data, type.predict = "response") %>% 
+  mutate(
+    `DRE result` = dre,
+    `PSA value` = psa,
+    `Gleason score` = gleason,
+    `Predicted value` = formatC(signif(.fitted, 4), 2, format = "f")
+  ) %>% 
+  select(`DRE result`, `PSA value`, `Gleason score`, `Predicted value`) %>% 
+  kable(align = c("l", "r", "r", "r"), caption = "Hypothetical values for DRE result, PSA value, and Gleason score along with predicted probability of tumor pentration of prostatic capsule obtained from the model.")
+```
+
+
+
 
 
 # Conclusion
@@ -315,10 +341,6 @@ We should note that the analyis performed here does have its limitations. The mo
 Another aspect of this analysis that should be handled with care is using the model developed to predict tumor penetration. The predictive capability assessment of this analysis was done on data that was used to fit the model. These predictions will no doubt be an overestimate of the ability of predictions on previously unseen data. If it is desired to use this model as a primary method to determine if a patient has experienced tumor penetration, a different approach should be followed than was done in this analysis such as splitting the data into a training and testing set to estimate its out of sample predictive performance. One would likely also want to determine a cutoff point as this model outputs probabilities and not yes-no decisions. This has its own inherent difficulties. Experts would need to determine an acceptable level of false postives and false negatives and an apropriate balance between the two.
 
 
-
-
-
-limitations
 
 
 \newpage

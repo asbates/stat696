@@ -390,3 +390,15 @@ data.frame(
 
 # --- future predictions ---
 
+# hypothetical new data
+new_data <- data.frame(
+  dre = c("no nodule", "unilobar right", "no nodule"),
+  psa = c(15.26, 8.70, 80.42),
+  gleason = c(6, 4, 8)
+)
+
+predict(final_fit, newdata = new_data, type = "response")
+
+# or via broom
+augment(final_fit, newdata = new_data, type.predict = "response")
+
