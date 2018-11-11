@@ -387,3 +387,6 @@ data.frame(
   geom_abline(slope = 1, intercept = 0) +
   annotate("text", label = paste0("AUC = ", round(fit_roc$auc, 2)),
            x = 0.75, y = 0.5)
+
+# --- future predictions ---
+
