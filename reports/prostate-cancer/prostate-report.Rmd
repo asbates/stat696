@@ -10,7 +10,7 @@ output:
 documentclass: article
 geometry: margin=1in
 fontsize: 11pt
-abstract: "In this analysis we investigate various prostate exam results and their relationship with tumor pentration of the prostatic capsule. A logistic regression model is constructed based on a subset of data collected by the Ohio State University Comprehensive Cancer Center in order to quantify the relationship. The components of the model are the results of a digital rectal exam, total Gleason score, and prostate specific antigen value. The most significant factor is whether a nodule was detected in a digital rectal exam. Presence of a nodule is associated with up to a 4.7 times increase in odds of tumor pentration compared to absence of a nodule. Provided the other variables are fixed, a one unit increase in Gleason score is associated with a 2.7 times increase in odds of tumor penetration. Prostate specific antigen value is related to tumor penetration via a 3% increase in odds of penetration for each additional mg/ml increase. We also assess the potential of using the model as an overall diagnostic tool that combines the results of a digital rectal exam, prostate specific antigen value and Gleason score into a single measure of risk, rather than considering each measure individually."
+abstract: "In this paper we investigate various prostate exam results and their relationship with tumor pentration of the prostatic capsule. A logistic regression model is constructed based on a subset of data collected by the Ohio State University Comprehensive Cancer Center in order to quantify the relationship. The components of the model are the results of a digital rectal exam, total Gleason score, and prostate specific antigen value. The most significant factor is whether a nodule was detected in a digital rectal exam. Presence of a nodule is associated with up to a 4.7 times increase in odds of tumor pentration compared to absence of a nodule. Provided the other variables are fixed, a one unit increase in Gleason score is associated with a 2.7 times increase in odds of tumor penetration. Prostate specific antigen value is related to tumor penetration via a 3% increase in odds of penetration for each additional mg/ml increase. We also assess the potential of using the model as an overall diagnostic tool that combines the results of a digital rectal exam, prostate specific antigen value and Gleason score into a single measure of risk, rather than considering each measure individually."
 ---
 
 
@@ -69,53 +69,19 @@ prostate <- prostate %>%
 
 # Introduction
 
-this seems too short. maybe comibne w/methods again? call it something like Intro and Methods or Intro and Overview?
+Prostate cancer is one of the most common cancers among males. Early detection is crucial because treatment can often be successful if the cancer is found early enough to where a spread to other parts of the body have not occured. In this paper we investigate the relationship between the results of various prostate related exams and whether tumor penetration of the prostatic capsule has occured. The primary purpose of this analysis is to determine if there are any factors that have a particularly influential relationship with prostate capsule penetration. A secondary aim is to develop a method to use the model resulting from the primary analysis as a diagnostic aid that merges the results of several exams into a single risk measure instead of considering each result independently.
 
-In this paper, we investigate the relationship between the results of various prostae related exams and whether tumor penetration of the prostatic capsule has occured. 
-The objective of this analysis is to determine if there are any factors that have a particularly influential relationship with prostatic capsule penetration.
-Additionally, we wish to develop a model to predict capsule penetration so it may be used as a diagnostic tool for future patients.
+
 
 # Methods
 
-In this analysis we examine a subset of data collected by the Ohio State University Comprehensive Cancer Center as part of a study to determine the potential of standard exam results to predict whether a tumor will penetrate the prostatic capsule.
-Out of $380$ patients, $153$ have experienced capsule penetration and $227$ have not. 
-The data set contains six explanatory variables: the patients age and race, results of a digital rectal exam (DRE), whether capsular involvement was detected, prostate specific antigen (PSA) value, and total Gleason score.
-Also included in the data set was an identification code which is not used in this analysis as it simply identifies the patient.
-For a detailed description of each variable see Table \@ref(tab:var-desc). There are two continuous variables, PSA and age, and the remaining variables are categorical. Observe that race is recorded as only Black or White.
-This may be the reason why three observations contain missing values for race. Perhaps three of the patients were neither Black nor White.
-However, without access to details of the study and the population considered, we can only speculate. 
-Furthermore, the other variables in these observations do not point to any particular reason as to why race is not recorded[^1].
-Because of this, we decided to omit these three observations. 
-The data set used for analysis then, consists of 377 observations. 
-Of these, 151 patients have experienced tumor penetration of the prostatic capsule, and 226 have not.
+In this analysis we examine a subset of data collected by the Ohio State University Comprehensive Cancer Center as part of a study to determine the potential of standard exam results to predict whether a tumor will penetrate the prostatic capsule. Out of 380 patients, 153 have experienced capsule penetration and 227 have not. The data set contains six explanatory variables: the patients age and race, results of a digital rectal exam (DRE), whether capsular involvement was detected, prostate specific antigen (PSA) value, and total Gleason score. Also included in the data set was an identification code which is not used in the analysis as it simply identifies the patient. For a detailed description of each variable see Table \@ref(tab:var-desc). There are two continuous variables, PSA and age, and the remaining variables are categorical. Observe that race is recorded as only Black or White. This may be the reason why three observations contain missing values for race. Perhaps three of the patients were neither Black nor White. However, without access to the details of the study we can only speculate. Furthermore, the other variables in these observations do not point to any particular reason as to why race is not recorded[^1]. Because of this, we decided to omit these three observations. The data set used for analysis then, consists of 377 observations. Of these, 151 patients have experienced tumor penetration of the prostatic capsule, and 226 have not.
 
 
+To investigate the relationship between the covariates and tumor penetration status, we use a logistic regression model. The response is especially well balanced with 40% of the observations having capsular penetration and 60% not having penetration. As such, procedures designed to assist with class imbalances, such as downsampling, are not considered in this analysis. In addition to the explanatory variables included in the data set, all two-way interaction terms are examined. Using this as a starting point, the model is chosen via a backwards elimination procedure using Akaike Information Criteria (AIC) as the model selection criterion. In the model constructed with this procedure age and race are not significant at the 0.05 level so they are subsequently removed along with any associated interaction terms.
 
-To investigate the relationship between the covariates and tumor penetration status, we use a logistic regression model. 
-The response is especially well balanced with 40% of the observations having capsular penetration and 60% not having penetration. 
-As such, procedures designed to assist with class imbalances, such as downsampling, are not considered in this analysis.
-In addition to the explanatory variables included in the data set, all two-way interaction terms are examined. 
-Using this as a starting point, the model is chosen via a backwards elimination procedure using Akaike Information Criteria (AIC) as the model selection criterion.
-(variable name) is not significant at the 0.05 level so it is subsequently removed, along with its corresponding interaction terms.
+Diagnostics of the resulting model are performed via explanatory variable patterns and a Hosmer-Lemeshow goodness-of-fit test. The strength of the relationship between the covariates and tumor penetration of the prostatic capsule is measured by the odds ratio. The predictive power of the model is evaluated by the area under the receiver operating characteristic curve. A method based on predictions from the model is proposed as a tumor penetration diagnostic tool to assist physicians in determining if further investigation of a given patient is warranted. The analysis is conducted using the statistical software R and the report is written using the R Markdown package. The R code is available in the appendix. All other materials used in this analysis are available online at `https://github.com/asbates/stat696/tree/master/reports/prostate-cancer`.
 
-
-
-log odds ratios were calculated, and predictions were made. predictive power was examined through a confusion matrix. What's more important here, false negatives or false positives?
-
-mention software: R, R Markdown, code available in appendix, etc.
-
-
-<!-- Table: (\#tab:var-description) Description of variables in the data set. -->
-
-<!-- | Variable Name | Description | Details | -->
-<!-- |:------|:-----|:-----| -->
-<!-- | capsule | Did the tumor penetrate the prostatic capsule | Yes, no | -->
-<!-- | age | Patient age| In years | -->
-<!-- | race | Patient race | Black or White | -->
-<!-- | dre | Results of digital rectal exam | No nodule, unilobar nodule left, unilobar nodule left right, bilobar nodule | -->
-<!-- | caps | Detection of capsular involvement | Yes, no | -->
-<!-- | psa | Prostatic Specific Antigen value | mg/ml | -->
-<!-- | gleason | Total Gleason score | 0-10 | -->
 
 ```{r var-desc}
 description <- data.frame(
@@ -136,8 +102,6 @@ kable(description,
 # Analysis
 
 ## Exploratory Analysis
-
-say something about the variable types and removing of missing values.
 
 We begin by inspecting tables of the categorical variables against whether tumor penetration has occured. Rather than examing contingency tables of counts, we find it more informative to view tables marginalized by the covariates. This provides more context by allowing us to see, for example, the proportion of Black patients who had tumor penetration and the proportion who did not. Table \@ref(tab:dre-tab) displays the proportion of patients who did and did not experience tumor penetration of the prostatic capsule grouped by the results of a digital rectal exam. It shows that the majority of patients who do not have a nodule have not experience tumor penetration. For those patients who did have a nodule, the rate of tumor penetration is reversed. The most pronounced difference is for patients who had a bilobar nodule with 65% experiencing tumor penetration. The relationship we see here tells us that DRE results will likely be a valuable predictor.
 
@@ -307,7 +271,7 @@ In addition to making inferences on the odds ratios of each of the variables in 
 
 We now illustrate how our model can be used as the aformentioned diagnostic tool. Let us suppose that we have three patients who have had a digitial rectal exam, have a PSA test done, and have received a Gleason score. Of course in reality we would have this information available but for the sake of demonstration we will use hypothetical values. The predictions are easy to obtain with software so we will focus on what to do once we have the predictions. Table \@ref(tab:preds) presents the supposed values as well as the probability of tumor penetration obtained from the model. Doctors would likely be satisfied with the first two patients whose predicted probability of tumor penetration are quite low. However, further investigation would likely be desired for the third patient how has a reasonably high chance of tumor penetration according to the model. 
 
-But is this probability really that high? What if it was 0.85 instead of 0.88? How would we determine what is considered 'high' and what is considered 'low'? One way we can do this is by considering the false positive rate and the false negative rate. We start by setting a cutoff value, say 0.85, for which values above we say that tumor penetration has occured and otherwise we say that it has not. A false postive occurs when we say tumor pentration has occured when it actually has not. Similarly, a false negative is when we claim that tumor penetration has not occured when it actually has. Both false positives and false negatives are inevitable so the game here is to find an appropriate balance between the two and determine which one is more important. For example, we may want to minimize the false negative rate because this means a patient walks away thinking they have not experienced tumor penetration when in reality they have. Ultimately, a team of physicians would need to weigh the costs and benefits of an incorrect prediction from which an appropriate cutoff value can be determined.
+But is this probability really that high? What if it was 0.85 instead of 0.88? How would we determine what is considered 'high' and what is considered 'low'? One way we can do this is by considering the false positive rate and the false negative rate. We start by setting a cutoff value, say 0.85, for which values above we say that tumor penetration has occured and otherwise we say that it has not. Patients with scores above the cutoff would warrant a deeper investigation while patients below the cutoff would proceed with a regular prostate exam schedule. A false postive occurs when we say tumor pentration has occured when it actually has not. Similarly, a false negative is when we claim that tumor penetration has not occured when it actually has. Both false positives and false negatives are inevitable so the game here is to find an appropriate balance between the two and determine which one is more important. For example, we may want to minimize the false negative rate because this means a patient walks away thinking they have not experienced tumor penetration when in reality they have. Ultimately, a team of physicians would need to weigh the costs and benefits of an incorrect prediction from which an appropriate cutoff value can be determined.
 
 
 ```{r preds}
