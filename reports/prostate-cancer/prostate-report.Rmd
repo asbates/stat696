@@ -1,5 +1,5 @@
 ---
-title: "Something About Prostate Cancer"
+title: "Analysis of Factors Related to Tumor Penetration of Prostatic Capsule"
 author: "Andrew Bates"
 date: "November 15, 2018"
 header-includes:
@@ -89,7 +89,8 @@ description <- data.frame(
 
 kable(description,
       caption = "Detailed description of variables included in the data set (except id). The two continuous variables are age and prostate specific antigen value. The remaining variables are categorical.") %>%
-  row_spec(0, bold = TRUE)
+  row_spec(0, bold = TRUE) %>% 
+  kable_styling(latex_options = "hold_position", position = "left")
 
 ```
 
@@ -117,7 +118,8 @@ dre_tab %>%
   formatC(., digits = 1, format = "f") %>% 
   kable(caption = "Results of digital rectal exam vs. whether tumor pentration of prostatic capsule occured, marginalized by the digital rectal exam results.") %>% 
   add_header_above(c(" " = 1, "DRE Result" = 4), bold = TRUE) %>%
-  column_spec(1, bold = TRUE)
+  column_spec(1, bold = TRUE) %>% 
+  kable_styling(latex_options = "hold_position")
 
 ```
 
@@ -129,7 +131,7 @@ The relationship for the remaining categorical variables can be found in Tables 
 For the numeric variables, we examine summary statistics and plots of age and PSA grouped by whether prostatic capusle penetration has occured. Summary statistics and a box plot for age can be found in Table \@ref(tab:app-age-sum) and Figure \@ref(fig:app-age-box) in the appendix. There is virtually no difference in the age distribution of patients who have experience tumor penetration and those who have not. As such, we do not expect it to make a significant contribution to our model. On the other hand, PSA value seems like it may be an important predictor.
 Figure \@ref(fig:psa-hist) is a histogram of PSA value where color indicates tumor penetration of the prostatic capsule. The distribution has a similar shape for low PSA values however, for PSA values above 67 mg/ml there are no cases where tumor penetration has occured. 
 
-```{r psa-hist, fig.cap = "Histogram of prostate specific antigen value colored by whether tumor penetration of prostatic capsule occured.", fig.height = 3, fig.width = 6}
+```{r psa-hist, fig.cap = "Histogram of prostate specific antigen value colored by whether tumor penetration of prostatic capsule occured.", fig.height = 2.7, fig.width = 6}
 ggplot(prostate, aes(x = psa, fill = penetrate)) +
   geom_histogram(bins = 50) +
   theme_classic()
@@ -221,7 +223,7 @@ Further diagnostic plots can be found in Figure \@ref(fig:app-diag-plots) in the
 As a final diagnostic measure we perform a Homer-Lemeshow goodness-of-fit test using the model fit to the EVPs. The EVP data is separated into bins according ot quantiles of the fitted values. Then observed and expected counts are computed for each bin and a $\chi^2$ test is performed. This test is an overall assessment of how well the model fits the data. The obtained test statistic is `r round(hl_test$statistic[[1]], 1)` with a corresponding p-value of `r round(hl_test$p.value, 2)`. The p-value may seem unfruitful at first as we are typically looking for small values. However in the situation at hand this is not the case. The null hypothesis in this test is that the model fits the data well so we do _not_ want to reject the null in our situation. So based on this test our model seems to fit the data well and we can move on to inferences.
 
 
-```{r resid-plot, fig.height = 3, fig.width = 6, fig.cap = "Pearson residuals vs. fitted values via Explanatory Variable Patterns (74). The horizontal reference lines indicate the usual residual cutoffs of +-2 and +- 3."}
+```{r resid-plot, fig.height = 2.7, fig.width = 6, fig.cap = "Pearson residuals vs. fitted values via Explanatory Variable Patterns (74). The horizontal reference lines indicate the usual residual cutoffs of +-2 and +- 3."}
 ggplot(aug_diag, aes(x = .fitted, y = .std.resid)) +
   geom_point() +
   geom_hline(yintercept = 2, linetype = "dotted") +
@@ -310,6 +312,7 @@ We should note that the analyis performed here does have its limitations. The mo
 
 Another aspect of this analysis that should be handled with care is using the model developed to predict tumor penetration. The predictive capability assessment of this analysis was done on data that was used to fit the model. These predictions will no doubt be an overestimate of the ability of predictions on previously unseen data. If it is desired to use this model as a primary method to determine if a patient has experienced tumor penetration, a different approach should be followed than was done in this analysis such as splitting the data into a training and testing set to estimate its out of sample predictive performance. One would likely also want to determine a cutoff point as this model outputs probabilities and not yes-no decisions. This has its own inherent difficulties. Experts would need to determine an acceptable level of false postives and false negatives and an apropriate balance between the two.
 
+
 \newpage
 
 # (APPENDIX) Appendix A  {-}
@@ -326,7 +329,8 @@ race_tab %>%
   formatC(., digits = 1, format = "f") %>%
   kable(caption = "Race vs. whether tumor penetration of prostatic capsule has occured, marginalized by race.") %>%
   add_header_above(c(" " = 1, "Race" = 2), bold = TRUE) %>%
-  column_spec(1, bold = TRUE)
+  column_spec(1, bold = TRUE) %>% 
+  kable_styling(latex_options = "hold_position")
 
 ```
 
@@ -342,7 +346,8 @@ caps_tab %>%
   #column_spec(1, bold = TRUE, border_left = TRUE) %>% 
   #column_spec(3, border_right = TRUE) %>% 
   add_header_above(c(" ", "Capsular Involvement" = 2), bold = TRUE) %>% 
-  column_spec(1, bold = TRUE)
+  column_spec(1, bold = TRUE) %>% 
+  kable_styling(latex_options = "hold_position")
 
 ```
 
@@ -356,7 +361,8 @@ gleason_tab %>%
   formatC(., digits = 1, format = "f") %>% 
   kable(caption = "Total Gleason score vs. whether tumor penetration of prostatic capsule occured, marginalized by Gleason score.") %>%
   add_header_above(c(" ", "Gleason Score" = 7), bold = TRUE) %>%
-  column_spec(1, bold = TRUE)
+  column_spec(1, bold = TRUE) %>% 
+  kable_styling(latex_options = "hold_position")
 ```
 
 
@@ -381,7 +387,8 @@ rownames(age_summary) <- c("No Penetration", "Tumor Penetration")
 age_summary %>%
   kable(caption = "Summary statistics of patient age grouped by whether tumor penetration of prostatic capsule occured.") %>% 
   column_spec(1, bold = TRUE) %>% 
-  row_spec(0, bold = TRUE)
+  row_spec(0, bold = TRUE) %>% 
+  kable_styling(latex_options = "hold_position")
 ```
 
 
@@ -407,19 +414,16 @@ rownames(psa_summary) <- c("No Penetration", "Tumor Penetration")
 psa_summary %>% 
   kable(caption = "Summary statistics for prostate specific antigen value grouped by whether tumor penetration of prostatic capsule occured.") %>%
   column_spec(1, bold = TRUE) %>% 
-  row_spec(0, bold = TRUE)
+  row_spec(0, bold = TRUE) %>% 
+  kable_styling(latex_options = "hold_position")
 ```
 
 
-
-
-```{r app-age-box, fig.cap = "Boxplot of age vs. whether tumor penetration of prostatic capsule occured.", fig.height = 3, fig.width = 5}
+```{r app-age-box, fig.cap = "Boxplot of age vs. whether tumor penetration of prostatic capsule occured.", fig.height = 3, fig.width = 6}
 ggplot(prostate, aes(x = penetrate, y = age)) +
   geom_boxplot() +
   theme_classic()
 ```
-
-
 
 
 ```{r app-best-step-sum}
@@ -480,6 +484,7 @@ data.frame(
 ```
 
 
+\newpage
 
 # R Code
 
@@ -493,6 +498,12 @@ library(forcats) # handle factors
 library(ggplot2)  # plotting
 library(broom) # tidy model output
 library(pROC) # assess predictions
+
+# these packages were used for formatting tables and figures 
+#  in the report but are not necessary to perform the analysis
+library(knitr)  # table formatting
+library(kableExtra) # table formatting
+library(gridExtra) # matrix of ggplot's
 
 prostate_raw <- read_tsv(here("data", "prostate.txt"))
 
@@ -673,7 +684,6 @@ pros_diag <- prostate_raw %>%
     caps = dcaps
   )
 
-
 # Create EVPs by binning continuous covariates
 g <- 5 # number of categories
 psa_interval = cut(pros_diag$psa,
@@ -721,7 +731,6 @@ wn_diag <- data.frame(
   cooks_d = round(examine$cookd, 2),
   h = round(examine$h, 2)
 )
-
 
 p <- length(diag_fit$coefficients)
 
@@ -911,11 +920,15 @@ augment(final_fit, newdata = new_data, type.predict = "response")
 #    should be given in the plots                                              #
 ################################################################################
 
-examine.logistic.reg <- function(mod.fit.obj = mod.fit, identify.points = TRUE, bubble = TRUE, scale.n = I,
- scale.cookd = I, pearson.dev = "Pearson"){
+examine.logistic.reg <- function(mod.fit.obj = mod.fit,
+                                 identify.points = TRUE, bubble = TRUE,
+                                 scale.n = I,
+                                 scale.cookd = I,
+                                 pearson.dev = "Pearson"){
 
  pearson <- residuals(mod.fit.obj, type = "pearson")  #Pearson residuals
- stand.resid <- rstandard(model = mod.fit.obj, type = "pearson")  # Standardized Pearson residuals
+ # Standardized Pearson residuals
+ stand.resid <- rstandard(model = mod.fit.obj, type = "pearson")  
  deltaXsq <- stand.resid^2
  pred <- mod.fit.obj$fitted.values
  n <- mod.fit.obj$prior.weights   # Number of observations per EVP
@@ -923,7 +936,8 @@ examine.logistic.reg <- function(mod.fit.obj = mod.fit, identify.points = TRUE, 
  cookd <- cooks.distance(mod.fit.obj)
  h <- hatvalues(mod.fit.obj)
  dev.res <- residuals(mod.fit.obj, type = "deviance")
- stand.dev.resid <- rstandard(model = mod.fit.obj, type = "deviance")  # Standardized deviance residuals
+ # Standardized deviance residuals
+ stand.dev.resid <- rstandard(model = mod.fit.obj, type = "deviance")  
  deltaD <- dev.res^2 + h*stand.resid^2
  pear.stat <- sum(pearson^2)
  dev <- mod.fit.obj$deviance
@@ -946,39 +960,51 @@ examine.logistic.reg <- function(mod.fit.obj = mod.fit, identify.points = TRUE, 
 
   # Open a new plotting window
   #x11(width = 8, height = 6, pointsize = 12)
-  # Divide the plot into three rows and two columns. The last row is only 1cm in height to make sure
+  # Divide the plot into three rows and two columns. 
+  # The last row is only 1cm in height to make sure
   #  there is some room for the printed GOF statistics
-  layout(mat = matrix(c(1,2,3,4,5,5), byrow = TRUE, ncol = 2), height = c(1,1,lcm(1)))
+  layout(mat = matrix(c(1,2,3,4,5,5), byrow = TRUE, ncol = 2),
+         height = c(1,1,lcm(1)))
   # layout.show(5)
 
 
   # Standardized residual vs predicted prob.
-  plot(x = pred, y = resid.plot11, xlab = "Estimated probabilities", ylab = "Standardized residuals",
-   main = paste("Standardized", plot.label11, "residuals vs. est. prob."), ylim = c(min(-3, stand.resid), max(3, stand.resid)))
+  plot(x = pred, y = resid.plot11, xlab = "Estimated probabilities",
+       ylab = "Standardized residuals",
+   main = paste("Standardized", plot.label11, "residuals vs. est. prob."),
+   ylim = c(min(-3, stand.resid), max(3, stand.resid)))
   abline(h = c(-3, -2, 0, 2, 3), lty = "dotted", col = "blue")
   if(identify.points == TRUE) {
    # labels(pred) uses the row names from the original data set
    #  This can be helpful, rather than the default of 1:n in identify(),
-   #  when observations have been removed from the data set (i.e., the same row names will be used
+   #  when observations have been removed from the data set 
+   #  (i.e., the same row names will be used
    #  as with the original data set)
    identify(x = pred, y = resid.plot11, labels = labels(pred))
   }
 
   order.pred <- order(pred)
   smooth.stand <- loess(formula = resid.plot11 ~ pred, weights = n)
-  lines(x = pred[order.pred], y = predict(smooth.stand)[order.pred], lty = "solid", col = "red")
-  # The ordering of pred leads to one line drawn across the plot. Otherwise, multiple lines will be drawn
-  #  between each pred and predict() pair, which may cause a zig-zag-like pattern of lines
+  lines(x = pred[order.pred], y = predict(smooth.stand)[order.pred],
+        lty = "solid", col = "red")
+  # The ordering of pred leads to one line drawn across the plot. 
+  # Otherwise, multiple lines will be drawn
+  #  between each pred and predict() pair, which may cause a 
+  #  zig-zag-like pattern of lines
 
   # Very similar way to get the loess model plotted
   # smooth.stand <- loess(formula = resid.plot11 ~ pred, weights = n)
-  # x.axis <- seq(from = min(pred), to = max(pred), by = (max(pred) - min(pred))/100)
-  # pred.data<-predict(object = smooth.stand, newdata = data.frame(pred = x.axis))
+  # x.axis <- seq(from = min(pred), to = max(pred), 
+  #    by = (max(pred) - min(pred))/100)
+  # pred.data<-predict(object = smooth.stand, newdata = 
+  # data.frame(pred = x.axis))
   # lines(x = x.axis, y = pred.data, lty = "solid", col = "red")
 
   # Cook's distance vs. leverage
-  plot(x = h, y = cookd, ylim = c(0, max(4/length(cookd), cookd)), xlim = c(0, max(3*p/length(h), h)),
-   xlab = "Leverage (hat matrix diagonal)", ylab = "Cook's distance", main = "Cook's distance vs. leverage")
+  plot(x = h, y = cookd, ylim = c(0, max(4/length(cookd), cookd)),
+       xlim = c(0, max(3*p/length(h), h)),
+   xlab = "Leverage (hat matrix diagonal)", ylab = "Cook's distance",
+   main = "Cook's distance vs. leverage")
   abline(h = c(4/length(cookd), 1), lty = "dotted")
   abline(v = c(2*p/length(h), 3*p/length(h)), lty = "dotted")
   if(identify.points == TRUE) {
@@ -987,17 +1013,22 @@ examine.logistic.reg <- function(mod.fit.obj = mod.fit, identify.points = TRUE, 
 
   # Delta X^2 or D vs. predicted prob. with plotting point proportional to n
   if(bubble == TRUE) {
-   symbols(x = pred, y = resid.plot21, xlab = "Estimated probabilities", circles = scale.n(n),
+   symbols(x = pred, y = resid.plot21, xlab = "Estimated probabilities",
+           circles = scale.n(n),
     ylab = plot.label21,
-    main = paste(plot.label21, "vs. est. prob. \n with plot point proportional to number of trials"),
+    main = paste(
+      plot.label21,
+      "vs. est. prob. \n with plot point proportional to number of trials"),
     inches = 0.1, ylim = c(0, max(9, resid.plot21)))
    abline(h = c(4, 9), lty = "dotted", col = "blue")
    if(identify.points == TRUE) {
     identify(x = pred, y = resid.plot21, labels = labels(pred))
    } }
   else {
-   plot(x = pred, y = resid.plot21, xlab = "Estimated probabilities", ylab = plot.label21,
-    main = paste(plot.label21, "vs. est. prob."), ylim = c(0, max(9, resid.plot21)))
+   plot(x = pred, y = resid.plot21, xlab = "Estimated probabilities",
+        ylab = plot.label21,
+    main = paste(plot.label21, "vs. est. prob."),
+    ylim = c(0, max(9, resid.plot21)))
    abline(h = c(4, 9), lty = "dotted", col = "blue")
    if(identify.points == TRUE) {
     identify(x = pred, y = resid.plot21)
@@ -1007,16 +1038,22 @@ examine.logistic.reg <- function(mod.fit.obj = mod.fit, identify.points = TRUE, 
   # Print deviance/df on plot
   dev.df <- dev/df
   gof.threshold <- round(c(1 + 2*sqrt(2/df), 1 + 3*sqrt(2/df)), 2)
-  mtext(text = paste("Deviance/df = ", round(dev.df, 2), "; GOF thresholds: 2 SD = ",
-   round(gof.threshold[1], 2), ", 3 SD = ", round(gof.threshold[2], 2), sep = ""),
+  mtext(text = paste("Deviance/df = ", round(dev.df, 2),
+                     "; GOF thresholds: 2 SD = ",
+   round(gof.threshold[1], 2), ", 3 SD = ",
+   round(gof.threshold[2], 2), sep = ""),
    side = 1, line = 6, cex = 1.0, adj = 0)
 
 
-  # Delta X^2 or D vs. predicted prob. with plotting point proportional to Cook's distance
+  # Delta X^2 or D vs. predicted prob. 
+  # with plotting point proportional to Cook's distance
   if(bubble == TRUE) {
-   symbols(x = pred, y = resid.plot21, circles = scale.cookd(cookd), xlab = "Estimated probabilities",
+   symbols(x = pred, y = resid.plot21, circles = scale.cookd(cookd),
+           xlab = "Estimated probabilities",
     ylab = plot.label21,
-    main = paste(plot.label21, "vs. est. prob. \n with plot point proportional to Cook's distance"),
+    main = paste(
+      plot.label21,
+      "vs. est. prob. \n with plot point proportional to Cook's distance"),
     inches = 0.1, ylim = c(0, max(9, resid.plot21)))
    abline(h = c(4, 9), lty = "dotted", col = "blue")
    if(identify.points == TRUE) {
@@ -1024,16 +1061,19 @@ examine.logistic.reg <- function(mod.fit.obj = mod.fit, identify.points = TRUE, 
    } }
   else {
    # Empty plot because the last plot would be exactly the same
-   plot(x = c(0, 1), y = c(0,1), type = "n", axes = FALSE, xlab = " ", ylab = " ")
+   plot(x = c(0, 1), y = c(0,1), type = "n", axes = FALSE, xlab = " ",
+        ylab = " ")
   }
 
   # Return to normal layout
   layout(mat = 1)
   
   # Information is stored in the object, but not printed unless requested
-  invisible(list(pearson = pearson, stand.resid = stand.resid, stand.dev.resid = stand.dev.resid,
+  invisible(list(pearson = pearson, stand.resid = stand.resid,
+                 stand.dev.resid = stand.dev.resid,
    deltaXsq = deltaXsq, deltaD = deltaD, cookd = cookd,
-   pear.stat = pear.stat, dev = dev, dev.df = dev.df, gof.threshold = gof.threshold, pi.hat = pred, h = h))
+   pear.stat = pear.stat, dev = dev, dev.df = dev.df,
+   gof.threshold = gof.threshold, pi.hat = pred, h = h))
 }
 
 HLTest = function(obj, g) {
@@ -1057,8 +1097,8 @@ HLTest = function(obj, g) {
   y = as.numeric(y) == 2  # Converts 1-2 factor levels to logical 0/1 values
 
  yhat = obj$fitted.values 
-
- interval = cut(yhat, quantile(yhat, 0:g/g), include.lowest = TRUE)  # Creates factor with levels 1,2,...,g
+ # Creates factor with levels 1,2,...,g
+ interval = cut(yhat, quantile(yhat, 0:g/g), include.lowest = TRUE)  
 
  Y1 <- trials*y
 
@@ -1088,7 +1128,8 @@ HLTest = function(obj, g) {
 
  return(structure(list(
 
-  method = c(paste("Hosmer and Lemeshow goodness-of-fit test with", g, "bins", sep = " ")),
+  method = c(paste("Hosmer and Lemeshow goodness-of-fit test with", g, "bins",
+                   sep = " ")),
 
   data.name = deparse(substitute(obj)),
 
