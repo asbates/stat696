@@ -78,13 +78,7 @@ Prostate cancer is one of the most common cancers among males. Early detection i
 
 # Methods
 
-In this analysis we examine a subset of data collected by the Ohio State University Comprehensive Cancer Center as part of a study to determine the potential of standard exam results to predict whether a tumor will penetrate the prostatic capsule. Out of 380 patients, 153 have experienced capsule penetration and 227 have not. The data set contains six explanatory variables: the patients age and race, results of a digital rectal exam (DRE), whether capsular involvement was detected, prostate specific antigen (PSA) value, and total Gleason score. Also included in the data set was an identification code which is not used in the analysis as it simply identifies the patient. For a detailed description of each variable see Table \@ref(tab:var-desc). There are two continuous variables, PSA and age, and the remaining variables are categorical. Observe that race is recorded as only Black or White. This may be the reason why three observations contain missing values for race. Perhaps three of the patients were neither Black nor White. However, without access to the details of the study we can only speculate. Furthermore, the other variables in these observations do not point to any particular reason as to why race is not recorded[^1]. Because of this, we decided to omit these three observations. The data set used for analysis then, consists of 377 observations. Of these, 151 patients have experienced tumor penetration of the prostatic capsule, and 226 have not.
-
-
-To investigate the relationship between the covariates and tumor penetration status, we use a logistic regression model. The response is especially well balanced with 40% of the observations having capsular penetration and 60% not having penetration. As such, procedures designed to assist with class imbalances, such as downsampling, are not considered in this analysis. In addition to the explanatory variables included in the data set, all two-way interaction terms are examined. Using this as a starting point, the model is chosen via a backwards elimination procedure using Akaike Information Criteria (AIC) as the model selection criterion. In the model constructed with this procedure age and race are not significant at the 0.05 level so they are subsequently removed along with any associated interaction terms.
-
-Diagnostics of the resulting model are performed via explanatory variable patterns and a Hosmer-Lemeshow goodness-of-fit test. The strength of the relationship between the covariates and tumor penetration of the prostatic capsule is measured by the odds ratio. The predictive power of the model is evaluated by the area under the receiver operating characteristic curve. A method based on predictions from the model is proposed as a tumor penetration diagnostic tool to assist physicians in determining if further investigation of a given patient is warranted. The analysis is conducted using the statistical software R and the report is written using the R Markdown package. The R code is available in the appendix. All other materials used in this analysis are available online at `https://github.com/asbates/stat696/tree/master/reports/prostate-cancer`.
-
+In this analysis we examine a subset of data collected by the Ohio State University Comprehensive Cancer Center as part of a study to determine the potential of standard exam results to predict whether a tumor will penetrate the prostatic capsule. Out of 380 patients, 153 have experienced capsule penetration and 227 have not. The data set contains six explanatory variables: the patients age and race, results of a digital rectal exam (DRE), whether capsular involvement was detected, prostate specific antigen (PSA) value, and total Gleason score. Also included in the data set was an identification code which is not used in the analysis as it simply identifies the patient. For a detailed description of each variable see Table \@ref(tab:var-desc). There are two continuous variables, PSA and age, and the remaining variables are categorical. Observe that race is recorded as only Black or White. This may be the reason why three observations contain missing values for race. Perhaps three of the patients were neither Black nor White. However, without access to the details of the study we can only speculate. Furthermore, the other variables in these observations do not point to any particular reason as to why race is not recorded. Because of this, we decided to omit these three observations. The data set used for analysis then, consists of 377 observations. Of these, 151 patients have experienced tumor penetration of the prostatic capsule, and 226 have not.
 
 ```{r var-desc}
 description <- data.frame(
@@ -94,20 +88,24 @@ description <- data.frame(
 )
 
 kable(description,
-      caption = "Description of variables in the data set.") %>%
+      caption = "Detailed description of variables included in the data set (except id). The two continuous variables are age and prostate specific antigen value. The remaining variables are categorical.") %>%
   row_spec(0, bold = TRUE)
 
 ```
 
 
-[^1]: As in, some have experienced capusle penetration, the ages and PSA scores vary significantly across the observations, etc.
+
+To investigate the relationship between the covariates and tumor penetration status, we use a logistic regression model. The response is especially well balanced with 40% of the observations having capsular penetration and 60% not having penetration. As such, procedures designed to assist with class imbalances, such as downsampling, are not considered in this analysis. In addition to the explanatory variables included in the data set, all two-way interaction terms are examined. Using this as a starting point, the model is chosen via a backwards elimination procedure using Akaike Information Criteria (AIC) as the model selection criterion. In the model constructed with this procedure age and race are not significant at the 0.05 level so they are subsequently removed along with any associated interaction terms.
+
+Diagnostics of the resulting model are performed via explanatory variable patterns and a Hosmer-Lemeshow goodness-of-fit test. The strength of the relationship between the covariates and tumor penetration of the prostatic capsule is measured by the odds ratio. The predictive power of the model is evaluated by the area under the receiver operating characteristic curve. A method based on predictions from the model is proposed as a tumor penetration diagnostic tool to assist physicians in determining if further investigation of a given patient is warranted. The analysis is conducted using the statistical software R and the report is written using the R Markdown package. The R code is available in the appendix. All other materials used in this analysis are available online at `https://github.com/asbates/stat696/tree/master/reports/prostate-cancer`.
+
 
 # Analysis
 
 ## Exploratory Analysis
 
-We begin by inspecting tables of the categorical variables against whether tumor penetration has occured. Rather than examing contingency tables of counts, we find it more informative to view tables marginalized by the covariates. This provides more context by allowing us to see, for example, the proportion of Black patients who had tumor penetration and the proportion who did not. Table \@ref(tab:dre-tab) displays the proportion of patients who did and did not experience tumor penetration of the prostatic capsule grouped by the results of a digital rectal exam. It shows that the majority of patients who do not have a nodule have not experience tumor penetration. For those patients who did have a nodule, the rate of tumor penetration is reversed. The most pronounced difference is for patients who had a bilobar nodule with 65% experiencing tumor penetration. The relationship we see here tells us that DRE results will likely be a valuable predictor.
 
+We begin by inspecting tables of the categorical variables against whether tumor penetration has occured. Rather than examing contingency tables of counts, we find it more informative to view tables marginalized by the covariates. This provides more context by allowing us to see, for example, the proportion of Black patients who had tumor penetration and the proportion who did not. Table \@ref(tab:dre-tab) displays the proportion of patients who did and did not experience tumor penetration of the prostatic capsule grouped by the results of a digital rectal exam. It shows that the majority of patients who do not have a nodule have not experience tumor penetration. For those patients who did have a nodule, the rate of tumor penetration is reversed. The most pronounced difference is for patients who had a bilobar nodule with 65% experiencing tumor penetration. The relationship we see here tells us that DRE results will likely be a valuable predictor.
 
 ```{r dre-tab}
 dre_tab <- table(prostate$penetrate, prostate$dre) %>%
@@ -122,18 +120,19 @@ dre_tab %>%
 
 ```
 
+
+
 The relationship for the remaining categorical variables can be found in Tables \@ref(tab:app-race-tab) to \@ref(tab:app-gleason-tab) in the appendix. For detection of capsular involvment and Gleason score, we find a similar story as DRE results. For patients where capsular involvement was detected, tumor penetration occured at more than twice the rate than patients where involvement was not detected (35% vs. 75%). As Gleason score increases from zero to nine, the tumor penetration rate increases from zero to 92%. Where we do not see a significant change in the rate of tumor penetration is with race. Both Black and White patients have a tumor penetration rate of approximately 40%.
 
-For the numeric variables, we examine summary statistics and plots of age and PSA grouped by whether prostatic capusle penetration has occured. Summary statistics and a box plot for age can be found in Table \@ref(tab:app-age-sum) and Figure \@ref(fig:app-age-box). There is virtually no difference in the age distribution of patients who have experience tumor penetration and those who have not. As such, we do not expect it to make a significant contribution to our model. On the other hand, PSA value seems like it may be an important predictor.
-Figure \@ref(fig:psa-hist) is a histogram of PSA value where color indicates tumor penetration of the prostatic capsule. The distribution has a similar shape for low PSA values however, for PSA values above 67 mg/ml there are no cases where tumor penetration has occured. 
 
+For the numeric variables, we examine summary statistics and plots of age and PSA grouped by whether prostatic capusle penetration has occured. Summary statistics and a box plot for age can be found in Table \@ref(tab:app-age-sum) and Figure \@ref(fig:app-age-box) in the appendix. There is virtually no difference in the age distribution of patients who have experience tumor penetration and those who have not. As such, we do not expect it to make a significant contribution to our model. On the other hand, PSA value seems like it may be an important predictor.
+Figure \@ref(fig:psa-hist) is a histogram of PSA value where color indicates tumor penetration of the prostatic capsule. The distribution has a similar shape for low PSA values however, for PSA values above 67 mg/ml there are no cases where tumor penetration has occured. 
 
 ```{r psa-hist, fig.cap = "Histogram of prostate specific antigen value colored by whether tumor penetration of prostatic capsule occured.", fig.height = 3, fig.width = 6}
 ggplot(prostate, aes(x = psa, fill = penetrate)) +
   geom_histogram(bins = 50) +
   theme_classic()
 ```
-
 
 
 
@@ -151,6 +150,9 @@ best_step <- glm(penetrate ~ age + race + dre + psa + gleason +
 To model the relationship between tumor penetration and the predictor variables, we use a logistic regression model. As most of the covariates are tests covering different aspects of of the prostate, it is not hard to imagine there some of them connected in their relationship with tumor penetration. For this reason, the initial model is fit using all first-order interaction terms. This serves as the starting point for model selection which is done via stepwise regression with AIC as the selection criteria. The model chosen via the stepwise procedure includes race, age, DRE results, PSA value, and Gleason score as well as age interacted with DRE result and race interacted with PSA value. A detailed summary can be found in Table \@ref(tab:app-best-step-sum). We note here that the AIC is `r round(best_step$aic, 0)` and the p-values for age and race are quite high at 0.11 and 0.99, respectively.
 
 Since some of the p-values of the model obtained via stepwise regression are large, we remove these terms and refit our model. Specifically, we remove age and race along with interaction terms associated with them. We can not justify keeping variables in interactions that themselves are not included in the model. Note that for this model, removing the relevant interaction terms actually means removing all interaction terms. Once this is done, we are left with a model that relates tumor penetration to just three variables: DRE results, PSA value, and Gleason score.
+
+
+
 
 ## Diagnostics
 
@@ -211,9 +213,9 @@ hl_test <- HLTest(diag_fit, 6)
 ```
 
 
-To assess the model we use diagnostic tools on explanatory variable patterns[^2] (EVP). We collapse the orginal data into groups where each group shares the same covariate values. Recall that one of the variables, PSA, is continous so we first cut the values into nonoverlapping bins. Then we fit the model to the EVPs using the number of original observations in each EVP as weights. Standardized Pearson residuals, Cook's distance, and leverage from the EVP model are what we use to perform our diagnostics. A plot of the residuals vs. fitted probabilites is shown in Figure \@ref(fig:resid-plot). The dotted horizontal lines indicate the standard cut off values of -3, -2, 2, and 3. There are no discernible patterns in the residuals and they are scattered roughly equally about zero. For larger fitted probabilities there is a bit more variability in the residuals but nothing too concerning. One EVP (lower right hand corner of plot) is slightly smaller than the lowest cut off bound, having a value of `r round(aug_diag[73, ]$.std.resid, 1)`. This is only a minor violation and the cut off values are simply rules-of-thumb so we consider this EVP satisfactory.
+To assess the model we use diagnostic tools on explanatory variable patterns[^1] (EVP). We collapse the orginal data into groups where each group shares the same covariate values. Recall that one of the variables, PSA, is continous so we first cut the values into nonoverlapping bins. Then we fit the model to the EVPs using the number of original observations in each EVP as weights. Standardized Pearson residuals, Cook's distance, and leverage from the EVP model are what we use to perform our diagnostics. A plot of the residuals vs. fitted probabilites is shown in Figure \@ref(fig:resid-plot). The dotted horizontal lines indicate the standard cut off values of -3, -2, 2, and 3. There are no discernible patterns in the residuals and they are scattered roughly equally about zero. For larger fitted probabilities there is a bit more variability in the residuals but nothing too concerning. One EVP (lower right hand corner of plot) is slightly smaller than the lowest cut off bound, having a value of `r round(aug_diag[73, ]$.std.resid, 1)`. This is only a minor violation and the cut off values are simply rules-of-thumb so we consider this EVP satisfactory.
 
-Further diagnostic plots can be found in Figure \@ref(fig:app-diag-plots) in the appendix. Only one other EVP is of any concern as its Cook's distance and leverage values are both outside the standard cut off values. However, this EVP is also only faintly outside the boundaries[^3]. Twenty two of the original observations are contained in this EVP. Given that the Cook's distance and leverage for this EVP are just barely outside their respective cut off, this is not enough justification to remove this many data points.
+Further diagnostic plots can be found in Figure \@ref(fig:app-diag-plots) in the appendix. Only one other EVP is of any concern as its Cook's distance and leverage values are both outside the standard cut off values. However, this EVP is also only faintly outside the boundaries[^2]. Twenty two of the original observations are contained in this EVP. Given that the Cook's distance and leverage for this EVP are just barely outside their respective cut off, this is not enough justification to remove this many data points.
 
 As a final diagnostic measure we perform a Homer-Lemeshow goodness-of-fit test using the model fit to the EVPs. The EVP data is separated into bins according ot quantiles of the fitted values. Then observed and expected counts are computed for each bin and a $\chi^2$ test is performed. This test is an overall assessment of how well the model fits the data. The obtained test statistic is `r round(hl_test$statistic[[1]], 1)` with a corresponding p-value of `r round(hl_test$p.value, 2)`. The p-value may seem unfruitful at first as we are typically looking for small values. However in the situation at hand this is not the case. The null hypothesis in this test is that the model fits the data well so we do _not_ want to reject the null in our situation. So based on this test our model seems to fit the data well and we can move on to inferences.
 
@@ -231,8 +233,8 @@ ggplot(aug_diag, aes(x = .fitted, y = .std.resid)) +
 ```
 
 
-[^2]: Also called covariate patterns.
-[^3]: Cook's distance = `r round(aug_diag[25, ]$.cooksd, 2)`, leverage = `r round(aug_diag[25, ]$.hat, 2)` with cutoff values of `r round(cook_cutoff, 2)` and `r round(h_cutoff3, 2)`.
+[^1]: Also called covariate patterns.
+[^2]: Cook's distance = `r round(aug_diag[25, ]$.cooksd, 2)`, leverage = `r round(aug_diag[25, ]$.hat, 2)` with cutoff values of `r round(cook_cutoff, 2)` and `r round(h_cutoff3, 2)`.
 
 ## Inferences
 
@@ -308,17 +310,13 @@ We should note that the analyis performed here does have its limitations. The mo
 Another aspect of this analysis that should be handled with care is using the model developed to predict tumor penetration. The predictive capability assessment of this analysis was done on data that was used to fit the model. These predictions will no doubt be an overestimate of the ability of predictions on previously unseen data. If it is desired to use this model as a primary method to determine if a patient has experienced tumor penetration, a different approach should be followed than was done in this analysis such as splitting the data into a training and testing set to estimate its out of sample predictive performance. One would likely also want to determine a cutoff point as this model outputs probabilities and not yes-no decisions. This has its own inherent difficulties. Experts would need to determine an acceptable level of false postives and false negatives and an apropriate balance between the two.
 
 
-
 \newpage
 
-# Appendix {-}
-
-# (APPENDIX) Appendix A {-}
+# (APPENDIX) Appendix A  {-}
 
 
-# Exploratory Analysis
+# Supplementary Tables and Figures
 
-## Tables
 
 ```{r app-race-tab}
 race_tab <- table(prostate$penetrate, prostate$race) %>% 
@@ -414,8 +412,6 @@ psa_summary %>%
 
 
 
-## Figures
-
 
 ```{r app-age-box, fig.cap = "Boxplot of age vs. whether tumor penetration of prostatic capsule occured.", fig.height = 3, fig.width = 5}
 ggplot(prostate, aes(x = penetrate, y = age)) +
@@ -424,9 +420,7 @@ ggplot(prostate, aes(x = penetrate, y = age)) +
 ```
 
 
-# Model Building and Diagnostics
 
-## Intermediate Models
 
 ```{r app-best-step-sum}
 tidy_best_step <- tidy(best_step) %>% 
@@ -446,7 +440,6 @@ tidy_best_step %>%
 ```
 
 
-## Diagnostics
 
 ```{r app-diag-plots, fig.height = 3, fig.width = 7, fig.cap = "Diagnostic plots for the model fit on explanatory variable patterns. Left: Cook's distance vs. leverage. Right: squared Pearson standardized residuals vs. fitted probabilities"}
 
@@ -471,7 +464,7 @@ deltax_vs_fit <- ggplot(aug_diag, aes(x = .fitted, y = .std.resid^2)) +
 grid.arrange(cook_vs_lev, deltax_vs_fit, ncol = 2) 
 ```
 
-## Inferences
+
 
 ```{r app-roc, fig.height = 3, fig.width = 6, fig.cap = "Reciever Operating Characteristic curve for final model fitting tumor penetration of prostatic capsule with covariates digital rectal exam result, prostate specific antigen value, and total Gleason score. The dotted line is a reference line indicating what the curve would be if we randomly decided whether tumor penetration occured."}
 data.frame(
@@ -486,6 +479,8 @@ data.frame(
   theme_classic()
 ```
 
+
+\newpage
 
 # R Code
 
@@ -892,6 +887,244 @@ predict(final_fit, newdata = new_data, type = "response")
 
 # or via broom
 augment(final_fit, newdata = new_data, type.predict = "response")
+
+# ==================================
+# ======= ADDITIONAL FUNCTIONS =====
+# ==================================
+
+
+################################################################################
+# NAME: Chris Bilder                                                           #
+# DATE: 7-30-13                                                                #
+# UPDATE:                                                                      #
+# Purpose: Automate part of the logistic regression diagnostic                 #
+#     procedures into one function.                                            #
+#                                                                              #
+# NOTES:                                                                       #
+# 1) This function needs to be run just once before it is used. Below is an    #
+#   example of how to use the function the first time:                         #
+#                                                                              #
+#   source(file = "C:\\Chris\\examine.logistic.model.R")                       #
+#   mod.fit1 <- glm(formula = y/n ~ x, data = EVP.form, weight = n,            #
+#    family = binomial(link = logit))                                          #
+#   examine.logistic.reg(mod.fit1)                                             #
+#   mod.fit2 <- glm(formula = y/n ~ x + I(x^2), data = EVP.form, weight = n,   #
+#    family = binomial(link = logit))                                          #
+#   examine.logistic.reg(mod.fit2)                                             # 
+#                                                                              #
+# 2) Arguments:                                                                # 
+#   mod.fit.obj = model fit object from glm()                                  #
+#   identify.points = identify points on the plot by mouse clicks              #
+#   bubble = produce plots where plotting point is proportional in size        #
+#    to a third dimension (number of trials or Cook's D)                       #
+#   scale.n, scale.cookd = scaling to use with bubble size; the default is     #
+#    the original numerical scale of the quantity; it can be helpful to use    #
+#    a transformation, like sqrt, when there is a large difference in          #
+#    numerical values.                                                         #
+#   pearson.dev = specifies whether "Pearson" or "deviance" based residuals    #
+#    should be given in the plots                                              #
+################################################################################
+
+examine.logistic.reg <- function(mod.fit.obj = mod.fit, identify.points = TRUE, bubble = TRUE, scale.n = I,
+ scale.cookd = I, pearson.dev = "Pearson"){
+
+ pearson <- residuals(mod.fit.obj, type = "pearson")  #Pearson residuals
+ stand.resid <- rstandard(model = mod.fit.obj, type = "pearson")  # Standardized Pearson residuals
+ deltaXsq <- stand.resid^2
+ pred <- mod.fit.obj$fitted.values
+ n <- mod.fit.obj$prior.weights   # Number of observations per EVP
+ df <- mod.fit.obj$df.residual
+ cookd <- cooks.distance(mod.fit.obj)
+ h <- hatvalues(mod.fit.obj)
+ dev.res <- residuals(mod.fit.obj, type = "deviance")
+ stand.dev.resid <- rstandard(model = mod.fit.obj, type = "deviance")  # Standardized deviance residuals
+ deltaD <- dev.res^2 + h*stand.resid^2
+ pear.stat <- sum(pearson^2)
+ dev <- mod.fit.obj$deviance
+ p <- length(mod.fit.obj$coefficients)
+
+ # Type of residuals to include on plots
+ resid.plot11 <- stand.resid
+ resid.plot21 <- deltaXsq
+ plot.label11 <- "Pearson"
+ plot.label21 <- "Delta X^2"
+ if (pearson.dev == "deviance") {
+  resid.plot11 <- stand.dev.resid
+  resid.plot21 <- deltaD
+  plot.label11 <- "deviance"
+  plot.label21 <- "Delta D"
+ }
+
+
+ ##############################################################################
+ # Four plots
+
+  # Open a new plotting window
+  #x11(width = 8, height = 6, pointsize = 12)
+  # Divide the plot into three rows and two columns. The last row is only 1cm in height to make sure
+  #  there is some room for the printed GOF statistics
+  layout(mat = matrix(c(1,2,3,4,5,5), byrow = TRUE, ncol = 2), height = c(1,1,lcm(1)))
+  # layout.show(5)
+
+
+  # Standardized residual vs predicted prob.
+  plot(x = pred, y = resid.plot11, xlab = "Estimated probabilities", ylab = "Standardized residuals",
+   main = paste("Standardized", plot.label11, "residuals vs. est. prob."), ylim = c(min(-3, stand.resid), max(3, stand.resid)))
+  abline(h = c(-3, -2, 0, 2, 3), lty = "dotted", col = "blue")
+  if(identify.points == TRUE) {
+   # labels(pred) uses the row names from the original data set
+   #  This can be helpful, rather than the default of 1:n in identify(),
+   #  when observations have been removed from the data set (i.e., the same row names will be used
+   #  as with the original data set)
+   identify(x = pred, y = resid.plot11, labels = labels(pred))
+  }
+
+  order.pred <- order(pred)
+  smooth.stand <- loess(formula = resid.plot11 ~ pred, weights = n)
+  lines(x = pred[order.pred], y = predict(smooth.stand)[order.pred], lty = "solid", col = "red")
+  # The ordering of pred leads to one line drawn across the plot. Otherwise, multiple lines will be drawn
+  #  between each pred and predict() pair, which may cause a zig-zag-like pattern of lines
+
+  # Very similar way to get the loess model plotted
+  # smooth.stand <- loess(formula = resid.plot11 ~ pred, weights = n)
+  # x.axis <- seq(from = min(pred), to = max(pred), by = (max(pred) - min(pred))/100)
+  # pred.data<-predict(object = smooth.stand, newdata = data.frame(pred = x.axis))
+  # lines(x = x.axis, y = pred.data, lty = "solid", col = "red")
+
+
+  # Cook's distance vs. leverage
+  plot(x = h, y = cookd, ylim = c(0, max(4/length(cookd), cookd)), xlim = c(0, max(3*p/length(h), h)),
+   xlab = "Leverage (hat matrix diagonal)", ylab = "Cook's distance", main = "Cook's distance vs. leverage")
+  abline(h = c(4/length(cookd), 1), lty = "dotted")
+  abline(v = c(2*p/length(h), 3*p/length(h)), lty = "dotted")
+  if(identify.points == TRUE) {
+   identify(x = h, y = cookd, labels = labels(h))
+  }
+
+
+  # Delta X^2 or D vs. predicted prob. with plotting point proportional to n
+  if(bubble == TRUE) {
+   symbols(x = pred, y = resid.plot21, xlab = "Estimated probabilities", circles = scale.n(n),
+    ylab = plot.label21,
+    main = paste(plot.label21, "vs. est. prob. \n with plot point proportional to number of trials"),
+    inches = 0.1, ylim = c(0, max(9, resid.plot21)))
+   abline(h = c(4, 9), lty = "dotted", col = "blue")
+   if(identify.points == TRUE) {
+    identify(x = pred, y = resid.plot21, labels = labels(pred))
+   } }
+  else {
+   plot(x = pred, y = resid.plot21, xlab = "Estimated probabilities", ylab = plot.label21,
+    main = paste(plot.label21, "vs. est. prob."), ylim = c(0, max(9, resid.plot21)))
+   abline(h = c(4, 9), lty = "dotted", col = "blue")
+   if(identify.points == TRUE) {
+    identify(x = pred, y = resid.plot21)
+  } }
+
+ 
+  # Print deviance/df on plot
+  dev.df <- dev/df
+  gof.threshold <- round(c(1 + 2*sqrt(2/df), 1 + 3*sqrt(2/df)), 2)
+  mtext(text = paste("Deviance/df = ", round(dev.df, 2), "; GOF thresholds: 2 SD = ",
+   round(gof.threshold[1], 2), ", 3 SD = ", round(gof.threshold[2], 2), sep = ""),
+   side = 1, line = 6, cex = 1.0, adj = 0)
+
+
+  # Delta X^2 or D vs. predicted prob. with plotting point proportional to Cook's distance
+  if(bubble == TRUE) {
+   symbols(x = pred, y = resid.plot21, circles = scale.cookd(cookd), xlab = "Estimated probabilities",
+    ylab = plot.label21,
+    main = paste(plot.label21, "vs. est. prob. \n with plot point proportional to Cook's distance"),
+    inches = 0.1, ylim = c(0, max(9, resid.plot21)))
+   abline(h = c(4, 9), lty = "dotted", col = "blue")
+   if(identify.points == TRUE) {
+    identify(x = pred, y = resid.plot21, labels = labels(pred))
+   } }
+  else {
+   # Empty plot because the last plot would be exactly the same
+   plot(x = c(0, 1), y = c(0,1), type = "n", axes = FALSE, xlab = " ", ylab = " ")
+  }
+
+
+  # Return to normal layout
+  layout(mat = 1)
+  
+  # Information is stored in the object, but not printed unless requested
+  invisible(list(pearson = pearson, stand.resid = stand.resid, stand.dev.resid = stand.dev.resid,
+   deltaXsq = deltaXsq, deltaD = deltaD, cookd = cookd,
+   pear.stat = pear.stat, dev = dev, dev.df = dev.df, gof.threshold = gof.threshold, pi.hat = pred, h = h))
+}
+
+HLTest = function(obj, g) {
+
+ # first, check to see if we fed in the right kind of object
+
+ stopifnot(family(obj)$family == "binomial" && family(obj)$link == "logit")
+
+ y = obj$model[[1]]
+
+ trials = rep(1, times = nrow(obj$model))
+
+ if(any(colnames(obj$model) == "(weights)")) 
+
+  trials <- obj$model[[ncol(obj$model)]]
+
+ # the double bracket (above) gets the index of items within an object
+
+ if (is.factor(y)) 
+
+  y = as.numeric(y) == 2  # Converts 1-2 factor levels to logical 0/1 values
+
+ yhat = obj$fitted.values 
+
+ interval = cut(yhat, quantile(yhat, 0:g/g), include.lowest = TRUE)  # Creates factor with levels 1,2,...,g
+
+ Y1 <- trials*y
+
+ Y0 <- trials - Y1
+
+ Y1hat <- trials*yhat
+
+ Y0hat <- trials - Y1hat
+
+ obs = xtabs(formula = cbind(Y0, Y1) ~ interval)
+
+ expect = xtabs(formula = cbind(Y0hat, Y1hat) ~ interval)
+
+ if (any(expect < 5))
+
+  warning("Some expected counts are less than 5. Use smaller number of groups")
+
+ pear <- (obs - expect)/sqrt(expect)
+
+ chisq = sum(pear^2)
+
+ P = 1 - pchisq(chisq, g - 2)
+
+ # by returning an object of class "htest", the function will perform like the 
+
+ # built-in hypothesis tests
+
+ return(structure(list(
+
+  method = c(paste("Hosmer and Lemeshow goodness-of-fit test with", g, "bins", sep = " ")),
+
+  data.name = deparse(substitute(obj)),
+
+  statistic = c(X2 = chisq),
+
+  parameter = c(df = g-2),
+
+  p.value = P,
+
+  pear.resid = pear,
+
+  expect = expect,
+
+  observed = obs
+
+ ), class = 'htest'))
+
+}
 ```
 
 \newpage
