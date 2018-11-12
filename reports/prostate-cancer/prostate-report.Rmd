@@ -100,6 +100,7 @@ To investigate the relationship between the covariates and tumor penetration sta
 Diagnostics of the resulting model are performed via explanatory variable patterns and a Hosmer-Lemeshow goodness-of-fit test. The strength of the relationship between the covariates and tumor penetration of the prostatic capsule is measured by the odds ratio. The predictive power of the model is evaluated by the area under the receiver operating characteristic curve. A method based on predictions from the model is proposed as a tumor penetration diagnostic tool to assist physicians in determining if further investigation of a given patient is warranted. The analysis is conducted using the statistical software R and the report is written using the R Markdown package. The R code is available in the appendix. All other materials used in this analysis are available online at `https://github.com/asbates/stat696/tree/master/reports/prostate-cancer`.
 
 
+
 # Analysis
 
 ## Exploratory Analysis
@@ -309,11 +310,9 @@ We should note that the analyis performed here does have its limitations. The mo
 
 Another aspect of this analysis that should be handled with care is using the model developed to predict tumor penetration. The predictive capability assessment of this analysis was done on data that was used to fit the model. These predictions will no doubt be an overestimate of the ability of predictions on previously unseen data. If it is desired to use this model as a primary method to determine if a patient has experienced tumor penetration, a different approach should be followed than was done in this analysis such as splitting the data into a training and testing set to estimate its out of sample predictive performance. One would likely also want to determine a cutoff point as this model outputs probabilities and not yes-no decisions. This has its own inherent difficulties. Experts would need to determine an acceptable level of false postives and false negatives and an apropriate balance between the two.
 
-
 \newpage
 
 # (APPENDIX) Appendix A  {-}
-
 
 # Supplementary Tables and Figures
 
@@ -384,6 +383,7 @@ age_summary %>%
   column_spec(1, bold = TRUE) %>% 
   row_spec(0, bold = TRUE)
 ```
+
 
 
 ```{r app-psa-sum}
@@ -480,9 +480,9 @@ data.frame(
 ```
 
 
-\newpage
 
 # R Code
+
 
 ```{r app-code, eval = FALSE, echo = TRUE}
 library(here)  # handles directories
@@ -494,9 +494,7 @@ library(ggplot2)  # plotting
 library(broom) # tidy model output
 library(pROC) # assess predictions
 
-
 prostate_raw <- read_tsv(here("data", "prostate.txt"))
-
 
 # =====================================
 # ======== SETUP/CLEANING =============
@@ -537,7 +535,6 @@ prostate <- prostate %>%
   )
 
 str(prostate)
-
 
 # how many have experience capsule penetration?
 prostate %>%
@@ -587,7 +584,6 @@ prop.table(dre_tab, margin = 2) * 100
 prop.table(caps_tab, margin = 2) * 100
 prop.table(gleason_tab, margin = 2) * 100
 
-
 # ------------ numeric predictors --------------
 
 # ---- age -----
@@ -601,7 +597,6 @@ age_sum <- prostate %>%
     mean = mean(age),
     max = max(age)
   )
-
 
 # bar chart of age
 ggplot(prostate, aes(x = age)) +
@@ -639,11 +634,9 @@ ggplot(prostate, aes(x = psa, fill = penetrate)) +
 ggplot(prostate, aes(x = penetrate, y = psa)) +
   geom_boxplot()
 
-
 # =====================================
 # ========== MODELING =================
 # =====================================
-
 
 # fit a 'full' model with all first-order interactions
 full_fit <- glm(penetrate ~.*.,
@@ -659,10 +652,8 @@ summary(best_step)
 # or via the broom package
 tidy(best_step)
 
-
 # if we remove variables from best_step according to p-value
 # we are left with penetrate ~ dre + psa + gleason
-
 
 # =====================================
 # ========== DIAGNOSTICS ==============
@@ -723,7 +714,6 @@ examine <- examine.logistic.reg(diag_fit,
                              scale.n = one_fourth_root,
                              scale.cookd = sqrt)
 
-
 wn_diag <- data.frame(
   wn,
   pi_hat = round(examine$pi.hat, 2),
@@ -780,8 +770,6 @@ any(which_violate_all)
 # lastly, almost all of them contain more than 6 original points, up to 14
 # we will proceed with the model as is
 
-
-
 # note: in the analysis we used the examine.logistic.reg function
 # because of it's interactivity
 # the plots in the report were made with the following code
@@ -827,7 +815,6 @@ ggplot(aug_diag, aes(x = .fitted, y = .std.resid^2)) +
   ylab("Squared Residuals") +
   xlab("Fitted Values") +
   theme_classic()
-
 
 # Hosmer-Lemeshow goodness-of-fit test
 
@@ -892,7 +879,6 @@ augment(final_fit, newdata = new_data, type.predict = "response")
 # ======= ADDITIONAL FUNCTIONS =====
 # ==================================
 
-
 ################################################################################
 # NAME: Chris Bilder                                                           #
 # DATE: 7-30-13                                                                #
@@ -955,7 +941,6 @@ examine.logistic.reg <- function(mod.fit.obj = mod.fit, identify.points = TRUE, 
   plot.label21 <- "Delta D"
  }
 
-
  ##############################################################################
  # Four plots
 
@@ -991,7 +976,6 @@ examine.logistic.reg <- function(mod.fit.obj = mod.fit, identify.points = TRUE, 
   # pred.data<-predict(object = smooth.stand, newdata = data.frame(pred = x.axis))
   # lines(x = x.axis, y = pred.data, lty = "solid", col = "red")
 
-
   # Cook's distance vs. leverage
   plot(x = h, y = cookd, ylim = c(0, max(4/length(cookd), cookd)), xlim = c(0, max(3*p/length(h), h)),
    xlab = "Leverage (hat matrix diagonal)", ylab = "Cook's distance", main = "Cook's distance vs. leverage")
@@ -1000,7 +984,6 @@ examine.logistic.reg <- function(mod.fit.obj = mod.fit, identify.points = TRUE, 
   if(identify.points == TRUE) {
    identify(x = h, y = cookd, labels = labels(h))
   }
-
 
   # Delta X^2 or D vs. predicted prob. with plotting point proportional to n
   if(bubble == TRUE) {
@@ -1043,7 +1026,6 @@ examine.logistic.reg <- function(mod.fit.obj = mod.fit, identify.points = TRUE, 
    # Empty plot because the last plot would be exactly the same
    plot(x = c(0, 1), y = c(0,1), type = "n", axes = FALSE, xlab = " ", ylab = " ")
   }
-
 
   # Return to normal layout
   layout(mat = 1)
@@ -1123,11 +1105,10 @@ HLTest = function(obj, g) {
   observed = obs
 
  ), class = 'htest'))
-
 }
 ```
 
+
 \newpage
 
-# References {-}
-
+# References 
