@@ -135,6 +135,8 @@ Figure \@ref(fig:psa-hist) is a histogram of PSA value where color indicates tum
 ```{r psa-hist, fig.cap = "Histogram of prostate specific antigen value colored by whether tumor penetration of prostatic capsule occured.", fig.height = 2.7, fig.width = 6}
 ggplot(prostate, aes(x = psa, fill = penetrate)) +
   geom_histogram(bins = 50) +
+  xlab("Prostate specific antigen value") +
+  guides(fill=guide_legend(title="Tumor Penetration")) + 
   theme_classic()
 ```
 
@@ -424,6 +426,7 @@ psa_summary %>%
 ```{r app-age-box, fig.cap = "Boxplot of age vs. whether tumor penetration of prostatic capsule occured.", fig.height = 3, fig.width = 6}
 ggplot(prostate, aes(x = penetrate, y = age)) +
   geom_boxplot() +
+  xlab("Tumor Penetration") + 
   theme_classic()
 ```
 
