@@ -1,6 +1,7 @@
 
 library(ISLR)
 library(dplyr)
+library(purrr)
 library(ggplot2)
 
 # or do i want to use a tidymodels aproach?
@@ -38,9 +39,35 @@ hitters <- Hitters %>%
     errors = Errors,
     salary = Salary,
     new_league = NewLeague
-  )
+  ) %>% 
+  as_tibble()
+
+hitters
+
+# =============================================
+# ============ numerical summaries ============
+# ============================================
+
+# any NA's?
+map(hitters, ~sum(is.na(.)))
+
+# covariates don't have any missing values but response (salary) does
+# i think we'll do imputation here
+# possible methods: knn, random forest, median, mean (after transformation)
+
+# let's go ahead and look at the rows with missing values first
+# we might want to investigate this a bit further
+# or not
+# in reality i need to look into the various types of missing values
+#  (MAR, MCAR, etc.) and try to figure out what method from there
+# but that would probably be too much work and time
+
+hitters %>% filter(is.na(salary))
 
 
+# ----- response ---------
+
+hitters %>% select(salary) %>%  summary()
 
 
 
