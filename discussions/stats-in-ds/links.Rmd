@@ -1,0 +1,23 @@
+---
+title: "Links To Other Articles"
+author: "Andrew Bates"
+date: "11/29/2018"
+output: html_document
+---
+
+
+
+- Gelman
+    - [Doing Data Science](https://andrewgelman.com/2013/11/01/data-science/)
+    - [Statistics Is Least Important](https://andrewgelman.com/2013/11/14/statistics-least-important-part-data-science/)
+
+- Broman
+    - [Stats Is DS](https://kbroman.wordpress.com/2013/04/05/data-science-is-statistics/)
+    
+- Granville
+    - [DS w/o Stats](http://www.datasciencecentral.com/profiles/blogs/data-science-without-statistics-is-possible-even-desirable)
+    
+- Wasserstein
+    - [Role of Stats in DS](https://community.amstat.org/blogs/ronald-wasserstein/2015/10/01/the-role-of-statistics-in-data-science-an-asa-statement)
+
+
