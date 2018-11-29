@@ -158,4 +158,44 @@ again
 # maybe center and scale need to happen BEFORE creating dummy vars
 
 
+# try again after realizing many vars are dropped
+# i think i need to center and scale before creating dummy variables
+bball_recipe <- recipe(salary ~., data = bball) %>% 
+  step_log(salary,
+           home_runs,
+           career_at_bat,
+           career_hits,
+           career_home_run,
+           career_runs,
+           career_rbi,
+           career_walks,
+           put_outs,
+           assists,
+           errors)
 
+bball_recipe
+
+# center and scale numeric predictors
+bball_recipe <- bball_recipe %>% 
+  step_center(all_numeric()) %>% 
+  step_scale(all_numeric()) #%>% 
+  #step_nzv(all_predictors()) 
+  
+# seems like step_nzv() is removing 7 vars
+
+
+# create dummy variables
+bball_recipe <- bball_recipe %>% 
+  step_dummy(league, division, new_league)
+
+df <- bball_recipe %>% 
+  prep() %>% 
+  bake(new_data = bball)
+
+df
+
+# also note: any vars with zeros get turned to -Inf in log transform
+# there are two things i can think of
+#  1. use a different transformation (boxcox?)
+#  2. write a new step (step_alt_log?) that adds e.g. 0.15 to each value
+#     before taking the log similar to DAR 1
