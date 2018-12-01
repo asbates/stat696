@@ -185,22 +185,45 @@ gghist(bball_logged, log_errors)
 
 bball_new_feats <- bball_logged %>% 
   mutate(
+    # season level
     hits_to_abs = hits / at_bats,
     hrs_to_abs = home_runs / at_bats,
     rbis_to_abs = rbis / at_bats,
     walks_to_abs = walks / at_bats,
+    hrs_to_hits = home_runs / hits,
+    runs_to_hits = runs / hits,
+    runs_to_rbis = runs / rbis,
+    # career level
     career_hits_to_abs = career_hits / career_at_bats,
     career_hrs_to_abs = career_home_runs / career_at_bats,
     career_rbis_to_abs = career_rbis / career_at_bats,
-    career_walks_to_abs = career_walks / career_at_bats
+    career_walks_to_abs = career_walks / career_at_bats,
+    career_hrs_to_hits = career_home_runs / career_hits,
+    career_runs_to_hits = career_runs / career_hits,
+    career_runs_to_rbis = career_runs / career_rbis
   )
 
 
+# this is overwhelmingly yes
+# so it's very unbalanced and thus probably not any good
+# same_change = as.factor(ifelse(league == new_league, "yes", "no"))
 
-# same_league = as.factor(ifelse(league == new_league, "yes", "no"))
 
-
-
+# ----- ideas for more features -------
+# power_hitter: home runs above average (or maybe 75 percentile)
+# career_power_hitter: '' but over career
+# experience: rookie (1 year), mid-level (>1 yr <= avg or median years), 
+#              veteran (> avg or median years)
+# butterfinger: errors > Q3 of errors
+# defense: poor, avg, high
+# walker: walks above average (or Q3 or several levels)
+# career_walker: '' but over career
+# defense_helper: assists above average (or Q3 or several levels)
+# offense_helper: above average rbis (or Q3 or several levels)
+# career_offense_helper: '' but over career
+# salary level : 2 or 3 levels depending on salary 
+#                this might help the issue of very high/low salaries
+#                not sure if this is worth considering
 
 
 
