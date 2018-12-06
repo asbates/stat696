@@ -95,6 +95,24 @@ ggplot(bball, aes(x = new_league)) +
   geom_bar()
 
 
+# correlation plot
+# mention this and how highly correlated vars present issues
+# put plot in appendix
+for_cor <- bball %>% 
+  select_if(is.numeric)
+
+bball_cor <- cor(for_cor)
+corrplot::corrplot(bball_cor, 
+                   method = "number",
+                   type = "lower",
+                   number.cex = 0.7)
+
+corrplot::corrplot(bball_cor, 
+                   type = "lower",
+                   addCoef.col = "black",
+                   addCoefasPercent = TRUE,
+                   number.cex = 0.7)
+
 
 
 # ==============================
@@ -242,6 +260,8 @@ bball_new_feats <- bball_logged %>%
 # 6. plots if did any transformations
 
 # don't forget to plot response vs. predictor
+
+# don't forget to do a correlation plot of new features
 
 # ---- prep for models ----
 # 7. pick appropriate predictors based on 1-6
