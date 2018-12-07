@@ -1,5 +1,5 @@
 ---
-title: "Prostate Exams as Indicators of  Tumor Penetration of the Prostatic Capsule"
+title: "Indicators for  Tumor Penetration of Prostatic Capsule"
 author: "Andrew Bates"
 date: "December 11, 2018"
 header-includes:
