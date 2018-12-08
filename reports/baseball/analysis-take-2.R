@@ -248,7 +248,6 @@ bball_log_only %>%
            addCoefasPercent = TRUE,
            number.cex = 0.7)
 
-
 # =============================
 # ====== MODELING SETUP =======
 # =============================
@@ -263,6 +262,34 @@ testing <- bball_log_only[-train_index, ]
 
 dim(training) # 259 observations for training
 dim(testing) # 63 observations for testing
+
+
+# create model matrices
+lr_recipe <- recipe(log_salary ~., data = training) %>% 
+  step_dummy(league, division, new_league)
+
+lr_model_mat <- lr_recipe %>% 
+  prep() %>% 
+  bake(new_data = training)
+
+lasso_rf_recipe <- recipe(log_salary ~., data = training) %>% 
+  step_dummy(league, division, new_league) %>% 
+  step_center(all_predictors()) %>% 
+  step_scale(all_predictors())
+
+lasso_rf_model_mat <- lasso_rf_recipe %>% 
+  prep() %>% 
+  bake(new_data = training)
+
+# --------------
+# NOTE: see also step_corr(., threshold = 0.9)
+# this will remove any vars with correlation over 0.9
+
+# -----------------
+# also: may not need to prep() and bake() here
+
+# specify training parameters
+train_control <- trainControl(method = "cv", number = 5)
 
 
 # ==============================
@@ -286,6 +313,7 @@ lr_train$results # prediction results. RMSE, Rsquared, etc.
 lr_train$finalModel # this gives the model
 
 class(lr_train$finalModel)
+
 
 lr_step <- lr_train$finalModel
 
@@ -368,6 +396,7 @@ lasso_train
 names(lasso_train)
 lasso_train$results
 
+
 lasso_fit <- lasso_train$finalModel
 
 summary(lasso_fit) # not really helpful
@@ -387,5 +416,69 @@ broom::augment(lasso_fit) # no method for enet
 
 
 
+# don't extract model from train()
+# use predict.train in caret instead
 
 
+
+# linear model
+set.seed(30)
+lr_trained <- train(lr_recipe,
+                  data = training,
+                  method = "lmStepAIC",
+                  trControl = lr_control,
+                  trace = 0) # keep MASS::stepAIC from printing every output
+
+
+lr_trained
+lr_trained$finalModel
+
+best_step_lr <- lr_trained$finalModel
+summary(best_step_lr)
+# this should be the same as before
+
+# now let's try removing any variables with correlation > 0.9
+
+lr_recipe_corr <- lr_recipe %>% 
+  step_corr(all_predictors(), threshold = 0.9)
+
+lr_trained_corr <- train(lr_recipe,
+                         data = training,
+                         method = "lmStepAIC",
+                         trControl = lr_control,
+                         trace = 0) # keep MASS::stepAIC from printing every output
+
+lr_trained_corr
+summary(lr_trained_corr$finalModel)
+
+
+
+
+lr_recipe_corr %>% 
+  prep() %>% 
+  bake(new_data = training)
+
+
+lr_recipe_corr <- recipe(log_salary ~., data = training) %>% 
+  step_corr(all_numeric(), threshold = 0.9) %>% 
+  step_dummy(league, division, new_league)
+
+
+lr_trained_corr <- train(lr_recipe_corr,
+                         data = training,
+                         method = "lmStepAIC",
+                         trControl = lr_control,
+                         trace = 0)
+
+summary(lr_trained_corr)
+
+names(lr_trained_corr)
+lr_trained_corr$recipe
+
+
+lr_first_fit <- lr_trained_corr$finalModel
+
+summary(lr_first_fit)
+car::vif(lr_first_fit) # nice!
+
+lr_trained_corr$results  # and the RMSE is actually lower!
