@@ -1,10 +1,17 @@
 library(ISLR)
+library(MASS) # load MASS first to prevent from masking dplyr::select
 library(dplyr)
 library(purrr)
 library(recipes)
 library(corrplot)
 library(ggplot2)
 library(caret)
+library(broom)
+library(car)
+library(glmnet)
+library(randomForest)
+
+
 
 
 # ===============================
@@ -264,79 +271,53 @@ dim(training) # 259 observations for training
 dim(testing) # 63 observations for testing
 
 
-# create model matrices
+# specify preprocessing which later gets used to create model matrices
 lr_recipe <- recipe(log_salary ~., data = training) %>% 
   step_dummy(league, division, new_league)
-
-lr_model_mat <- lr_recipe %>% 
-  prep() %>% 
-  bake(new_data = training)
 
 lasso_rf_recipe <- recipe(log_salary ~., data = training) %>% 
   step_dummy(league, division, new_league) %>% 
   step_center(all_predictors()) %>% 
   step_scale(all_predictors())
 
-lasso_rf_model_mat <- lasso_rf_recipe %>% 
-  prep() %>% 
-  bake(new_data = training)
-
 # --------------
 # NOTE: see also step_corr(., threshold = 0.9)
 # this will remove any vars with correlation over 0.9
 
-# -----------------
-# also: may not need to prep() and bake() here
 
-# specify training parameters
+
+# specify training scheme
 train_control <- trainControl(method = "cv", number = 5)
+
+# specify training parameters to try
+lasso_grid <- expand.grid(alpha = 1,
+                          lambda = seq(0.01, 1, length.out = 10))
 
 
 # ==============================
 # ===== LINEAR REGRESSION ======
 # ==============================
 
-# we use 5-fold cross validation
-# with stepwise model selection via AIC
-lr_control <- trainControl(method = "cv", number = 5)
 
 set.seed(30)
-lr_train <- train(log_salary ~.,
+lr_trained <- train(lr_recipe,
                  data = training,
                  method = "lmStepAIC",
-                 trControl = lr_control,
+                 trControl = train_control,
                  trace = 0) # keep MASS::stepAIC from printing every output
 
-lr_train
-names(lr_train)
-lr_train$results # prediction results. RMSE, Rsquared, etc.
-lr_train$finalModel # this gives the model
-
-class(lr_train$finalModel)
-
-
-lr_step <- lr_train$finalModel
-
-# this actually doesn't look too bad
+lr_trained # RMSE = 0.552
+lr_step <- lr_trained$finalModel # this gives the model
 summary(lr_step)
-plot(lr_step)  
+# 2 high p-values: log_put_outs & log_assists
 
-# formula = .outcome ~ at_bats + hits + log_home_runs + rbis + 
-# walks + divisionW + log_put_outs + log_assists + log_career_rbis
+vif(lr_step)  # at_bats = 19, hits = 17
 
-# high p-value: rbis (0.074), log_put_outs (0.133)
-# possible problem points: 38, 118, 174, 228, 
-
-car::vif(lr_step)  # wow! at_bats = 19, hits = 17
-
-# not really surprising b/c correlation is 0.97
-# let's remove one of these
-
-# i think we should remove at_bats and keep hits
+# remove at_bats and keep hits
 # b/c of the remaining variables in the model,
 #   at_bats has higer correlations than hits
 
-lr_final <- lm(log_salary ~ hits +
+lr_step_sub <- lm(log_salary ~ hits +
                  log_home_runs +
                  rbis +
                  walks +
@@ -346,36 +327,62 @@ lr_final <- lm(log_salary ~ hits +
                  log_career_rbis,
                data = training)
 
-summary(lr_final)
-car::vif(lr_final)
-# high p-values: log_put_outs (0.2), log_assists (0.2)
-# largest vif: rbis (5.96). this is moderate according to lecture slides
-#   week 5, Regression_modeling.pdf
+summary(lr_step_sub) # one high p-value (barely): log_home_runs (0.059)
+vif(lr_step_sub) # this is much better
 
-plot(lr_final)
-# looks decent enough. same possible problem points
+plot(lr_step_sub)
 
-lr_pred <- predict(lr_final, newdata = testing)
+lr_step_sub_pred <- predict(lr_step_sub, newdata = testing)
+sqrt(mean( (training$log_salary - lr_step_sub$fitted.values)^2 )) 
+# RMSE = 0.512. lower than initial fit
 
-RMSE(lr_pred, testing$log_salary) # 0.687
+# we could remove log_put_outs & log_assists as well
+# or we could take another approach:
+#  before model fitting, remove pairs of variables that have high correlations
+
+lr_recipe_corr <- recipe(log_salary ~., data = training) %>% 
+  step_corr(all_numeric(), threshold = 0.9) %>% 
+  step_dummy(league, division, new_league)
+
+set.seed(30)
+lr_trained_corr <- train(lr_recipe_corr,
+                         data = training,
+                         method = "lmStepAIC",
+                         trControl = train_control,
+                         trace = 0)
+
+lr_trained_corr 
+# RMSE = 0.535. 
+# lower than initial fit but higher than after removing at_bats
+lr_step_corr <- lr_trained_corr$finalModel
+summary(lr_step_corr) 
+# one large p-value: log_put_outs (0.13)
+vif(lr_step_corr) # better than after manually removing at_bats
 
 
-# is this the final model i want to present?
-# i don't think so b/c this is really a prediction problem as posed
-# but then again he wants us to go through typical lm building
-# so who knows
-lr_full_fit <- lm(log_salary ~ hits +
-                 log_home_runs +
-                 rbis +
-                 walks +
-                 division +
-                 log_put_outs +
-                 log_assists +
-                 log_career_rbis,
-               data = bball_log_only)
+# we will go with lr_step_sub as the final model
+# both this and lr_step_corr have one high p-value 
+#  with lr_step_corr being lower
+# vif's for lr_step_sub are higher but the largest one is still only moderate
+# additionally, lr_step_sub has slightly lower RMSE which is the main
+#  goal for this analysis
 
-summary(lr_full_fit)
-plot(lr_full_fit)
+# actually, we should re-fit the model using caret::train
+
+lr_step_sub2 <- train(log_salary ~ hits +
+                       log_home_runs +
+                       rbis +
+                       walks +
+                       division +
+                       log_put_outs +
+                       log_assists +
+                       log_career_rbis,
+                     data = training,
+                     method = "lm")
+
+varImp(lr_step_sub2) # absolute value of t-statistic for each parameter
+
+plot(varImp(lr_step_sub2))
 
 
 
@@ -383,102 +390,91 @@ plot(lr_full_fit)
 # ======= LASSO =========
 # =======================
 
-lasso_control <- trainControl(method = "cv", number = 5)
-
 set.seed(30)
-lasso_train <- train(log_salary ~.,
-                     data = training,
-                     method = "lasso",
-                     trControl = lasso_control)
+# note: this gives a warning about missing values in performance metrics
+# this can be ignored because we are considering RMSE
+lasso_trained <- train(lasso_rf_recipe,
+                      data = training,
+                      method = "glmnet",
+                      trControl = train_control,
+                      tuneGrid = lasso_grid)
 
-lasso_train
+lasso_trained # RMSE = 0.536
 
-names(lasso_train)
-lasso_train$results
+lambda <- lasso_trained$bestTune$lambda
+coef(lasso_trained$finalModel, s = lambda) # model coefficients
 
+plot(lasso_trained)
 
-lasso_fit <- lasso_train$finalModel
+varImp(lasso_trained, lambda = lambda) # absolute value of coefficients
+plot(varImp(lasso_trained, lambda = lambda))
 
-summary(lasso_fit) # not really helpful
-names(lasso_fit)
-
-lasso_fit$beta.pure
-lasso_fit$param
-coef(lasso_fit) # NULL
-lasso_fit$lambda
-
-broom::augment(lasso_fit) # no method for enet
-
-# should i try to use glmnet instead?
-# will that allow me to get a summary like lm?
-# maybe i should just not worry about it and just present the
-#  CV error, prediction error, and predictions
-
-
-
-# don't extract model from train()
-# use predict.train in caret instead
-
-
-
-# linear model
-set.seed(30)
-lr_trained <- train(lr_recipe,
-                  data = training,
-                  method = "lmStepAIC",
-                  trControl = lr_control,
-                  trace = 0) # keep MASS::stepAIC from printing every output
-
-
-lr_trained
-lr_trained$finalModel
-
-best_step_lr <- lr_trained$finalModel
-summary(best_step_lr)
-# this should be the same as before
-
-# now let's try removing any variables with correlation > 0.9
-
-lr_recipe_corr <- lr_recipe %>% 
-  step_corr(all_predictors(), threshold = 0.9)
-
-lr_trained_corr <- train(lr_recipe,
-                         data = training,
-                         method = "lmStepAIC",
-                         trControl = lr_control,
-                         trace = 0) # keep MASS::stepAIC from printing every output
-
-lr_trained_corr
-summary(lr_trained_corr$finalModel)
-
-
-
-
-lr_recipe_corr %>% 
+# ------ trying to see if can get augment()
+lasso_df <- lasso_rf_recipe %>% 
   prep() %>% 
   bake(new_data = training)
 
+lasso_mod_mat <- model.matrix(log_salary ~., data = lasso_df)
 
-lr_recipe_corr <- recipe(log_salary ~., data = training) %>% 
-  step_corr(all_numeric(), threshold = 0.9) %>% 
-  step_dummy(league, division, new_league)
+lasso_fit <- cv.glmnet(lasso_mod_mat,
+                    training$log_salary,
+                    lambda = c(0.01, 0.02)) 
+# cv.glmnet needs more than one lambda value
 
+tidy(lasso_fit)
+tidy(lasso_fit) 
+summary(lasso_fit)
+augment(lasso_fit)
 
-lr_trained_corr <- train(lr_recipe_corr,
-                         data = training,
-                         method = "lmStepAIC",
-                         trControl = lr_control,
-                         trace = 0)
-
-summary(lr_trained_corr)
-
-names(lr_trained_corr)
-lr_trained_corr$recipe
+broom::augment(lasso_trained$finalModel) # no method for enet
+broom::augment.glmnet(lasso_trained$finalModel)
 
 
-lr_first_fit <- lr_trained_corr$finalModel
+# ============================
+# ===== RANDOM FOREST ========
+# ============================
 
-summary(lr_first_fit)
-car::vif(lr_first_fit) # nice!
+set.seed(30)
+rf_trained <- train(lasso_rf_recipe,
+                    data = training,
+                    method = "rf",
+                    trControl = train_control,
+                    tuneLength = 10,
+                    importance = TRUE)
 
-lr_trained_corr$results  # and the RMSE is actually lower!
+rf_trained # RMSE = 0.429
+
+( (0.536 - 0.429) / 0.536 ) * 100 # 20% reduction in error
+
+plot(rf_trained)
+varImp(rf_trained)
+plot(varImp(rf_trained))
+
+
+ggplot(rf_trained, mapping = NULL, top = dim(rf_trained$importance)[1])
+
+rf_imp <- varImp(rf_trained)
+
+ggplot(rf_imp)
+
+rf_tick_labels <- rev(c("log career hits",
+                    "log career at bats",
+                    "log career runs",
+                    "log career rbis",
+                    "log career walks",
+                    "log career home runs",
+                    "years",
+                    "at bats",
+                    "hits",
+                    "log home runs",
+                    "runs",
+                    "rbis",
+                    "walks",
+                    "log put outs",
+                    "division west",
+                    "log errors",
+                    "league national",
+                    "log assists",
+                    "new league national"))
+ggplot(rf_imp) +
+  scale_x_discrete(labels = rf_tick_labels)
