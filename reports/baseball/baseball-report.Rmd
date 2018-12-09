@@ -23,18 +23,12 @@ knitr::opts_chunk$set(echo = FALSE)
 
 In 2001 Leo Breiman described two approaches to analyzing data with statistical models [@breiman2001]. *Data modeling* is the traditional method where we use models with known theoretical properties so that we can make inferences on the population of interest, typically via coefficient estimates. In the other approach, what Breiman calls *algorithmic modeling*, the focus is less on the the structure of the data itself and more about the output of the model. We are not concerned about finding a model that satisfies the theoretical assumptions needed to make inferences. We are interested in whether the model can make accurate predictions on newly collected data. Data modeling is the method typically taught in statistics and is probably what most who have studied statistics think of when they think about modeling. However, there has been increased interest in algorithmic modeling recently[^1] with some, including Breiman, diminishing traditional statistical modeling. 
 
+In this paper we compare Breiman's two modeling paradigms by analyzing Major League Baseball data with the goal of developing a model to predict a players salary. We examine one data model, one algorithmic model, and one model at the intersection of the two approaches. Some advantages and disadvantages of each approach is discussed in the context of these models. The primary aim is to construct a predictive model, but we also examine intrepretation of the models themselves
 
 
-
-Data modeling is what is typically taught in statistics courses, the classical example being linear regression. Algorithmic modeling on the other hand is less common in statistics programs and usually finds its place in computer science departments under the term machine learning.However, there has been increased interest in algorithmic modeling recently. Algorithmic modeling on the other hand has seen an increased interest recently
-
-The data modeling approach is what statistics students 
-
-
-In 2001 Leo Breiman identified two culutures in stastics, differentiated by their approach to modeling data.
 what is the problem? why do we care about it? reference Moneyball somehow. if a franchise can accurately predict an appropriate salary for a player they wish to acquire (accurate estimate a players 'worth'), they will have an advantage over teams that make an offer (is this how it works? or do teams just pick players and players don't have a choice?) based on more traditional methods. Or, if an MLB franchise can accurately estimate a given players 'worth', that player will likely be more satisfied with their position and renew their contract with the team, a situation that benefits both parties. In this paper we analyze data on players from the 1986 and 1987 Major League Basebal seasons with the aim of building a model that provides accurate predictions of a given players salary. To that end (?), we examine three statistical learning methods to determine which is more suitable for the problem at hand. Or, in order to achieve this goal we investigate three clases of models and provide a comparison of each models performance.
 
-[^1]: https://trends.google.com/trends/explore?date=all&geo=US&q=machine%20learning
+[^1]: See https://trends.google.com/trends/explore?date=all&geo=US&q=machine%20learning for example which shows web interest in machine learning (accessed 12/9/2018).
 
 # Methods
 
