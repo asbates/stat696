@@ -10,6 +10,7 @@ output:
     toc: false
 geometry: margin=1in
 fontsize: 11pt
+bibliography: ["references.bib"]
 abstract: "This is the executive summary."
 ---
 
@@ -99,4 +100,6 @@ If future analysts deisire to construct a model for estimating contemporary MLB 
 \end{appendices}
 -->
 
+\newpage
 
+# References
