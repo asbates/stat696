@@ -28,11 +28,12 @@ In 2001 Leo Breiman described two approaches to analyzing data with statistical 
 In this paper we compare Breiman's two modeling paradigms by analyzing Major League Baseball data with the goal of developing a model to predict a players salary. We examine one data model (linear regression), one algorithmic model (random forest), and one model at the intersection of the two approaches (LASSO). For each model, we discuss some advantages and disadvantages in terms of both predictive capability and interpretability. The primary aim is to construct a predictive model but, although prediction and interpretability are often seen at odds with one another [@breiman2001, p. 206], in some situations one may be interested in finding a balance between the two.
 
 
-what is the problem? why do we care about it? reference Moneyball somehow. if a franchise can accurately predict an appropriate salary for a player they wish to acquire (accurate estimate a players 'worth'), they will have an advantage over teams that make an offer (is this how it works? or do teams just pick players and players don't have a choice?) based on more traditional methods. Or, if an MLB franchise can accurately estimate a given players 'worth', that player will likely be more satisfied with their position and renew their contract with the team, a situation that benefits both parties. In this paper we analyze data on players from the 1986 and 1987 Major League Basebal seasons with the aim of building a model that provides accurate predictions of a given players salary. To that end (?), we examine three statistical learning methods to determine which is more suitable for the problem at hand. Or, in order to achieve this goal we investigate three clases of models and provide a comparison of each models performance.
 
-[^1]: See https://trends.google.com/trends/explore?date=all&geo=US&q=machine%20learning for example which shows web interest in machine learning (accessed 12/9/2018).
+[^1]: See https://trends.google.com/trends/explore?date=all&geo=US&q=machine%20learning for example which shows web interest in machine learning since 2004 (accessed 12/9/2018).
 
 # Methods
+
+The data set used in this analysis is the `Hitters` data from the R package `ISLR` [@R-ISLR] which is a companion package to *An Introduction to Statistical Learning with Applications in R* [@islrbook] containing the data sets used in the book.
 
 a paragraph about the data. where does it come from, how was it collected. this data set contains 322 observations. describe a few of the variables: There are 20 variables included in this data set and can mostly be broken down into two categories: performance metrics for the 1986 season (number of at bats, number of home runs, etc.), and performance metrics based on a given players career (career RBIs, career hits, etc.).
 
