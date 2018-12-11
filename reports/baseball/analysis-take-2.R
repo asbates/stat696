@@ -385,6 +385,22 @@ varImp(lr_step_sub2) # absolute value of t-statistic for each parameter
 plot(varImp(lr_step_sub2))
 
 
+# yet another approach that actually is probably better
+# center and scale before doing linear regresion too
+# this makes the interpretations: a one sd increase in blah is associated ...
+
+set.seed(30)
+lr_center_scale <- train(lasso_rf_recipe,
+                    data = training,
+                    method = "lmStepAIC",
+                    trControl = train_control,
+                    trace = 0) # keep MASS::stepAIC from printing every output
+
+lr_center_scale
+
+summary(lr_center_scale$finalModel)
+
+# the resulting model should be the same but not the interpretation
 
 # =======================
 # ======= LASSO =========
