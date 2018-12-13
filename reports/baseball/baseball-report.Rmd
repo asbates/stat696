@@ -33,7 +33,10 @@ In this paper we compare Breiman's two modeling paradigms by analyzing Major Lea
 
 # Methods
 
-The data set used in this analysis is the `Hitters` data from the R package `ISLR` [@R-ISLR] which is a companion package to *An Introduction to Statistical Learning with Applications in R* [@islrbook] containing the data sets used in the book.
+In this analysis we use the `Hitters` data from the R package `ISLR` [@R-ISLR], a companion package to *An Introduction to Statistical Learning with Applications in R* [@islrbook] containing the data sets used in the book. The Hitters data contains information on  322 players from the 1986 and 1987 Major League Baseball (MLB) seasons. There are 19 covariates included in this data set that can mostly be broken down into two categories: performance metrics for the 1986 season (number of at bats, number of home runs, etc.), and performance metrics based on a given players career (career runs, career hits, etc.). There are 16 continuous variables and three categorical variables. For the 1987 season we have the player's salary on opening day along with their league (American or National) at the beginning of the season.
+
+
+
 
 a paragraph about the data. where does it come from, how was it collected. this data set contains 322 observations. describe a few of the variables: There are 20 variables included in this data set and can mostly be broken down into two categories: performance metrics for the 1986 season (number of at bats, number of home runs, etc.), and performance metrics based on a given players career (career RBIs, career hits, etc.).
 
