@@ -39,8 +39,8 @@ The salary variable has 59 missing observations, 18% of the data. This was too m
 
 Prior to model fitting the data was split into a training and testing set with 20% reserved for testing. All three models were trained using 5-fold cross-validation with the final model chosen to be the one with the lowest root mean squared error (RMSE). In each cross-validation run for linear regression a stepwise procedure was used with Akaike Information Criteria (AIC) as the model selection criterion. Diagnostics were run on the model chosen via cross-validation and some covariates were subsequently ommited based on variance inflation factors and correlations between the covariates. Grid search was used for hyperparameter tuning of the lasso and random forest with 10 values in each grid. For the lasso the hyperparameter is the lasso penalty and for random forest the hyperparameter is the number of randomly selected covariates considered at each split. A comparison of predictive ability for the three models was made through RMSE on the testing set. We investigate interpretability via coefficient interpretation for linear regression and lasso and variable importance for lasso and random forest.
 
+The analysis was conducted using the statistical software R [@R-base]. This document was written using the R packages `R Markdown` [@R-rmarkdown], `knitr` [@R-knitr], and `bookdown` [@R-bookdown]. All materials used to conduct the analysis and compose the report can be found at `https://github.com/asbates/stat696/tree/master/reports/baseball`.
 
-don't forget a final software summary b/c Levine will probably want that.
 
 
 # Analysis
