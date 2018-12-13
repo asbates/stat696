@@ -58,6 +58,9 @@ library(glmnet)
 library(randomForest)
 library(knitr)
 library(kableExtra)
+library(gridExtra)
+
+theme_set(theme_bw())
 
 data("Hitters")
 
@@ -139,9 +142,32 @@ bball_log_only <- bball_logged %>%
 ```
 
 
+
 ## Exploratory Analysis
 
-first talk about missing value imputation. explain what method and why. also explain why even impute. if the data set was bigger, might consider just removing them but in this case i think we need to impute them.
+There are a few areas of concern with the data use in this analysis. The first being a number of missing values for player salary[^2]. Almost 20% of the data has missing salary values. Most of the covariates were collected for the 1986 MLB season but salary was gathered at the beginning of the following season. Most of the missing salaries are likely due to retirement as 57 players retired in 1986[^3]. The others might be missing a salary because the players returned to the minor leagues which is not uncommon in baseball. Regardless of the reason, with so many missing values we decided to impute them using k-nearest neighboors. The data set is not particulary large at 322 observations so omitting missing values would be leaving out a large chunk of the data. Another issue with this data set is the correlations between the covariates. A plot of the correlation matrix for the continuous variables is given in the appendix (Figure \@ref:(fig:corrplot-initial)). Several covariates have extremely high correlations, up to 98%. We also see groupings of several covariates that have large correlations with each other, most notably the career level variables. These are likely to present problems, especially in the linear regression model.
+
+Over half of the continuous variables exhibit skewness to some degree. This is of highest concern for the linear regression model but it may also affect the fit for lasso and random forest if most of the values are clumped together. Log transformations were used to account for skewness, favored for the interpretability of coefficients in the linear regression model. An example of this skewness is seen in Figure \@ref(fig:salary-hist) where we have a histogram of salary (left) along with a histogram of log salary (right). The log transformation clearly helps with skewness but also note that after transformation salary is approximately normally distributed.
+
+
+```{r salary-hist, cache = TRUE, fig.width = 6, fig.height=3, fig.cap="Histogram of player salary. The left plot is prior to transformation and the right plot is after log transforming."}
+sal_hist <- 
+  ggplot(bball, aes(salary)) +
+  geom_histogram(bins = 30) +
+  xlab("Salary")
+
+sal_hist_log <-
+  ggplot(bball_log_only, aes(log_salary)) +
+  geom_histogram(bins = 30) +
+  xlab("Log salary")
+
+grid.arrange(sal_hist, sal_hist_log, ncol = 2) 
+```
+
+
+
+[^2]: None of the covariates had massing values.
+[^3]: http://www.baseball-almanac.com/yearly/final.php?l=NL&y=1986
 
 
 ### Feature Engineering
@@ -174,7 +200,29 @@ If future analysts deisire to construct a model for estimating contemporary MLB 
 
 # (APPENDIX) Appendix A  {-}
 
-# Supplementary Material
+# Supplementary Figures
+
+```{r corrplot-initial, cache = TRUE, fig.width=6, fig.height=4, fig.cap="Correlation matrix plot of continuous variables prior to transformations. Correlations are displayed as a percent."}
+bball %>% 
+  select_if(is.numeric) %>% 
+  cor() %>% 
+  corrplot(type = "lower",
+           addCoef.col = "black",
+           addCoefasPercent = TRUE,
+           number.cex = 0.7)
+```
+
+
+```{r corrplot-logged, cache = TRUE, fig.width = 6, fig.height = 4, fig.cap = "Correlation matrix plot of continuous variables after log transformations. Correlations are displayed as a percent."}
+bball_log_only %>% 
+  select_if(is.numeric) %>% 
+  cor() %>% 
+  corrplot(type = "lower",
+           addCoef.col = "black",
+           addCoefasPercent = TRUE,
+           number.cex = 0.7)
+```
+
 
 
 # R Code

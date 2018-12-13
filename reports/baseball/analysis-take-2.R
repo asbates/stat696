@@ -66,6 +66,15 @@ map_int(bball, ~sum(is.na(.)))
 # =========== EDA ============
 # ============================
 
+# correlation plot
+bball %>% 
+  select_if(is.numeric) %>% 
+  cor() %>% 
+  corrplot(type = "lower",
+           addCoef.col = "black",
+           addCoefasPercent = TRUE,
+           number.cex = 0.7)
+
 
 # function to produce histograms
 gghist <- function(data, var, bins = 30){
@@ -104,23 +113,6 @@ ggplot(bball, aes(x = division)) +
 
 ggplot(bball, aes(x = new_league)) +
   geom_bar()
-
-
-# correlation plot
-# mention this and how highly correlated vars present issues
-# put plot in appendix
-
-
-bball %>% 
-  select_if(is.numeric) %>% 
-  cor() %>% 
-  corrplot(type = "lower",
-           addCoef.col = "black",
-           addCoefasPercent = TRUE,
-           number.cex = 0.7)
-
-# is there a way to set a cutoff for plotting?
-# for example, only put numbers in if > 0.8
 
 
 
