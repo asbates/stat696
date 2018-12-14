@@ -43,7 +43,7 @@ The analysis was conducted using the statistical software R [@R-base]. This docu
 # Analysis
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(echo = FALSE, cache = TRUE)
 library(ISLR)
 library(MASS) # load MASS first to prevent from masking dplyr::select
 library(dplyr)
@@ -145,12 +145,12 @@ bball_log_only <- bball_logged %>%
 
 ## Exploratory Analysis
 
-There are a few areas of concern with the data use in this analysis. The first being a number of missing values for player salary[^2]. Almost 20% of the data has missing salary values. Most of the covariates were collected for the 1986 MLB season but salary was gathered at the beginning of the following season. Most of the missing salaries are likely due to retirement as 57 players retired in 1986[^3]. The others might be missing a salary because the players returned to the minor leagues which is not uncommon in baseball. Regardless of the reason, with so many missing values we decided to impute them using k-nearest neighboors. The data set is not particulary large at 322 observations so omitting missing values would be leaving out a large chunk of the data. Another issue with this data set is the correlations between the covariates. A plot of the correlation matrix for the continuous variables is given in the appendix (Figure \@ref:(fig:corrplot-initial)). Several covariates have extremely high correlations, up to 98%. We also see groupings of several covariates that have large correlations with each other, most notably the career level variables. These are likely to present problems, especially in the linear regression model.
+There are a few areas of concern with the data use in this analysis. The first being a number of missing values for player salary[^2]. Almost 20% of the data has missing salary values. Most of the covariates were collected for the 1986 MLB season but salary was gathered at the beginning of the following season. Most of the missing salaries are likely due to retirement as 57 players retired in 1986[^3]. The others might be missing a salary because the players returned to the minor leagues which is not uncommon in baseball. Regardless of the reason, with so many missing values we decided to impute them using k-nearest neighboors. The data set is not particulary large at 322 observations so omitting missing values would be leaving out a large chunk of the data. Another issue with this data set is the correlations between the covariates. A plot of the correlation matrix for the continuous variables is given in the appendix (Figure \@ref(fig:corrplot-initial)). Several covariates have extremely high correlations, up to 98%. We also see groupings of several covariates that have large correlations with each other, most notably the career level variables. These are likely to present problems, especially in the linear regression model.
 
-Over half of the continuous variables exhibit skewness to some degree. This is of highest concern for the linear regression model but it may also affect the fit for lasso and random forest if most of the values are clumped together. Log transformations were used to account for skewness, favored for the interpretability of coefficients in the linear regression model. An example of this skewness is seen in Figure \@ref(fig:salary-hist) where we have a histogram of salary (left) along with a histogram of log salary (right). The log transformation clearly helps with skewness but also note that after transformation salary is approximately normally distributed.
+Over half of the continuous variables exhibit skewness to some degree. This is of highest concern for the linear regression model but it may also affect the fit for lasso and random forest if most of the values are clumped together. Log transformations were used to account for skewness, favored for the interpretability of coefficients in the linear regression model. An example of this skewness is seen in Figure \@ref(fig:salary-hist) where we have a histogram of salary (left) along with a histogram of log salary (right). The log transformation clearly helps with skewness but also note that after transformation salary is approximately normally distributed. Histograms of the remaining variables as well as any log transformed variables are provided in the appendix for reference. Also included are scatter plots of each covariate (or the log transformed covariate) versus log salary to assess the plausability of the linearity assumption for the linear regression model. The plots show that each predictor variable has an approximately linear relationship with log salary.
 
 
-```{r salary-hist, cache = TRUE, fig.width = 6, fig.height=3, fig.cap="Histogram of player salary. The left plot is prior to transformation and the right plot is after log transforming."}
+```{r salary-hist, fig.width = 6, fig.height=3, fig.cap="Histogram of player salary. The left plot is prior to transformation and the right plot is after log transforming."}
 sal_hist <- 
   ggplot(bball, aes(salary)) +
   geom_histogram(bins = 30) +
@@ -202,7 +202,7 @@ If future analysts deisire to construct a model for estimating contemporary MLB 
 
 # Supplementary Figures
 
-```{r corrplot-initial, cache = TRUE, fig.width=6, fig.height=4, fig.cap="Correlation matrix plot of continuous variables prior to transformations. Correlations are displayed as a percent."}
+```{r corrplot-initial, fig.width=6, fig.height=4, fig.cap="Correlation matrix plot of continuous variables prior to transformations. Correlations are displayed as a percent."}
 bball %>% 
   select_if(is.numeric) %>% 
   cor() %>% 
@@ -213,7 +213,7 @@ bball %>%
 ```
 
 
-```{r corrplot-logged, cache = TRUE, fig.width = 6, fig.height = 4, fig.cap = "Correlation matrix plot of continuous variables after log transformations. Correlations are displayed as a percent."}
+```{r corrplot-logged, fig.width = 6, fig.height = 4, fig.cap = "Correlation matrix plot of continuous variables after log transformations. Correlations are displayed as a percent."}
 bball_log_only %>% 
   select_if(is.numeric) %>% 
   cor() %>% 
@@ -222,6 +222,104 @@ bball_log_only %>%
            addCoefasPercent = TRUE,
            number.cex = 0.7)
 ```
+
+
+```{r histos-no-log, fig.width = 6, fig.height = 4, fig.cap = "Histograms of covariates for which log transformations were not performed"}
+
+gghist <- function(data, var, bins = 30){
+  var <- enquo(var)
+  ggplot(data, aes(!!var)) +
+    geom_histogram(bins = bins)
+}
+
+
+at_bats_hist <- gghist(bball, at_bats) + xlab("At bats")
+hits_hist <- gghist(bball, hits) + xlab("Hits")
+runs_hist <- gghist(bball, runs) + xlab("Runs")
+rbis_hist <- gghist(bball, rbis) + xlab("Runs batted in")
+walks_hist <- gghist(bball, walks) + xlab("Walks")
+years_hist <- gghist(bball, years, bins = 20) + xlab("Years in major league")
+
+grid.arrange(at_bats_hist,
+             hits_hist,
+             runs_hist,
+             rbis_hist,
+             walks_hist,
+             years_hist,
+             ncol = 2) 
+
+```
+
+```{r histos-with-log, fig.cap = "Histograms of season level covariates that were log transformed. The left side is the variable on the original scale and the right side is the variable on the log scale."}
+
+hr_hist <- gghist(bball, home_runs)  + xlab("Home runs")
+hr_log_hist <- gghist(bball_logged, log_home_runs, bins = 20) + 
+  xlab("Log home runs")
+
+po_hist <- gghist(bball, put_outs) + xlab("Put outs")
+po_log_hist <- gghist(bball_logged, log_put_outs) + 
+  xlab("Log put outs")
+
+assist_hist <- gghist(bball, assists) + xlab("Assists")
+assist_log_hist <- gghist(bball_logged, log_assists) +
+  xlab("Log assists")
+ 
+error_hist <- gghist(bball, errors) + xlab("Errors")
+error_log_hist <- gghist(bball_logged, log_errors, bins = 20) +
+  xlab("Log errors")
+
+grid.arrange(hr_hist,
+             hr_log_hist,
+             po_hist,
+             po_log_hist,
+             assist_hist,
+             assist_log_hist,
+             error_hist,
+             error_log_hist,
+             ncol = 2)
+
+```
+
+```{r histos-with-log-career, fig.cap = "Histograms of career level covariates that were log transformed. The left side is the variable on the original scale and the right side is the variable on the log scale."}
+
+cat_bats_hist <- gghist(bball, career_at_bats) + xlab("Career at bats")
+cat_bats_log_hist <- gghist(bball_logged, log_career_abs) +
+  xlab("Log career at bats")
+
+chits_hist <- gghist(bball, career_hits) + xlab("Career hits")
+chits_log_hist <- gghist(bball_logged, log_career_hits) + 
+  xlab("Log career hits")
+
+chr_hist <- gghist(bball, career_home_runs) + xlab("Career home runs")
+chr_log_hist <- gghist(bball_logged, log_career_hrs) + 
+  xlab("Log career home runs")
+
+cruns_hist <- gghist(bball, career_runs) + xlab("Career runs")
+cruns_log_hist <- gghist(bball_logged, log_career_runs) +
+  xlab("Log career runs")
+
+crbi_hist <- gghist(bball, career_rbis) + xlab("Career runs batted in")
+crbi_log_hist <- gghist(bball_logged, log_career_rbis) +
+  xlab("Log career runs batted in")
+
+cwalk_hist <- gghist(bball, career_walks) + xlab("Career walks")
+cwalk_log_hist <- gghist(bball_logged, log_career_walks, bins = 20) +
+  xlab("Log career walks")
+
+grid.arrange(cat_bats_hist,
+             cat_bats_log_hist,
+             chits_hist,
+             chits_log_hist,
+             cruns_hist,
+             cruns_log_hist,
+             crbi_hist,
+             crbi_log_hist,
+             cwalk_hist,
+             cwalk_log_hist,
+             ncol = 2)
+
+```
+
 
 
 
