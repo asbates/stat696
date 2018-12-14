@@ -8,3 +8,7 @@
 *-concordance.tex
 *.log
 *.synctex.gz
+
+# knitr cache folders
+/*_cache/
+/*_files/
