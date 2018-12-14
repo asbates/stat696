@@ -176,6 +176,11 @@ grid.arrange(sal_hist, sal_hist_log, ncol = 2)
 
 ## Modeling Fitting
 
+
+After splitting the data into a testing and training set, each type of model was fit to the training data set with 5-fold cross-validation. In each case, the final model was the one that resulted in the lowest root mean squared error (RMSE), averaged over the cross-validation runs. Prior to performing cross validation each continuous predictor was first centered by the mean and scaled by the standard deviation.
+
+For the linear regression model a backwards stepwise procedure was used on each cross validation run. The resulting fit was the one with the lowest Akaike Information Criteria.
+
 explain model fitting method. for each method, k-fold cross validation was performed with the final model being the one that minimized the mean cross validation error. We used rmsle as a performance metric because it penalizes large and small errors more evenly compared to rmse. don't forget to discuss hyperparameter tuning. for liner regression, the only real hyperparameter is the number of variables. within each cross validation run, maybe we can do some sort of stepwise regression variable selection. how would this work in code? can this be done with recipes? can this be done with mlr? will i have to implement a custom method via MASS? for the others, does recipes handle random search or only grid search? can it even do hyperparameter tuning? (i assume yes). maybe list out the the range of hyperparameters considered for random forest. with lasso, would it be ok to extend this to elastic net or does it have to be strictly lasso?
 
 ## Prediction Results

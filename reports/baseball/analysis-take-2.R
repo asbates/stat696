@@ -265,19 +265,10 @@ dim(training) # 259 observations for training
 dim(testing) # 63 observations for testing
 
 
-# specify preprocessing which later gets used to create model matrices
-lr_recipe <- recipe(log_salary ~., data = training) %>% 
-  step_dummy(league, division, new_league)
-
-lasso_rf_recipe <- recipe(log_salary ~., data = training) %>% 
+model_recipe <- recipe(log_salary ~., data = training) %>% 
   step_dummy(league, division, new_league) %>% 
   step_center(all_predictors()) %>% 
   step_scale(all_predictors())
-
-# --------------
-# NOTE: see also step_corr(., threshold = 0.9)
-# this will remove any vars with correlation over 0.9
-
 
 
 # specify training scheme
@@ -295,7 +286,7 @@ lasso_grid <- expand.grid(alpha = 1,
 
 
 set.seed(30)
-lr_trained <- train(lr_recipe,
+lr_trained <- train(model_recipe,
                  data = training,
                  method = "lmStepAIC",
                  trControl = train_control,
@@ -312,90 +303,37 @@ vif(lr_step)  # at_bats = 19, hits = 17
 # b/c of the remaining variables in the model,
 #   at_bats has higer correlations than hits
 
-lr_step_sub <- lm(log_salary ~ hits +
-                 log_home_runs +
-                 rbis +
-                 walks +
-                 division +
-                 log_put_outs +
-                 log_assists +
-                 log_career_rbis,
-               data = training)
-
-summary(lr_step_sub) # one high p-value (barely): log_home_runs (0.059)
-vif(lr_step_sub) # this is much better
-
-plot(lr_step_sub)
-
-lr_step_sub_pred <- predict(lr_step_sub, newdata = testing)
-sqrt(mean( (training$log_salary - lr_step_sub$fitted.values)^2 )) 
-# RMSE = 0.512. lower than initial fit
-
-# we could remove log_put_outs & log_assists as well
-# or we could take another approach:
-#  before model fitting, remove pairs of variables that have high correlations
-
-lr_recipe_corr <- recipe(log_salary ~., data = training) %>% 
-  step_corr(all_numeric(), threshold = 0.9) %>% 
-  step_dummy(league, division, new_league)
+# new model specification with smaller # of variables
+lr_small_recipe <- recipe(log_salary ~ hits +
+                            log_home_runs +
+                            rbis +
+                            walks +
+                            division +
+                            log_put_outs +
+                            log_assists +
+                            log_career_rbis,
+                          data = training) %>% 
+  step_dummy(division) %>% 
+  step_center(all_predictors()) %>% 
+  step_scale(all_predictors())
 
 set.seed(30)
-lr_trained_corr <- train(lr_recipe_corr,
-                         data = training,
-                         method = "lmStepAIC",
-                         trControl = train_control,
-                         trace = 0)
+lr_step_small_trained <- train(lr_small_recipe,
+                      data = training,
+                      method = "lm",
+                      trControl = train_control)
 
-lr_trained_corr 
-# RMSE = 0.535. 
-# lower than initial fit but higher than after removing at_bats
-lr_step_corr <- lr_trained_corr$finalModel
-summary(lr_step_corr) 
-# one large p-value: log_put_outs (0.13)
-vif(lr_step_corr) # better than after manually removing at_bats
+lr_step_small_trained # RMSE = 0.530
+lr_step_small <- lr_step_small_trained$finalModel
+
+summary(lr_step_small) # 2 high p-values (log_put_outs & log_career_rbis)
+vif(lr_step_small) # these are much better. largest is 5.9
 
 
-# we will go with lr_step_sub as the final model
-# both this and lr_step_corr have one high p-value 
-#  with lr_step_corr being lower
-# vif's for lr_step_sub are higher but the largest one is still only moderate
-# additionally, lr_step_sub has slightly lower RMSE which is the main
-#  goal for this analysis
+varImp(lr_step_small) # absolute value of t-statistic for each parameter
 
-# actually, we should re-fit the model using caret::train
+plot(varImp(lr_step_small))
 
-lr_step_sub2 <- train(log_salary ~ hits +
-                       log_home_runs +
-                       rbis +
-                       walks +
-                       division +
-                       log_put_outs +
-                       log_assists +
-                       log_career_rbis,
-                     data = training,
-                     method = "lm")
-
-varImp(lr_step_sub2) # absolute value of t-statistic for each parameter
-
-plot(varImp(lr_step_sub2))
-
-
-# yet another approach that actually is probably better
-# center and scale before doing linear regresion too
-# this makes the interpretations: a one sd increase in blah is associated ...
-
-set.seed(30)
-lr_center_scale <- train(lasso_rf_recipe,
-                    data = training,
-                    method = "lmStepAIC",
-                    trControl = train_control,
-                    trace = 0) # keep MASS::stepAIC from printing every output
-
-lr_center_scale
-
-summary(lr_center_scale$finalModel)
-
-# the resulting model should be the same but not the interpretation
 
 # =======================
 # ======= LASSO =========
@@ -404,7 +342,7 @@ summary(lr_center_scale$finalModel)
 set.seed(30)
 # note: this gives a warning about missing values in performance metrics
 # this can be ignored because we are considering RMSE
-lasso_trained <- train(lasso_rf_recipe,
+lasso_trained <- train(model_recipe,
                       data = training,
                       method = "glmnet",
                       trControl = train_control,
@@ -421,7 +359,7 @@ varImp(lasso_trained, lambda = lambda) # absolute value of coefficients
 plot(varImp(lasso_trained, lambda = lambda))
 
 # ------ trying to see if can get augment()
-lasso_df <- lasso_rf_recipe %>% 
+lasso_df <- model_recipe %>% 
   prep() %>% 
   bake(new_data = training)
 
@@ -446,7 +384,7 @@ broom::augment.glmnet(lasso_trained$finalModel)
 # ============================
 
 set.seed(30)
-rf_trained <- train(lasso_rf_recipe,
+rf_trained <- train(model_recipe,
                     data = training,
                     method = "rf",
                     trControl = train_control,
