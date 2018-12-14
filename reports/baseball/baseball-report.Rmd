@@ -202,7 +202,7 @@ If future analysts deisire to construct a model for estimating contemporary MLB 
 
 # Supplementary Figures
 
-```{r corrplot-initial, fig.width=6, fig.height=4, fig.cap="Correlation matrix plot of continuous variables prior to transformations. Correlations are displayed as a percent."}
+```{r corrplot-initial, fig.width=6, fig.height= 3.5, fig.cap="Correlation matrix plot of continuous variables prior to transformations. Correlations are displayed as a percent."}
 bball %>% 
   select_if(is.numeric) %>% 
   cor() %>% 
@@ -213,7 +213,7 @@ bball %>%
 ```
 
 
-```{r corrplot-logged, fig.width = 6, fig.height = 4, fig.cap = "Correlation matrix plot of continuous variables after log transformations. Correlations are displayed as a percent."}
+```{r corrplot-logged, fig.width = 6, fig.height = 3.5, fig.cap = "Correlation matrix plot of continuous variables after log transformations. Correlations are displayed as a percent."}
 bball_log_only %>% 
   select_if(is.numeric) %>% 
   cor() %>% 
@@ -250,7 +250,8 @@ grid.arrange(at_bats_hist,
 
 ```
 
-```{r histos-with-log, fig.cap = "Histograms of season level covariates that were log transformed. The left side is the variable on the original scale and the right side is the variable on the log scale."}
+
+```{r histos-with-log, fig.height = 7.5, fig.cap = "Histograms of season level covariates that were log transformed. The left side is the variable on the original scale and the right side is the variable on the log scale."}
 
 hr_hist <- gghist(bball, home_runs)  + xlab("Home runs")
 hr_log_hist <- gghist(bball_logged, log_home_runs, bins = 20) + 
@@ -280,7 +281,8 @@ grid.arrange(hr_hist,
 
 ```
 
-```{r histos-with-log-career, fig.cap = "Histograms of career level covariates that were log transformed. The left side is the variable on the original scale and the right side is the variable on the log scale."}
+
+```{r histos-with-log-career, fig.height = 7.5, fig.cap = "Histograms of career level covariates that were log transformed. The left side is the variable on the original scale and the right side is the variable on the log scale."}
 
 cat_bats_hist <- gghist(bball, career_at_bats) + xlab("Career at bats")
 cat_bats_log_hist <- gghist(bball_logged, log_career_abs) +
@@ -320,6 +322,91 @@ grid.arrange(cat_bats_hist,
 
 ```
 
+
+```{r scatters-season, fig.height = 7.5, fig.cap = "Scatter plots of log salary vs. season level covariates. The blue line is a smoothing line."}
+
+# function to produce scatter plots
+ggscatter <- function(data, var){
+  var <- enquo(var)
+  ggplot(data, aes(x = !!var, y = log_salary)) +
+    geom_point() +
+    geom_smooth(method = "lm", formula = y ~ x, se = FALSE) +
+    ylab("Log salary")
+}
+
+
+at_bat_scat <- ggscatter(bball_log_only, at_bats) + xlab("At bats")
+hits_scat <- ggscatter(bball_log_only, hits) + xlab("Hits")
+hrs_scat <- ggscatter(bball_log_only, log_home_runs) + xlab("Log home runs")
+runs_scat <- ggscatter(bball_log_only, runs) + xlab("Runs")
+rbis_scat <- ggscatter(bball_log_only, rbis) + xlab("Runs batted in")
+walks_scat <- ggscatter(bball_log_only, walks) + xlab("Walks")
+years_scat <- ggscatter(bball_log_only, years) + xlab("Years")
+po_scat <- ggscatter(bball_log_only, log_put_outs) + xlab("Log put outs")
+assists_scat <- ggscatter(bball_log_only, log_assists) + xlab("Log assists")
+errors_scat <- ggscatter(bball_log_only, log_errors) + xlab("Log errors")
+
+grid.arrange(at_bat_scat,
+             hits_scat,
+             hrs_scat,
+             runs_scat,
+             rbis_scat,
+             walks_scat,
+             years_scat,
+             po_scat,
+             assists_scat,
+             errors_scat,
+             ncol = 2)
+
+```
+
+
+```{r scatters-career, fig.height = 7.5, fig.cap = "Scatter plots of log salary vs. career level covariates. The blue line is a smoothing line."}
+
+cat_bat_scat <- ggscatter(bball_log_only, log_career_abs) + 
+  xlab("Log career at bats")
+chits_scat <- ggscatter(bball_log_only, log_career_hits) +
+  xlab("Log career hits")
+chrs_scat <- ggscatter(bball_log_only, log_career_hrs) +
+  xlab("Log career home runs")
+cruns_scat <- ggscatter(bball_log_only, log_career_runs) +
+  xlab("Log career runs")
+crbis_scat <- ggscatter(bball_log_only, log_career_rbis) +
+  xlab("Log career runs batted in")
+cwalks_scat <- ggscatter(bball_log_only, log_career_walks) +
+  xlab("Log career walks")
+
+grid.arrange(cat_bat_scat,
+             chits_scat,
+             chrs_scat,
+             cruns_scat,
+             crbis_scat,
+             cwalks_scat,
+             ncol = 2)
+
+```
+
+
+```{r categorical-plots, fig.height = 7.5, fig.cap = "Bar plots of categorical variables."}
+league_bar <- ggplot(bball, aes(x = league)) +
+  geom_bar() +
+  scale_x_discrete("League at end of 1986 season",
+                   labels = c("American", "National"))
+
+division_bar <- ggplot(bball, aes(x = division)) +
+  geom_bar() +
+  scale_x_discrete("Division", labels = c("East", "West"))
+
+new_league_bar <- ggplot(bball, aes(x = new_league)) +
+  geom_bar() +
+  scale_x_discrete("League at start of 1987 season",
+                   labels = c("American", "National"))
+
+grid.arrange(league_bar,
+             division_bar,
+             new_league_bar,
+             ncol = 1)
+```
 
 
 
