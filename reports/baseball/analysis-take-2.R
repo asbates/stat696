@@ -73,7 +73,8 @@ bball %>%
   corrplot(type = "lower",
            addCoef.col = "black",
            addCoefasPercent = TRUE,
-           number.cex = 0.7)
+           number.cex = 0.7,
+           tl.srt = 10)
 
 
 # function to produce histograms
@@ -245,7 +246,8 @@ bball_log_only %>%
   corrplot(type = "lower",
            addCoef.col = "black",
            addCoefasPercent = TRUE,
-           number.cex = 0.7)
+           number.cex = 0.7,
+           tl.srt = 10)
 
 # =============================
 # ====== MODELING SETUP =======
