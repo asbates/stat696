@@ -391,7 +391,7 @@ plot(varImp(lasso_trained, lambda = lambda))
 
 # save model
 saveRDS(lasso_trained,
-        here("reports", "baseball", "results", "lass_trained.rds"))
+        here("reports", "baseball", "results", "lasso_trained.rds"))
 
 
 # ============================
@@ -426,15 +426,24 @@ saveRDS(rf_trained,
 
 
 # --- linear regression ----
+lr_test_pred <- predict(lr_step_small_trained, newdata = testing)
 
+# testing RMSE = 0.687
+postResample(pred = lr_test_pred, obs = testing$log_salary)
 
 
 # ---- lasso ------
+lasso_test_pred <- predict(lasso_trained, newdata = testing)
+
+# testing RMSE = 0.706
+postResample(pred = lasso_test_pred, obs = testing$log_salary)
 
 
 # ----- random forest -----
+rf_test_pred <- predict(rf_trained, newdata = testing)
 
-
+# testing RMSE = 0.460
+postResample(pred = rf_test_pred, obs = testing$log_salary)
 
 
 

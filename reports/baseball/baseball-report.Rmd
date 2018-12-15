@@ -216,6 +216,70 @@ Lasso and random forest were fit with ten values of their respective hyperparame
 
 ## Prediction Results
 
+```{r test-tab}
+
+# create train/test data
+set.seed(42)
+train_index <- createDataPartition(bball_log_only$log_salary,
+                                   p = 0.8,
+                                   list = FALSE)
+training <- bball_log_only[train_index, ]
+testing <- bball_log_only[-train_index, ]
+
+# --- load the models ---
+lr_step_small_trained <- readRDS(here("reports",
+                                      "baseball",
+                                      "results",
+                                      "lr_step_small_trained.rds"))
+lasso_trained <- readRDS(here("reports",
+                              "baseball",
+                              "results",
+                              "lasso_trained.rds"))
+rf_trained <- readRDS(here("reports",
+                           "baseball",
+                           "results",
+                           "rf_trained.rds"))
+# --- training predictions ---
+lr_train_error <- lr_step_small_trained$results[1, 2]
+lasso_train_error <- lasso_trained$results[1,3]
+rf_train_error <- rf_trained$results[2,2]
+
+# ---- test set predictions ----
+# --- linear regression ----
+lr_test_pred <- predict(lr_step_small_trained, newdata = testing)
+lr_test_error <- postResample(pred = lr_test_pred,
+                              obs = testing$log_salary)[1]
+# ---- lasso ------
+lasso_test_pred <- predict(lasso_trained, newdata = testing)
+lasso_test_error <- postResample(pred = lasso_test_pred,
+                                 obs = testing$log_salary)[1]
+# ----- random forest -----
+rf_test_pred <- predict(rf_trained, newdata = testing)
+rf_test_error <- postResample(pred = rf_test_pred,
+                              obs = testing$log_salary)[1]
+pred_results <- tibble(
+  Model = c("Linear Regression", "LASSO", "Random Forest"),
+  `CV error` = c(lr_train_error, lasso_train_error, rf_train_error),
+  `Testing error` = c(lr_test_error, lasso_test_error, rf_test_error)
+) %>% 
+  mutate(
+    `CV relative error` = `CV error` / min(`CV error`),
+    `Testing relative error` = `Testing error` / min(`Testing error`)
+  ) %>%
+  select(Model,
+         `CV error`,
+         `CV relative error`,
+         `Testing error`,
+         `Testing relative error`) %>% 
+  arrange(`Testing error`, `CV error`)
+
+pred_results %>% 
+  kable(digits = 2, caption = "Prediction results for linear regression, lasso, and random forest. Included are the mean cross-validation RMSE and test set RMSE. Also included are the relative cross-validation and test set error.") %>% 
+  row_spec(0, bold = TRUE)
+
+```
+
+
 
 
 
