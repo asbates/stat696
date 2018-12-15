@@ -1,3 +1,4 @@
+library(here)
 library(ISLR)
 library(MASS) # load MASS first to prevent from masking dplyr::select
 library(dplyr)
@@ -10,6 +11,7 @@ library(broom)
 library(car)
 library(glmnet)
 library(randomForest)
+
 
 
 
@@ -295,9 +297,10 @@ lr_trained <- train(model_recipe,
 lr_trained # RMSE = 0.552
 lr_step <- lr_trained$finalModel # this gives the model
 summary(lr_step)
-# 2 high p-values: log_put_outs & log_assists
+# high p-values: log_put_outs (0.13)
 
 vif(lr_step)  # at_bats = 19, hits = 17
+
 
 # remove at_bats and keep hits
 # b/c of the remaining variables in the model,
@@ -326,14 +329,42 @@ lr_step_small_trained <- train(lr_small_recipe,
 lr_step_small_trained # RMSE = 0.530
 lr_step_small <- lr_step_small_trained$finalModel
 
-summary(lr_step_small) # 2 high p-values (log_put_outs & log_career_rbis)
+# --- diagnostics -----
+summary(lr_step_small) # high p-values: log_put_outs (0.2) 
+#                                       & log_career_rbis (0.2)
 vif(lr_step_small) # these are much better. largest is 5.9
+
+lr_aug <- augment(lr_step_small)
+
+# residuals vs. fitted values
+ggplot(lr_aug, aes(x = .fitted, y = .resid)) +
+  geom_point() + 
+  geom_hline(yintercept = 0, color = "blue")
+
+# qq plot
+ggplot(lr_aug, aes(sample = .resid)) +
+  stat_qq(distribution = qnorm) +
+  stat_qq_line(distribution = qnorm, color = "blue")
+
+# residual plot has one troublesome point
+# the qq plot looks good
+# since the primary goal of this analysis is predictions,
+#  we will not worry about the lone point in the residual plot
 
 
 varImp(lr_step_small) # absolute value of t-statistic for each parameter
 
 plot(varImp(lr_step_small))
 
+
+# save models to save time compiling report
+# these are saved locally
+saveRDS(lr_trained, here("reports", "baseball", "results", "lr_trained.rds"))
+saveRDS(lr_step, here("reports", "baseball", "results", "lr_step.rds"))
+saveRDS(lr_step_small_trained,
+        here("reports", "baseball", "results", "lr_step_small_trained.rds"))
+saveRDS(lr_step_small,
+        here("reports", "baseball", "results", "lr_step_small.rds"))
 
 # =======================
 # ======= LASSO =========
@@ -358,25 +389,9 @@ plot(lasso_trained)
 varImp(lasso_trained, lambda = lambda) # absolute value of coefficients
 plot(varImp(lasso_trained, lambda = lambda))
 
-# ------ trying to see if can get augment()
-lasso_df <- model_recipe %>% 
-  prep() %>% 
-  bake(new_data = training)
-
-lasso_mod_mat <- model.matrix(log_salary ~., data = lasso_df)
-
-lasso_fit <- cv.glmnet(lasso_mod_mat,
-                    training$log_salary,
-                    lambda = c(0.01, 0.02)) 
-# cv.glmnet needs more than one lambda value
-
-tidy(lasso_fit)
-tidy(lasso_fit) 
-summary(lasso_fit)
-augment(lasso_fit)
-
-broom::augment(lasso_trained$finalModel) # no method for enet
-broom::augment.glmnet(lasso_trained$finalModel)
+# save model
+saveRDS(lasso_trained,
+        here("reports", "baseball", "results", "lass_trained.rds"))
 
 
 # ============================
@@ -393,37 +408,39 @@ rf_trained <- train(model_recipe,
 
 rf_trained # RMSE = 0.429
 
-( (0.536 - 0.429) / 0.536 ) * 100 # 20% reduction in error
 
 plot(rf_trained)
 varImp(rf_trained)
 plot(varImp(rf_trained))
 
 
-ggplot(rf_trained, mapping = NULL, top = dim(rf_trained$importance)[1])
+# save model
+saveRDS(rf_trained,
+        here("reports", "baseball", "results", "rf_trained.rds"))
 
-rf_imp <- varImp(rf_trained)
 
-ggplot(rf_imp)
 
-rf_tick_labels <- rev(c("log career hits",
-                    "log career at bats",
-                    "log career runs",
-                    "log career rbis",
-                    "log career walks",
-                    "log career home runs",
-                    "years",
-                    "at bats",
-                    "hits",
-                    "log home runs",
-                    "runs",
-                    "rbis",
-                    "walks",
-                    "log put outs",
-                    "division west",
-                    "log errors",
-                    "league national",
-                    "log assists",
-                    "new league national"))
-ggplot(rf_imp) +
-  scale_x_discrete(labels = rf_tick_labels)
+# ============================
+# ====== TEST SET ERROR ======
+# ============================
+
+
+# --- linear regression ----
+
+
+
+# ---- lasso ------
+
+
+# ----- random forest -----
+
+
+
+
+
+
+
+
+
+
+

@@ -12,3 +12,6 @@
 # knitr cache folders
 *_cache/
 *_files/
+
+# saved model results
+/reports/
