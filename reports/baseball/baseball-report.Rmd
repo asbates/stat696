@@ -216,6 +216,10 @@ Lasso and random forest were fit with ten values of their respective hyperparame
 
 ## Prediction Results
 
+Table \@ref(tab:test-tab) displays the prediction error for each model across the cross-validation runs and on the testing set. As one would expect, the random forest model outperforms linear regression and lasso on both cross-validation error and test set error. The random forest is approximately 50% better than the alternatives in terms of relative error. The errors for linear regression and lasso are approximately the same which is a bit remarkable given that lasso often has improved predictive preformance compared to linear regression [@islrbook p. 203]. Also of note, and perhaps most important, is the percent increase in error on the testing set compared to cross-validation error. Both linear regression and lasso saw an increase of about 30% while the random forest increase was only 7%. 
+
+something about deccorolation in random forest? does better b/c of high correlations? with mtry = 3 this may be the case. only 3 of 19 variables are considered so even if 3 variables with high correlations are selected, the other highly correlated variables in that group are left out...
+
 ```{r test-tab}
 
 # create train/test data
@@ -260,21 +264,26 @@ rf_test_error <- postResample(pred = rf_test_pred,
 pred_results <- tibble(
   Model = c("Linear Regression", "LASSO", "Random Forest"),
   `CV error` = c(lr_train_error, lasso_train_error, rf_train_error),
-  `Testing error` = c(lr_test_error, lasso_test_error, rf_test_error)
+  `Test error` = c(lr_test_error, lasso_test_error, rf_test_error)
 ) %>% 
   mutate(
-    `CV relative error` = `CV error` / min(`CV error`),
-    `Testing relative error` = `Testing error` / min(`Testing error`)
+    `% Increase in error` = ((`Test error` - `CV error`) / `CV error`) * 100,
+    `Test relative error` = `Test error` / min(`Test error`)
   ) %>%
+  mutate(
+    `% Increase in error` = formatC(signif(`% Increase in error`, 2),
+                                    1, format = "f")
+  ) %>% 
   select(Model,
          `CV error`,
-         `CV relative error`,
-         `Testing error`,
-         `Testing relative error`) %>% 
-  arrange(`Testing error`, `CV error`)
+         `Test error`,
+         `% Increase in error`,
+         `Test relative error`) %>% 
+  arrange(`Test error`, `CV error`)
 
 pred_results %>% 
-  kable(digits = 2, caption = "Prediction results for linear regression, lasso, and random forest. Included are the mean cross-validation RMSE and test set RMSE. Also included are the relative cross-validation and test set error.") %>% 
+  kable(digits = 2, caption = "Prediction results for linear regression, lasso, and random forest. Included are the mean cross-validation RMSE and test set RMSE. Also included is the increase in error from cross validation to testing and relative test set error.",
+        align = c("l", "r", "r", "r", "r")) %>% 
   row_spec(0, bold = TRUE)
 
 ```
