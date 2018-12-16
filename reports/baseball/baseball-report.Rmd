@@ -292,12 +292,11 @@ pred_results %>%
 
 ## Model Interpretation
 
-obviously regression summary table and interpretation of that. also include regression coefficients for lasso? will this be too much? but will levine want this? 
 
-Even if the main objective for building a model is prediction accuracy one usually wants to have an understanding of how the model is working. For example, we might be interested in how the covariates affect the response or which covariates are most important to the model.
+Interpretation is another aspect for which the three models considered here differ. Even if the main objective for building a model is prediction accuracy one usually wants to have an understanding of how the model is working. For example, we might be interested in how the covariates affect the response or which covariates are most important to the model. The type of model dictates what kind of inferences we can make. For linear regression, inferences most often take the form of interpreting the regression coefficients. The lasso is based on a standard linear regression model but the nature of the fitting process makes linear-regression-like inferences difficult. Random forests are similarly difficult to interpret in a similar fashion to linear regression. Although there has been some recent development on inference for both lasso [@lasso-inference] and random forest [@rf-inference], they beyond the scope of this analysis. Instead we take the traditional approach of model interpretation through feature importance measures.
 
+A summary of the linear regression fit is given in Table \@ref(tab:lr_summary). Included are coefficient estimates of the model along with their associated standard errors, p-values, and 95% confidence intervals. Because log transformations and centering and scaling of the covariates was perfomed, the interpretations of the coefficients are not as straightforward as when no transformations are performed. There are three types of predictors in the model and each warrants a slightly different interpretation. The simplest case is the covariates that were not log transformed, such as number of hits. Since the predictors were centered and scaled prior to fitting, we can interpret number of hits as follows. Hits has a standard deviation of 46 and its coefficient estimate is 0.18. So every 46 hits a player gets per season is associated with a 100 * 0.18 or 18% increase in salary. Now let's consider a covariate that was log transformed, log home runs. Log home runs has a standard deviation of 1 and a coefficient of 0.11. Suppose log home runs for a given player increases by 50% of a standard deviation which in this case is 0.5. If we take 1 + 0.5 and raise it to the power of 0.11 the result is 1.046. Subtract one from this and multiply by 100 and we get 4.6% which is the associated increase in salary we expect. The remaining type of predictor is the categorical variable for division. We leave this to the reader to interpret.
 
-for regression, mention something about being cautious with inferences because of model selection procedure and cite @sequential-regression.
 
 ```{r lr-summary}
 
@@ -328,6 +327,8 @@ tidy_lr %>%
 
 ```
 
+
+We should note that these results do not take into account the model selection procedure and as such should be handled with caution. @sequential-regression discuss how to account for this with forward stepwise regression but we use backwards selection here. In a higher stakes setting one should consider the implications of the model selection mechanism but for reasons of simplicity we assume our inferences are reasonable approximations.
 
 variable importance plots. make sure to say what they are for linear regression (include this?) and lasso at the least. what is the most important variable for each model? what are the top 2 or 3 most important? what about the least important? also note any large gaps between importance levels.
 
