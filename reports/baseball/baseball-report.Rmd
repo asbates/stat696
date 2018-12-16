@@ -290,7 +290,11 @@ pred_results %>%
 ```
 
 
+## Model Interpretation
 
+obviously regression summary table and interpretation of that. also include regression coefficients for lasso? will this be too much? but will levine want this? 
+
+variable importance plots. make sure to say what they are for linear regression (include this?) and lasso at the least. what is the most important variable for each model? what are the top 2 or 3 most important? what about the least important? also note any large gaps between importance levels.
 
 
 # Conclusion
