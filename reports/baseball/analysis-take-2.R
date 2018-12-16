@@ -386,12 +386,29 @@ coef(lasso_trained$finalModel, s = lambda) # model coefficients
 
 plot(lasso_trained)
 
-varImp(lasso_trained, lambda = lambda) # absolute value of coefficients
-plot(varImp(lasso_trained, lambda = lambda))
+# variable importance measures and plot
+lasso_imp <- varImp(lasso_trained)$importance %>% 
+  mutate(
+    Term = c("At bats", "Hits", "Log home runs", "Runs",
+             "RBIs", "Walks", "Years", "Log put outs",
+             "Log assists", "Log errors", "Log career at bats",
+             "Log career hits", "Log career home runs", "Log career runs",
+             "Log career RBIs", "Log career walks", "League: National",
+             "Division: West", "New league: National")
+  ) %>% 
+  filter(Overall > 0)
+
+ggplot(lasso_imp, aes(x = reorder(Term, Overall), y = Overall)) +
+  geom_point() +
+  geom_segment(aes(x = Term, xend = Term, y = 0, yend = Overall)) +
+  labs(x = "",
+       y = "Lasso variable importance (%)") +
+  coord_flip()
 
 # save model
 saveRDS(lasso_trained,
         here("reports", "baseball", "results", "lasso_trained.rds"))
+
 
 
 # ============================
@@ -408,10 +425,26 @@ rf_trained <- train(model_recipe,
 
 rf_trained # RMSE = 0.429
 
-
 plot(rf_trained)
-varImp(rf_trained)
-plot(varImp(rf_trained))
+
+# variable importance measures and plot
+rf_imp <- varImp(rf_trained)$importance %>% 
+  mutate(
+    Term = c("At bats", "Hits", "Log home runs", "Runs",
+             "RBIs", "Walks", "Years", "Log put outs",
+             "Log assists", "Log errors", "Log career at bats",
+             "Log career hits", "Log career home runs", "Log career runs",
+             "Log career RBIs", "Log career walks", "League: National",
+             "Division: West", "New league: National")
+  ) %>% 
+  filter(Overall > 0)
+
+ggplot(rf_imp, aes(x = reorder(Term, Overall), y = Overall)) +
+  geom_point() +
+  geom_segment(aes(x = Term, xend = Term, y = 0, yend = Overall)) +
+  labs(x = "",
+       y = "Random forest variable importance (%)") +
+  coord_flip()
 
 
 # save model

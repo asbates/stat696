@@ -153,7 +153,7 @@ Another potential issue with this data set is the correlations between the covar
 Over half of the continuous variables exhibit skewness to some degree. This is of highest concern for the linear regression model but it may also affect the fit for lasso and random forest if most of the values are clumped together. Log transformations were used to account for skewness, favored for the interpretability of coefficients in the linear regression model. An example of this skewness is seen in Figure \@ref(fig:salary-hist) where we have a histogram of salary (left) along with a histogram of log salary (right). The log transformation clearly helps with skewness but also note that after transformation salary is approximately normally distributed. Histograms of the remaining variables as well as any log transformed variables are provided in the appendix for reference. Also included are scatter plots of each covariate (or the log transformed covariate) versus log salary to assess the plausability of the linearity assumption for the linear regression model. The plots show that each predictor variable has an approximately linear relationship with log salary.
 
 
-```{r salary-hist, fig.width = 6, fig.height=3, fig.cap="Histogram of player salary. The left plot is prior to transformation and the right plot is after log transforming."}
+```{r salary-hist, fig.width = 7, fig.height = 2.5, fig.cap="Histogram of player salary. The left plot is prior to transformation and the right plot is after log transforming."}
 sal_hist <- 
   ggplot(bball, aes(salary)) +
   geom_histogram(bins = 30) +
@@ -182,33 +182,7 @@ After splitting the data into a testing and training set, each type of model was
 
 For the linear regression model a backwards stepwise procedure was used on each cross validation run. The resulting fit was the one with the lowest Akaike Information Criteria and this was then used to predict on the cross-validation hold out set. The model with the lowest mean cross-validation error was then evaluated. The coefficient for log put outs has a reasonably large p-value at 0.13 but the p-values for the remaining coefficients were satisfactory. The real concern with this model is the variance inflation factors (VIF). Number of at bats had a VIF of 19.2 and number of hits had a VIF of 16.9. These are quite large and indicate collinearity issues. This should not be surprising as we noted earlier that these variables are highly correlated (97%) and they both have moderate to high correlations with other variables. Number of at bats generally has higher correlations with other covariates than number of hits so it was decided to remove at bats and keep number of hits.
 
-After removing number of at bats from the linear regression model the collinearity issue was mostly abated. The largest VIF for this model was moderate at 5.9 (number of runs batted in). Further diagnostics were done through plotting residuals versus fitted values and a QQ plot, both of which can be found in Figure \@ref(fig:lr-diagnostics). In the left plot we see one concerning point (top left) with a rather large residual. The plot also shows a few points with variance a bit larger than most of the others. For the quantile-quantile plot, we also see a point of concern (top right) that distances itself from the remaining points. However, recall that the primary purpose of this analysis is to compare predictive performance across each class of model and not necessarily to construct a model that perfectly satisfies its assumptions. Overall, both of the diagnostic plots in Figure \@ref(fig:lr-diagnostics) are reasonable approximations and are satisfactory for our purposes. Proceding with this model, cross-validation was then performed using the same fit on each run in order to get an estimate of out-of-sample RMSE and allow for comparison with the other models.
-
-
-```{r lr-diagnostics, fig.width = 6, fig.height = 3, fig.cap = "Diagnostic plots for the linear regression model. The left hand plot is residuals vs. fitted values. The right hand plot is a QQ plot of the residuals vs. normal quantiles. The blue lines are reference lines indicating zero (left) and the y=x line (right)."}
-
-lr_step_small <- readRDS(here("reports",
-                              "baseball",
-                              "results",
-                              "lr_step_small.rds"))
-
-lr_aug <- augment(lr_step_small)
-
-# residuals vs. fitted values
-resid_fit <- ggplot(lr_aug, aes(x = .fitted, y = .resid)) +
-  geom_point() + 
-  geom_hline(yintercept = 0, color = "blue") +
-  labs(x = "Fitted values", y = "Residuals")
-
-# qq plot
-qq <- ggplot(lr_aug, aes(sample = .resid)) +
-  stat_qq(distribution = qnorm) +
-  stat_qq_line(distribution = qnorm, color = "blue") +
-  labs(x = "Theoretical quantiles", y = "Sample quantiles")
-
-grid.arrange(resid_fit, qq, ncol = 2)
-
-```
+After removing number of at bats from the linear regression model the collinearity issue was mostly abated. The largest VIF for this model was moderate at 5.9 (number of runs batted in). Further diagnostics were done through plotting residuals versus fitted values and a QQ plot, both of which can be found in Figure \@ref(fig:lr-diagnostics) in the appendix. We see one concerning point with a rather large residual. The plot also shows a few points with variance a bit larger than most of the others. For the quantile-quantile plot, we see a point of concern that distances itself from the remaining points. However, recall that the primary purpose of this analysis is to compare predictive performance across each class of model and not necessarily to construct a model that perfectly satisfies its assumptions. Overall, both of the diagnostic plots in Figure \@ref(fig:lr-diagnostics) are reasonable approximations and are satisfactory for our purposes. Proceding with this model, cross-validation was then performed using the same fit on each run in order to get an estimate of out-of-sample RMSE and allow for comparison with the other models.
 
 
 Lasso and random forest were fit with ten values of their respective hyperparameters on each cross-validation iteration. The parameter for the lasso is the penalty parameter on the L_1 norm of the coefficients. Ten equally spaced values were used ranging from 0.01 to 1. The optimal parameter was 0.01. For the random forest the hyperparameter is the number of randomly selected predictor variables considered at each split. Values ranged from 2 to 19 with the optimal parameter found to be three.
@@ -295,7 +269,7 @@ pred_results %>%
 
 Interpretation is another aspect for which the three models considered here differ. Even if the main objective for building a model is prediction accuracy one usually wants to have an understanding of how the model is working. For example, we might be interested in how the covariates affect the response or which covariates are most important to the model. The type of model dictates what kind of inferences we can make. For linear regression, inferences most often take the form of interpreting the regression coefficients. The lasso is based on a standard linear regression model but the nature of the fitting process makes linear-regression-like inferences difficult. Random forests are similarly difficult to interpret in a similar fashion to linear regression. Although there has been some recent development on inference for both lasso [@lasso-inference] and random forest [@rf-inference], they beyond the scope of this analysis. Instead we take the traditional approach of model interpretation through feature importance measures.
 
-A summary of the linear regression fit is given in Table \@ref(tab:lr_summary). Included are coefficient estimates of the model along with their associated standard errors, p-values, and 95% confidence intervals. Because log transformations and centering and scaling of the covariates was perfomed, the interpretations of the coefficients are not as straightforward as when no transformations are performed. There are three types of predictors in the model and each warrants a slightly different interpretation. The simplest case is the covariates that were not log transformed, such as number of hits. Since the predictors were centered and scaled prior to fitting, we can interpret number of hits as follows. Hits has a standard deviation of 46 and its coefficient estimate is 0.18. So every 46 hits a player gets per season is associated with a 100 * 0.18 or 18% increase in salary. Now let's consider a covariate that was log transformed, log home runs. Log home runs has a standard deviation of 1 and a coefficient of 0.11. Suppose log home runs for a given player increases by 50% of a standard deviation which in this case is 0.5. If we take 1 + 0.5 and raise it to the power of 0.11 the result is 1.046. Subtract one from this and multiply by 100 and we get 4.6% which is the associated increase in salary we expect. The remaining type of predictor is the categorical variable for division. We leave this to the reader to interpret.
+A summary of the linear regression fit is given in Table \@ref(tab:lr_summary). Included are coefficient estimates of the model along with their associated standard errors, p-values, and 95% confidence intervals. Because log transformations and centering and scaling of the covariates was perfomed, the interpretations of the coefficients are not as straightforward as when no transformations are performed. There are three types of predictors in the model and each warrants a slightly different interpretation. The simplest case is the covariates that were not log transformed, such as number of hits. Since the predictors were centered and scaled prior to fitting, we can interpret number of hits as follows. Hits has a standard deviation of 46 and its coefficient estimate is 0.18. So every 46 hits a player gets per season is associated with a 100 * 0.18 or 18% increase in salary. Now let's consider a covariate that was log transformed, log home runs. Log home runs has a standard deviation of 1 and a coefficient of 0.11. Suppose log home runs for a given player increases by one standard deviation. If we take 1 + 1 and raise it to the power of 0.11 the result is 1.079. Subtract one from this and multiply by 100 and we get 7.9% which is the associated increase in salary we expect. The remaining type of predictor is the categorical variable for division. We leave this to the reader to interpret.
 
 
 ```{r lr-summary}
@@ -328,9 +302,57 @@ tidy_lr %>%
 ```
 
 
-We should note that these results do not take into account the model selection procedure and as such should be handled with caution. @sequential-regression discuss how to account for this with forward stepwise regression but we use backwards selection here. In a higher stakes setting one should consider the implications of the model selection mechanism but for reasons of simplicity we assume our inferences are reasonable approximations.
+We should note that these inferences do not take into account the model selection procedure and as such should be handled with caution. @sequential-regression discuss how to account for this with forward stepwise regression but we use backwards selection here. In a higher stakes setting one should consider the implications of the model selection mechanism but for reasons of simplicity we assume our inferences are reasonable approximations.
 
-variable importance plots. make sure to say what they are for linear regression (include this?) and lasso at the least. what is the most important variable for each model? what are the top 2 or 3 most important? what about the least important? also note any large gaps between importance levels.
+For lasso and random forest we interpret the models via variable importance measures. For variable importance of the lasso we use the absolute value of the regression coefficients. Feature importance for random forest is based on out-of-bag predictions before and after permuting a feature. Importance measures for both models are then scaled so that the most influential feature has an importance of 100. Variable importance measures are easier to assess in a plot, which is given in Figure
+
+```{r var-imp-plot, fig.width = 7, fig.height = 2.5, fig.cap = "Variable importance plots for lasso (left) and random forest (right). Importance measures are scaled so that the most influential feature has an importance value of 100. Only variables with importance larger than 0 are included."}
+
+lasso_imp <- varImp(lasso_trained)$importance %>% 
+  mutate(
+    Term = c("At bats", "Hits", "Log home runs", "Runs",
+             "RBIs", "Walks", "Years", "Log put outs",
+             "Log assists", "Log errors", "Log career at bats",
+             "Log career hits", "Log career home runs", "Log career runs",
+             "Log career RBIs", "Log career walks", "League: National",
+             "Division: West", "New league: National")
+  ) %>% 
+  filter(Overall > 0)
+
+lasso_imp_plot <- ggplot(lasso_imp, 
+                         aes(x = reorder(Term, Overall), y = Overall)) +
+  geom_point() +
+  geom_segment(aes(x = Term, xend = Term, y = 0, yend = Overall)) +
+  labs(x = "",
+       y = "Importance (lasso)") +
+  theme(axis.title.y = element_text(size = 8)) + 
+  coord_flip()
+
+
+rf_imp <- varImp(rf_trained)$importance %>% 
+  mutate(
+    Term = c("At bats", "Hits", "Log home runs", "Runs",
+             "RBIs", "Walks", "Years", "Log put outs",
+             "Log assists", "Log errors", "Log career at bats",
+             "Log career hits", "Log career home runs", "Log career runs",
+             "Log career RBIs", "Log career walks", "League: National",
+             "Division: West", "New league: National")
+  ) %>% 
+  filter(Overall > 0)
+
+rf_imp_plot <- ggplot(rf_imp, 
+                      aes(x = reorder(Term, Overall), y = Overall)) +
+  geom_point() +
+  geom_segment(aes(x = Term, xend = Term, y = 0, yend = Overall)) +
+  labs(x = "",
+       y = "Importance (random forest)") +
+  theme(axis.title.y = element_text(size = 8)) + 
+  coord_flip()
+
+grid.arrange(lasso_imp_plot, rf_imp_plot, ncol = 2)
+
+```
+
 
 
 # Conclusion
@@ -555,6 +577,33 @@ grid.arrange(league_bar,
              division_bar,
              new_league_bar,
              ncol = 1)
+```
+
+
+
+```{r lr-diagnostics, fig.width = 7, fig.height = 3, fig.cap = "Diagnostic plots for the linear regression model. The left hand plot is residuals vs. fitted values. The right hand plot is a QQ plot of the residuals vs. normal quantiles. The blue lines are reference lines indicating zero (left) and the y=x line (right)."}
+
+lr_step_small <- readRDS(here("reports",
+                              "baseball",
+                              "results",
+                              "lr_step_small.rds"))
+
+lr_aug <- augment(lr_step_small)
+
+# residuals vs. fitted values
+resid_fit <- ggplot(lr_aug, aes(x = .fitted, y = .resid)) +
+  geom_point() + 
+  geom_hline(yintercept = 0, color = "blue") +
+  labs(x = "Fitted values", y = "Residuals")
+
+# qq plot
+qq <- ggplot(lr_aug, aes(sample = .resid)) +
+  stat_qq(distribution = qnorm) +
+  stat_qq_line(distribution = qnorm, color = "blue") +
+  labs(x = "Theoretical quantiles", y = "Sample quantiles")
+
+grid.arrange(resid_fit, qq, ncol = 2)
+
 ```
 
 
