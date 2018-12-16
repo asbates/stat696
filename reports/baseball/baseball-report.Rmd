@@ -294,6 +294,41 @@ pred_results %>%
 
 obviously regression summary table and interpretation of that. also include regression coefficients for lasso? will this be too much? but will levine want this? 
 
+Even if the main objective for building a model is prediction accuracy one usually wants to have an understanding of how the model is working. For example, we might be interested in how the covariates affect the response or which covariates are most important to the model.
+
+
+for regression, mention something about being cautious with inferences because of model selection procedure and cite @sequential-regression.
+
+```{r lr-summary}
+
+lr_step_small <- readRDS(here("reports",
+                              "baseball",
+                              "results",
+                              "lr_step_small.rds"))
+tidy_lr <- tidy(lr_step_small, conf.int = TRUE) %>% 
+  mutate(
+    Term = c("Intercept", "Hits", "Log home runs",
+             "RBIs", "Walks", "Log put outs",
+             "Log assists", "Log career RBIs", "Division: West"),
+    Estimate = formatC(signif(estimate, 4), 2, format = "f"),
+    SE = formatC(signif(std.error, 4), 2, format = "f"),
+    `p-value` = formatC(signif(p.value, 4), 3, format = "f"),
+    `95% CI` = paste("(",
+                     formatC(signif(conf.low, 4), 2, format = "f"),
+                     ", ",
+                     formatC(signif(conf.high, 4), 2, format = "f"),
+                     ")"
+                     )
+  ) %>% 
+  select(Term, Estimate, SE, `p-value`, `95% CI`)
+
+tidy_lr %>% 
+  kable(align = c("l", "r", "r", "r", "r"), caption = "Summary for linear regression model of log salary against hits, log home runs, runs batted in, walks, log put outs, log assists, log career runs batted in, and division. Coefficient estimates are provided along with their standard errors, p-values, and 95\\% confidence intervals.") %>% 
+  row_spec(0, bold = TRUE)
+
+```
+
+
 variable importance plots. make sure to say what they are for linear regression (include this?) and lasso at the least. what is the most important variable for each model? what are the top 2 or 3 most important? what about the least important? also note any large gaps between importance levels.
 
 
