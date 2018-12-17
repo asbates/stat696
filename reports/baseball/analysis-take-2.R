@@ -479,10 +479,3 @@ rf_test_pred <- predict(rf_trained, newdata = testing)
 postResample(pred = rf_test_pred, obs = testing$log_salary)
 
 
-
-
-
-
-
-
-
